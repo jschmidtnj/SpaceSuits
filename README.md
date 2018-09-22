@@ -2,7 +2,7 @@
 A Hololens-based Space Suit.
 
 
-### Standard Ooperation Procedure
+### Standard Operation Procedure
 
 1) Develop major changes on your own branch
 
