@@ -1,8 +1,8 @@
-#SpaceSuits
+# SpaceSuits
 A Hololens-based Space Suit.
 
 
-###Standard Ooperation Procedure
+### Standard Ooperation Procedure
 
 1) Develop major changes on your own branch
 
