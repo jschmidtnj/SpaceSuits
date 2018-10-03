@@ -17,5 +17,13 @@ A Hololens-based Space Suit.
 `wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe`  
 Then follow these steps:  
 * https://www.mono-project.com/download/stable/#download-lin
-* https://www.mono-project.com/docs/getting-started/mono-basics/  
+* https://www.mono-project.com/docs/getting-started/mono-basics/
+  
+  
 Finally try `mono nuget.exe install <Package-to-install>`
+
+### git dev
+1) `git checkout -b <branch name>`
+2) `git add .`, `git commit -a "<message>"`
+3) `git push --set-upstream origin <branch name>`
+4) `git push origin`
