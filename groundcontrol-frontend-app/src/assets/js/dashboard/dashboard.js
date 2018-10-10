@@ -37,51 +37,152 @@ function handleError(error) {
     }, config.other.alerttimeout);
 }
 
-var createdDownloadButton = false;
-
 $(document).ready(function () {
 
     $('#toslink').attr('href', config.other.tosUrl);
     $('#privacypolicylink').attr('href', config.other.privacyPolicyUrl);
     $('#helplink').attr('href', config.other.helpPageUrl);
 
+    $.validator.addMethod(
+        "regex1",
+        function (value, element, regexp) {
+            var re = new RegExp(regexp, 'i');
+            return this.optional(element) || re.test(value);
+        },
+        ""
+    );
+
+    function createTaskFormValidation() {
+        $("#taskForm").validate({
+            rules: {
+                task: {
+                    required: true
+                }
+            },
+            messages: {
+                task: "Please enter a task"
+            },
+            errorElement: "div",
+            errorPlacement: function (error, element) {
+                // Add the `invalid-feedback` class to the div element
+                error.addClass("invalid-feedback");
+    
+                if (element.prop("type") === "checkbox") {
+                    error.insertAfter(element.parent("label"));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function (element) {
+                $(element).addClass("is-invalid").removeClass("is-valid");
+            },
+            unhighlight: function (element) {
+                $(element).addClass("is-valid").removeClass("is-invalid");
+            }
+        });
+
+        function submitTask() {
+            if ($("#taskForm").valid()) {
+                var formData = $("#registerForm").serializeArray();
+                //console.log(formData);
+                var task = formData[0].value.toString();
+                firebase.database().ref('tasks/').push({
+                    data: task
+                }).then(function() {
+                    console.log("task added");
+                }).catch(function(err){
+                    handleError(err);
+                });
+            } else {
+                console.log("form invalid");
+            }
+        }
+
+        $("#submitTask").on('click touchstart', function () {
+            submitTask();
+        });
+
+        $("#task").keypress(function (event) {
+            if (event.which == '13') {
+                event.preventDefault();
+                submitTask();
+            }
+        });
+    }
+
+    function getSuitData() {
+        firebase.database().ref("suitdata/").on("value").then(function(suitdata) {
+            var suitdataval = suitdata.val();
+            var primaryo2 = suitdataval.primaryo2;
+            $("#primaryo2").prop('disabled', false);
+            $("#primaryo2").val(primaryo2);
+            $("#primaryo2").prop('disabled', true);
+            var secondaryo2 = suitdataval.secondaryo2;
+            $("secondaryo2").prop('disabled', false);
+            $("#secondaryo2").val(secondaryo2);
+            $("#secondaryo2").prop('disabled', true);
+            var battery = suitdataval.battery;
+            $("#battery").prop('disabled', false);
+            $("#battery").val(battery);
+            $("#battery").prop('disabled', true);
+            var heartrate = suitdataval.heartrate;
+            $("#heartrate").prop('disabled', false);
+            $("#heartrate").val(heartrate);
+            $("#heartrate").prop('disabled', true);
+            var moisture = suitdataval.moisture;
+            $("#moisture").prop('disabled', true);
+            $("#moisture").val(moisture);
+            $("#moisture").prop('disabled', true);
+
+            var accelx = suitdataval.accelx;
+            $("#accelx").prop('disabled', false);
+            $("#accelx").val(accelx);
+            $("#accelx").prop('disabled', true);
+            var accely = suitdataval.accely;
+            $("#accely").prop('disabled', false);
+            $("#accely").val(accely);
+            $("#accely").prop('disabled', true);
+            var accelz = suitdataval.accelz;
+            $("#accelz").prop('disabled', false);
+            $("#accelz").val(accelz);
+            $("#accelz").prop('disabled', true);
+            var roll = suitdataval.roll;
+            $("#roll").prop('disabled', false);
+            $("#roll").val(roll);
+            $("#roll").prop('disabled', true);
+            var pitch = suitdataval.pitch;
+            $("#pitch").prop('disabled', false);
+            $("#pitch").val(pitch);
+            $("#pitch").prop('disabled', true);
+            var yaw = suitdataval.yaw;
+            $("#yaw").prop('disabled', false);
+            $("#yaw").val(yaw);
+            $("#yaw").prop('disabled', true);
+        }).catch(function(err) {
+            handleError(err);
+        });
+    }
+
     var signed_in_initially = false;
 
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
-            window.user = user
+            window.user = user;
             signed_in_initially = true;
-            var ref = firebase.database().ref('users/' + user.uid);
-            ref.once('value').then(function (snapshot) {
-                console.log("snapshot", snapshot.val().usertype)
-                var usertype = snapshot.val().usertype;
-                if (usertype == "patient") {
-                    console.log("Patient signed in");
-                    // User is signed in.
-                    //console.log("signed in");
-                    $("#bodycollapse").removeClass("collapse");
-                    $("#patientDash").removeClass("collapse");
-                    firebase.database().ref("requests/").once('value').then(function (snapshot) {
-                        snapshot.forEach(function (childSnapshot) {
-                            var patientId = childSnapshot.val().patientID;
-                            if (patientId == window.user.uid) {
-                                console.log(childSnapshot.val())
-                                var doctor = childSnapshot.val().doctor;
-                                $("#notificationsBody").append(
-                                    "<tr><td>" + doctor + "</td><td><button id=\"" + patientId
-                                     + "\" class='accept btn btn-primary'>Accept</button></td>" + 
-                                     "<td><button id=\"" + patientId + "\" class='reject btn btn-primary'>Reject</button></td></tr>"
-                                );
-                            }
-                        })
-                    })
-                } else if (usertype == "doctor") {
-                    window.email = user.email;
-                    var testemail = new RegExp(config.regex.adminemailregex, 'g');
-                    $("#bodycollapse").removeClass("collapse");
-                    $("#doctorDash").removeClass("collapse");
+            firebase.database().ref('users/' + user.uid).once('value').then(function (userdata) {
+                var userdataval = userdata.val();
+                var usertype = userdataval.usertype;
+                if (usertype == "groundcontrol") {
+                    console.log("ground control signed in");
                 }
+            }).catch(function(err) {
+                handleError(err);
             });
+            $("#bodycollapse").removeClass("collapse");
+            $("#taskmanagementcollapse").removeClass("collapse");
+            createTaskFormValidation();
+            $("#suitdatacollapse").removeClass("collapse");
+            getSuitData();
         } else {
             // No user is signed in. redirect to login page:
             if (signed_in_initially) {
@@ -109,64 +210,13 @@ $(document).ready(function () {
         }
     });
 
-$("#logoutButton").on('click touchstart', function () {
-    firebase.auth().signOut().then(function () {
-        // Sign-out successful.
-    }).catch(function (error) {
-        // An error happened.
-        handleError(error);
+    $("#logoutButton").on('click touchstart', function () {
+        firebase.auth().signOut().then(function () {
+            // Sign-out successful.
+        }).catch(function (error) {
+            // An error happened.
+            handleError(error);
+        });
     });
-});
 
-//events for approve and reject buttons
-$(".approve").on("click touchstart", function (event) {
-    event.preventDefault();
-    
-    console.log("approve")
-})
-
-$("#notifications").on("click", "#reject1", function (event) {
-    event.preventDefault();
-    var parent = $(event.target).parent()
-    console.log("reject")
-})
-
-//event for doctor request data
-$("#submitDataRequest").on("click", function (event) {
-    event.preventDefault();
-    var patientID = $("#getPatientData").serializeArray()[0].value;
-    firebase.database().ref('users/' + patientID).once('value').then(function (snapshot) {
-        var patient = snapshot.val();
-        console.log("patient", patient);
-        console.log(window.user.uid);
-        firebase.database().ref('users/' + window.user.uid).once('value').then(function (snapshot1) {
-            var doctorName = snapshot1.val().name;
-            console.log("patientID", patientID);
-            var requests = firebase.database().ref('requests/');
-            var sendRequests = requests.push({
-                patientID: patientID,
-                doctor: doctorName
-            });
-            sendRequests;
-            console.log("request sent");
-        })
-    })
-});
-//submit ehr form
-$("#submitEhr").on("click", function (event) {
-    event.preventDefault();
-    var ehrData = $("#ehrForm").serializeArray()
-    console.log(ehrData);
-    var ehr = firebase.database().ref('ehr/' + ehrData[0].value);
-    var sendEhr = ehr.push({
-        name: ehrData[1].value,
-        age: ehrData[2].value,
-        prescription: ehrData[3].value,
-        diagnosis: ehrData[4].value,
-        notes: ehrData[5].value,
-        other: ehrData[6].value
-    })
-    sendEhr;
-    console.log(sendEhr, "ehr sent")
-})
 });

@@ -75,6 +75,11 @@
         "source": "/terms",
         "destination": "/termsandconditions.html",
         "type" : 301
+      },
+      {
+        "source": "/help",
+        "destination": "/help.html",
+        "type" : 301
       }
     ],
     "headers": [{

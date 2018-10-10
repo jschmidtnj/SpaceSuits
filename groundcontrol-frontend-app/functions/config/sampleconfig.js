@@ -1,8 +1,4 @@
 var config = {
-    "mailjet": {
-        "mailjetapikey": "key",
-        "mailjetapisecret": "secret"
-    },
     "firebaseadmin": {
         "type": "service_account",
         "project_id": "app",

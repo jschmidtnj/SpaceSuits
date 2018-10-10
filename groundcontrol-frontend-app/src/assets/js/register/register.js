@@ -351,41 +351,14 @@ $(document).ready(function () {
 
     var expandedForm = 0; //collapsed = 0
 
-    $("#registerPatient").on('click touchstart', function () {
-        usertype = "patient";
+    $("#registerEmail").on('click touchstart', function () {
+        usertype = "groundcontrol";
         if (expandedForm == 1) { //if it is mode 1 collapse
             $("#expandForm").addClass("collapse");
             expandedForm = 0;
         } else {
             $("#expandForm").removeClass("collapse");
             expandedForm = 1;
-        }
-        $("#expandSecretKey").addClass("collapse");
-        expandedSecretKey = false;
-        validateForm();
-    });
-
-    $("#registerDoctor").on('click touchstart', function () {
-        usertype = "doctor";
-        if (expandedForm == 2) { //if it is mode 2 collapse
-            $("#expandForm").addClass("collapse");
-            expandedForm = 0;
-        } else {
-            $("#expandForm").removeClass("collapse");
-            expandedForm = 2;
-        }
-        $("#expandSecretKey").removeClass("collapse");
-        validateForm();
-    });
-
-    $("#registerInsurance").on('click touchstart', function () {
-        usertype = "insurance";
-        if (expandedForm == 3) { //if it is mode 3 collapse
-            $("#expandForm").addClass("collapse");
-            expandedForm = 0;
-        } else {
-            $("#expandForm").removeClass("collapse");
-            expandedForm = 3;
         }
         $("#expandSecretKey").removeClass("collapse");
         validateForm();
