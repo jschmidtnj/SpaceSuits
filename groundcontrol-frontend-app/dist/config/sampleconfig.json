@@ -1,0 +1,28 @@
+{
+    "firebase": {
+            "apiKey": "key",
+            "authDomain": "app.firebaseapp.com",
+            "databaseURL": "https://app.firebaseio.com",
+            "projectId": "app",
+            "storageBucket": "app.appspot.com",
+            "messagingSenderId": "123456789"
+    },
+    "regex": {
+            "adminemailregex": "^.*@gmail.com$",
+            "commaseperatedemails": "^((\\s?[^\\s,]+@[^\\s,]+\\.[^\\s,]+\\s?,)*(\\s?[^\\s,]+@[^\\s,]+\\.[^\\s,]+))$",
+            "validemail": "^(([^<>()\\[\\]\\.,;:\\s@\\\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$",
+            "fullname": "^(.*\\s+.*)+$",
+            "passwordcontainsletter": "^(.*[a-zA-Z].*)+$",
+            "passwordcontainsnumber": "^(.*[0-9].*)+$",
+            "passwordcontainsspecialcharacter": "^(.*[!@#\\$%\\^&\\*].*)+$"
+    },
+    "other": {
+            "tosUrl": "https://apple.com",
+            "privacyPolicyUrl": "https://google.com",
+            "signInSuccessUrl": "http://apple.com",
+            "locationviewmax": 500,
+            "datatimeout": 500,
+            "redirecttimeout": 1000,
+            "alerttimeout": 1000
+    }
+}

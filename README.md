@@ -27,3 +27,11 @@ Finally try `mono nuget.exe install <Package-to-install>`
 2) `git add .`, `git commit -a "<message>"`
 3) `git push --set-upstream origin <branch name>`
 4) `git push origin`
+5) `git pull origin master`
+6) `git checkout master`
+7) `git merge <branch name>`
+8) `git add .`
+9) `git commit -a "<message>"`
+10) `git push origin master`
+
+Notes: `git branch -av` lists the branches and the branch you are using
