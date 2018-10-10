@@ -58,3 +58,10 @@ nuget.exe
 
 # System packages
 System.*/
+
+# binaries
+bin/
+
+# config files / folders
+config.json
+config/

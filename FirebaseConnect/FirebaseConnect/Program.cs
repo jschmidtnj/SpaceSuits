@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SpaceSuits
+namespace FirebaseConnect
 {
     class Program
     {
