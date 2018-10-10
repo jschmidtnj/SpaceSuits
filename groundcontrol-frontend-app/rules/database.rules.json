@@ -7,6 +7,10 @@
       },
       ".indexOn": ["email"],
       ".read": "auth != null && auth.token.email_verified == true"
+    },
+    "suitdata": {
+      ".write": "auth != null && auth.token.email_verified == true",
+      ".read": "auth != null && auth.token.email_verified == true"
     }
   }
 }
