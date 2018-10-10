@@ -1,0 +1,37 @@
+{
+  "engines": {
+    "composer": "^0.20.1"
+  },
+  "name": "api2",
+  "version": "0.0.1",
+  "description": "Main Blockchain Database API",
+  "scripts": {
+    "start": "composer-rest-server -c admin@api2 -n always -u true -w true && (cd admin-frontend && npm start) && wait",
+    "prepublish": "mkdirp ./dist && composer archive create --sourceType dir --sourceName . -a ./dist/api.bna",
+    "pretest": "npm run lint",
+    "lint": "eslint .",
+    "test": "nyc mocha -t 0 test/*.js && cucumber-js"
+  },
+  "keywords": [
+    "composer",
+    "composer-network"
+  ],
+  "author": "Joshua Schmidt",
+  "email": "jschmidtnj@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "composer-admin": "^0.20.1",
+    "composer-cli": "^0.20.1",
+    "composer-client": "^0.20.1",
+    "composer-common": "^0.20.1",
+    "composer-connector-embedded": "^0.20.1",
+    "composer-cucumber-steps": "^0.20.1",
+    "chai": "latest",
+    "chai-as-promised": "latest",
+    "cucumber": "^2.2.0",
+    "eslint": "latest",
+    "nyc": "latest",
+    "mkdirp": "latest",
+    "mocha": "latest"
+  }
+}

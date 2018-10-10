@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-127099702-1"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'UA-127099702-1');
+	</script>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="title" content="datacare">
+	<meta name="description" content="managing health with blockchain">
+	<meta name="author" content="Joshua Schmidt">
+	<title>Login</title>
+
+	<link rel="icon" href="assets/icons/favicon.ico">
+
+	<!-- Bootstrap core CSS -->
+	<script src="assets/js/global/bootstrapcss.js"></script>
+
+	<!-- Custom Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
+
+	<!-- Global Navbar -->
+	<link href="assets/css/global.css" rel="stylesheet">
+
+	<!-- Custom styles for this template -->
+	<link href="assets/css/login.css" rel="stylesheet">
+</head>
+
+<section id="alerts">
+	<div class="container" id="alertscontainer" style="position:fixed; z-index:1; margin:5%;">
+		<div class="alert alert-success collapse" role="alert" id="alertloginsuccess">
+			<h5 class="alert-heading">Logged In</h5>
+			<hr>
+			<p class="mb-0">Redirecting to Dashboard.</p>
+		</div>
+		<div class="alert alert-danger collapse" role="alert" id="alertloginfailure">
+			<h5 class="alert-heading">Login Failed</h5>
+			<hr>
+			<p class="mb-0">
+				<div id="error-info"></div>
+			</p>
+		</div>
+	</div>
+</section>
+
+<body class="my-login-page">
+	<header class="masthead mb-auto">
+		<div class="inner">
+			<!-- Navigation -->
+			<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+				<div class="container">
+					<a class="navbar-brand js-scroll-trigger" href="index.html">
+						datacare
+					</a>
+					<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+					    aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+						Menu
+						<i class="fa fa-bars"></i>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarResponsive">
+						<ul class="navbar-nav ml-auto">
+							<li class="nav-item">
+								<a class="nav-link" href="register.html">Sign Up</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link active" href="login.html">Login</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<br/>
+			<br/>
+			<br/>
+		</div>
+	</header>
+	<section class="h-100">
+		<div class="container h-100">
+			<div class="row justify-content-md-center h-100">
+				<div class="card-wrapper">
+					<div class="brand">
+						<img src="assets/images/formicon.svg">
+					</div>
+					<div class="card fat">
+						<div class="card-body">
+							<h4 class="card-title">Login</h4>
+							<form id="loginForm">
+								<div class="form-group">
+									<label class="control-label" for="email">E-Mail Address</label>
+									<input id="email" type="text" class="form-control" name="email" value="" required autofocus>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label" for="password">Password
+										<a href="forgot.html" class="float-right">
+											Forgot Password?
+										</a>
+									</label>
+									<input id="password" type="password" class="form-control" name="password" required data-eye>
+								</div>
+
+								<div class="form-group">
+									<label>
+										<input type="checkbox" name="remember"> Remember Me
+									</label>
+								</div>
+							</form>
+							<div class="form-group no-margin">
+								<button value="Sign in" class="btn btn-primary btn-block onclick=" void(0) "" id="loginSubmitEmail">
+									Login
+								</button>
+							</div>
+							<div class="margin-top20 text-center">
+								Don't have an account?
+								<a href="register.html">Create One</a>
+							</div>
+							<br/>
+							<br/>
+							<!-- Google Sign in -->
+							<!--div class="google-login-container d-flex justify-content-center">
+								<div class="google-login-picture" id="loginSubmitGoogle"></div>
+							</div-->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+
+	<footer>
+		<div class="container">
+			<p>&copy; Joshua Schmidt 2018. All Rights Reserved.</p>
+			<ul class="list-inline">
+				<li class="list-inline-item">
+					<a target="_blank" id="privacypolicylink">Privacy</a>
+				</li>
+				<li class="list-inline-item">
+					<a target="_blank" id="toslink">Terms</a>
+				</li>
+				<li class="list-inline-item">
+					<a target="_blank" id="helplink">Help</a>
+				</li>
+			</ul>
+		</div>
+	</footer>
+
+	<script src="assets/js/login/login.js"></script>
+
+</body>
+
+</html>

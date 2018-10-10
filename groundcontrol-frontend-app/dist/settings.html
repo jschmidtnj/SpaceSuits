@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-127099702-1"></script>
+  	<script>
+  	window.dataLayer = window.dataLayer || [];
+  	function gtag(){dataLayer.push(arguments);}
+  	gtag('js', new Date());
+
+  	gtag('config', 'UA-127099702-1');
+  	</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,
+            shrink-to-fit=no">
+    <meta name="title" content="datacare">
+    <meta name="description" content="managing health with blockchain">
+    <meta name="author" content="Joshua Schmidt">
+    <title>Settings</title>
+
+    <link rel="icon" href="assets/icons/favicon.ico">
+
+    <!-- Bootstrap core CSS -->
+    <script src="assets/js/global/bootstrapcss.js"></script>
+
+    <!-- Custom Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
+
+    <!-- Global Navbar -->
+    <link href="assets/css/global.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/settings.css" rel="stylesheet">
+
+</head>
+
+<section id="alerts">
+    <div class="container" id="alertscontainer" style="position:fixed;
+            z-index:1; margin:5%;">
+        <div class="alert alert-success collapse" role="alert" id="alertsignoutsuccess">
+            <h5 class="alert-heading">Signing Out</h5>
+            <hr>
+            <p class="mb-0">Redirecting to Login.</p>
+        </div>
+        <div class="alert alert-success collapse" role="alert" id="alertpasswordchangesuccess">
+            <h5 class="alert-heading">Password Successfully Changed</h5>
+            <hr>
+        </div>
+        <div class="alert alert-success collapse" role="alert" id="alertusernamechangesuccess">
+            <h5 class="alert-heading">Username Successfully Changed</h5>
+            <hr>
+        </div>
+        <div class="alert alert-success collapse" role="alert" id="alertnamechangesuccess">
+            <h5 class="alert-heading">Name Successfully Changed</h5>
+            <hr>
+        </div>
+        <div class="alert alert-danger collapse" role="alert" id="alertsignoutfailure">
+            <h5 class="alert-heading">Error</h5>
+            <hr>
+            <p class="mb-0">
+                <div id="error-info"></div>
+            </p>
+        </div>
+        <div class="alert alert-danger collapse" role="alert" id="alertconfirmdeleteaccount">
+            <h5 class="alert-heading">Confirm Delete Account
+                <button type="button" class="close" aria-label="Close" id="cancelDeleteAccount">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </h5>
+            <p class="mb-0">This action cannot be undone.</p>
+            <hr>
+            <button value="Comfirm" class="btn btn-primary onclick=" void(0) "" id="confirmDeleteAccount">
+                Confirm
+            </button>
+        </div>
+        <div class="alert alert-danger collapse" role="alert" id="alertconfirmdeletedoctor">
+            <h5 class="alert-heading">Confirm Delete
+                <button type="button" class="close" aria-label="Close" id="cancelDeleteDoctor">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </h5>
+            <hr>
+            <button value="Comfirm" class="btn btn-primary onclick=" void(0) "" id="confirmDeleteDoctor">
+                Confirm
+            </button>
+        </div>
+        <div class="alert alert-success collapse" role="alert" id="alertlocationadded">
+            <h5 class="alert-heading">Location Added Successfully</h5>
+            <hr>
+        </div>
+    </div>
+</section>
+
+<body class="text-center">
+    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+        <header id="headermain" class="masthead mb-auto">
+            <div class="inner">
+                <br/>
+                <br/>
+                <!-- Navigation -->
+                <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+                    <div class="container">
+                        <a class="navbar-brand js-scroll-trigger" href="index.html">
+                            datacare
+                        </a>
+                        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                            data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                            Menu
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarResponsive">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="dashboard.html">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="settings.html">Settings</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link logoutButton" href="#" id="logoutButton">Logout</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <main role="main" class="main">
+            <br />
+            <br />
+            <br />
+            <br />
+            <h4>Settings</h4>
+            <br />
+            <br />
+            <div id="bodycollapse" class="collapse">
+                <div id="changeDoctorsCollapse" class="collapse">
+                    <br />
+                    <h5>Doctors</h5>
+                    <br />
+                    <div id="nodoctorswarning" class="text-center collapse">
+                        <br />
+                        <h6>No doctors found.</h6>
+                        <br />
+                    </div>
+                    <div id="doctorlistcollapse" class="collapse">
+                        <table id="doctorlist" class="table table-hover table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody id="doctordata"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <br />
+                <br />
+                <h5>Name</h5>
+                <br />
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-3">
+                            <form id="changeName" method="post" action="">
+                                <div class="form-group">
+                                    <!--label class="control-label" for="fullname">Name</label-->
+                                    <input type="fullname" class="form-control" id="fullname" name="fullname" required />
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-2">
+                            <button id="changeNameSubmit" type="changeName" value="changeName" class="btn btn-primary btn-block onclick="
+                                void(0) "">
+                                Change Name
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <h5>Username</h5>
+                <br />
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-3">
+                            <form id="changeUsername" method="post" action="">
+                                <div class="form-group">
+                                    <!--label class="control-label" for="username">Username</label-->
+                                    <input type="username" class="form-control" id="username" name="username" required />
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-2">
+                            <button id="changeUsernameSubmit" type="changeUsername" value="changeUsername" class="btn btn-primary btn-block onclick="
+                                void(0) "">
+                                Change Username
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="changePasswordCollapse" class="collapse">
+                    <br />
+                    <h5>Change password</h5>
+                    <br />
+                    <form id="changePassword">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="control-label" for="password">Password</label>
+                                        <input type="password" class="form-control" id="password" name="password"
+                                            required />
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="control-label" for="confirm_password">Confirm</label>
+                                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="control-label" for="changePasswordSubmit">&nbsp;</label>
+                                        <button id="changePasswordSubmit" type="changePassword" value="changePassword"
+                                            class="btn btn-primary btn-block onclick=" void(0) "">
+                                            Change Password
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <br />
+                <br />
+                <h5>Delete Account</h5>
+                <br />
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-sm-2">
+                            <button id="deleteAccount" type="deleteAccount" value="deleteAccount" class="btn btn-primary btn-block onclick="
+                                void(0) "">
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; Joshua Schmidt 2018. All Rights Reserved.</p>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a target="_blank" id="privacypolicylink">Privacy</a>
+                </li>
+                <li class="list-inline-item">
+                    <a target="_blank" id="toslink">Terms</a>
+                </li>
+                <li class="list-inline-item">
+                    <a target="_blank" id="helplink">Help</a>
+                </li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/js/settings/settings.js"></script>
+</body>
+
+</html>
