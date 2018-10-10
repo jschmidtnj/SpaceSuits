@@ -1,7 +1,7 @@
 {
-    "name": "datacare",
-    "short_name": "datacare",
-    "description": "application for blockchain healthcare",
+    "name": "spacesuit",
+    "short_name": "spacesuit",
+    "description": "application for spacesuit control",
     "start_url": "/index.html",
     "scope": ".",
     "background_color": "#EEE",

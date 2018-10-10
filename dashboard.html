@@ -3,18 +3,18 @@
 
 <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-127099702-1"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-127307096-1"></script>
   	<script>
   	window.dataLayer = window.dataLayer || [];
   	function gtag(){dataLayer.push(arguments);}
   	gtag('js', new Date());
 
-  	gtag('config', 'UA-127099702-1');
+  	gtag('config', 'UA-127307096-1');
   	</script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="title" content="datacare">
-	<meta name="description" content="managing health with blockchain">
+    <meta name="title" content="spacesuit">
+	<meta name="description" content="managing space suit">
     <meta name="author" content="Joshua Schmidt">
     <title>Dashboard</title>
 
@@ -66,7 +66,7 @@
                 <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
                     <div class="container">
                         <a class="navbar-brand js-scroll-trigger" href="index.html">
-                            datacare
+                            spacesuit
                         </a>
                         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
                             data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
@@ -103,92 +103,77 @@
             <div id="bodycollapse" class="collapse">
                 <br />
                 <br />
-                <div id="patientDash" class="collapse">
-                  <div class="row justify-content-center">
-                    <label for="notifications">Notifications</label>
-                    <table class="table" id="notifications" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Requester</th>
-                                <th>Approve</th>
-                                <th>Reject</th>
-                            </tr>
-                        </thead>
-                        <tbody id="notificationsBody">
-                            
-                        </tbody>
-                    </table>
-                  </div>
-                    <br />
-                    <br />
-                  <div class="row justify-content-center">
-                    <label for="ehr">Health Record</label>
-                    <table id="ehr" class="table" style="width:100%">
-                      <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Data</th>
-                        </tr>
-                      </thead>
-                      <tbody id="ehrBody">
-                        <!--EHR dynamically rendered here-->
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <!--Doctor Dashboard-->
-                <div id="doctorDash" class="collapse">
-                  <h5>Request Data</h5>
-                  <div class="row justify-content-center">
-                    <div id="patientFormDiv">
-                        <form id="getPatientData" method="get">
-                            <label for="patientId">Patient ID</label>
-                            <input type="text" class="form-control" id="patientId" name="patientId" />
-                        </form>
-                        <button id="submitDataRequest" class="btn btn-primary">Submit</button>
-                    </div>
-                  </div>
-                  <div class="row justify-content-center">
-                    <div id="ehrFormDiv">
-                        <form id="ehrForm" method="get">
-                            <label for="patientID">Patient ID</label>
-                            <input type="text" class="form-control" id="patientID" name="patientID"/>
-                            <label for="name">Name</label>
-                            <input type="text" class="form-control" id="name" name="name"/>
-                            <label for="age">Age</label>
-                            <input type="text" class="form-control" id="age" name="age"/>
-                            <label for="prescription">Prescription</label>
-                            <input type="text" class="form-control" id="prescription" name="prescription"/>
-                            <label for="diagnosis">Diagnosis</label>
-                            <input type="text" class="form-control" id="diagnosis" name="diagnosis"/>
-                            <label for="notes">Notes</label>
-                            <input type="text" class="form-control" id="notes" name="notes"/>
-                            <label for="other">Other</label>
-                            <input type="text" class="form-control" id="other" name="other"/>
-                        </form>
-                        <button id="submitEhr" class="btn btn-primary">Submit</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="collapse display: inline-block" id="downloadSelectCollapse">
-                    <p>Download</p>
-                </div>
-                <div class="collapse display: inline-block" id="downloadButtonCollapse">
-                    <br />
-                    <div id="nodatawarning" class="collapse">
-                        <p>No contacts</p>
-                    </div>
-                    <br />
-                    <div class="row justify-content-center">
-                        <div class="col-sm-2">
-                            <button id="downloadLocationCSV" type="downloadLocationCSV" value="downloadLocationCSV"
-                                class="btn btn-primary btn-block onclick=" void(0) "">
-                                Download
-                            </button>
+                <div id="suitdatacollapse" class="collapse">
+                    <h5>Suit Metrics</h5>
+                    <br/>
+                    <br/>
+                    <form id="suitMetricsForm">
+                        <div class="form-group">
+                            <label class="control-label" for="primaryo2">O<sub>2</sub> (primary)</label>
+                            <input type="text" class="form-control" id="primaryo2" name="primaryo2" disabled/> psi
                         </div>
+                        <div class="form-group">
+                            <label class="control-label" for="secondaryo2">O<sub>2</sub> (secondary)</label>
+                            <input type="text" class="form-control" id="secondaryo2" name="secondaryo2" disabled/> psi
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="battery">Battery</label>
+                            <input type="text" class="form-control" id="battery" name="battery" disabled/> %
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="heartrate">Heart Rate</label>
+                            <input type="text" class="form-control" id="heartrate" name="heartrate" disabled/> bpm
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="moisture">Moisture</label>
+                            <input type="text" class="form-control" id="moisture" name="moisture" disabled/> %
+                        </div>
+                    </form>
+                    <hr>
+                    <form id="suitPositioningForm">
+                        <div class="form-group">
+                            <label class="control-label" for="accelerationx">Accel X</label>
+                            <input type="text" class="form-control" id="accelerationx" name="accelerationx" disabled/> m/s<sup>2</sup>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="accelerationy">Accel Y</label>
+                            <input type="text" class="form-control" id="accelerationy" name="accelerationy" disabled/> m/s<sup>2</sup>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="accelerationx">Accel Z</label>
+                            <input type="text" class="form-control" id="accelerationz" name="accelerationz" disabled/> m/s<sup>2</sup>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="roll">Roll</label>
+                            <input type="text" class="form-control" id="roll" name="roll" disabled/>&deg;
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="pitch">Pitch</label>
+                            <input type="text" class="form-control" id="pitch" name="pitch" disabled/>&deg;
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="yaw">Yaw</label>
+                            <input type="text" class="form-control" id="yaw" name="yaw" disabled/>&deg;
+                        </div>
+                    </form>
+                    <hr>
+                </div>
+                <div id="taskmanagementcollapse" class="collapse">
+                    <h5>Task Management</h5>
+                    <br/>
+                    <br/>
+                    <form id="taskForm">
+                        <div class="form-group">
+                            <label class="control-label" for="fullname">Task</label>
+                            <input type="text" class="form-control" id="task" name="task"/>
+                        </div>
+                    </form>
+                    <div class="form-group no-margin">
+                        <button id="submitTask" type="submit" value="Submit Task" class="btn btn-primary btn-block onclick=" void(0) "">
+                            Enter Task
+                        </button>
                     </div>
                 </div>
-                <br />
                 <br />
                 <br />
             </div>
