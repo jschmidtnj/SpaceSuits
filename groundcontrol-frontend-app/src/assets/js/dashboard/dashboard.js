@@ -111,8 +111,11 @@ $(document).ready(function () {
     }
 
     function getSuitData() {
-        firebase.database().ref("suitdata/").on("value").then(function(suitdata) {
+        console.log("get the suit data");
+        var suitdataref = firebase.database().ref("suitdata");
+        suitdataref.on("value", function(suitdata) {
             var suitdataval = suitdata.val();
+            console.log(suitdataval);
             var primaryo2 = suitdataval.primaryo2;
             $("#primaryo2").prop('disabled', false);
             $("#primaryo2").val(primaryo2);
@@ -158,8 +161,6 @@ $(document).ready(function () {
             $("#yaw").prop('disabled', false);
             $("#yaw").val(yaw);
             $("#yaw").prop('disabled', true);
-        }).catch(function(err) {
-            handleError(err);
         });
     }
 
