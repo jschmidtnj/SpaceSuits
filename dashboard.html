@@ -50,8 +50,8 @@
                 <div id="error-info"></div>
             </p>
         </div>
-        <div class="alert alert-success collapse" role="alert" id="alertcontactadded">
-            <h5 class="alert-heading">Contact Added Successfully</h5>
+        <div class="alert alert-success collapse" role="alert" id="alerttasksuccess">
+            <h5 class="alert-heading">Task Submitted Successfully</h5>
             <hr>
         </div>
     </div>
@@ -108,52 +108,83 @@
                     <br/>
                     <br/>
                     <form id="suitMetricsForm">
-                        <div class="form-group">
-                            <label class="control-label" for="primaryo2">O<sub>2</sub> (primary)</label>
-                            <input type="text" class="form-control" id="primaryo2" name="primaryo2" disabled/> psi
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="secondaryo2">O<sub>2</sub> (secondary)</label>
-                            <input type="text" class="form-control" id="secondaryo2" name="secondaryo2" disabled/> psi
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="battery">Battery</label>
-                            <input type="text" class="form-control" id="battery" name="battery" disabled/> %
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="heartrate">Heart Rate</label>
-                            <input type="text" class="form-control" id="heartrate" name="heartrate" disabled/> bpm
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="moisture">Moisture</label>
-                            <input type="text" class="form-control" id="moisture" name="moisture" disabled/> %
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label" for="primaryo2">O<sub>2</sub> (primary)</label>
+                                        <input type="text" class="form-control" id="primaryo2" name="primaryo2" disabled/> psi
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label" for="secondaryo2">O<sub>2</sub> (secondary)</label>
+                                        <input type="text" class="form-control" id="secondaryo2" name="secondaryo2" disabled/> psi
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label" for="battery">Battery</label>
+                                        <input type="text" class="form-control" id="battery" name="battery" disabled/> %
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label" for="heartrate">Heart Rate</label>
+                                        <input type="text" class="form-control" id="heartrate" name="heartrate" disabled/> bpm
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label" for="moisture">Moisture</label>
+                                        <input type="text" class="form-control" id="moisture" name="moisture" disabled/> %
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                     <hr>
                     <form id="suitPositioningForm">
-                        <div class="form-group">
-                            <label class="control-label" for="accelerationx">Accel X</label>
-                            <input type="text" class="form-control" id="accelerationx" name="accelerationx" disabled/> m/s<sup>2</sup>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="accelerationy">Accel Y</label>
-                            <input type="text" class="form-control" id="accelerationy" name="accelerationy" disabled/> m/s<sup>2</sup>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="accelerationx">Accel Z</label>
-                            <input type="text" class="form-control" id="accelerationz" name="accelerationz" disabled/> m/s<sup>2</sup>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="roll">Roll</label>
-                            <input type="text" class="form-control" id="roll" name="roll" disabled/>&deg;
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="pitch">Pitch</label>
-                            <input type="text" class="form-control" id="pitch" name="pitch" disabled/>&deg;
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="yaw">Yaw</label>
-                            <input type="text" class="form-control" id="yaw" name="yaw" disabled/>&deg;
+                        <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label" for="accelx">Accel X</label>
+                                            <input type="text" class="form-control" id="accelx" name="accelx" disabled/> m/s<sup>2</sup>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label" for="accely">Accel Y</label>
+                                            <input type="text" class="form-control" id="accely" name="accely" disabled/> m/s<sup>2</sup>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label" for="accelz">Accel Z</label>
+                                            <input type="text" class="form-control" id="accelz" name="accelz" disabled/> m/s<sup>2</sup>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label" for="roll">Roll</label>
+                                            <input type="text" class="form-control" id="roll" name="roll" disabled/>&deg;
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label" for="pitch">Pitch</label>
+                                            <input type="text" class="form-control" id="pitch" name="pitch" disabled/>&deg;
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label" for="yaw">Yaw</label>
+                                            <input type="text" class="form-control" id="yaw" name="yaw" disabled/>&deg;
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                     <hr>
@@ -162,16 +193,24 @@
                     <h5>Task Management</h5>
                     <br/>
                     <br/>
-                    <form id="taskForm">
-                        <div class="form-group">
-                            <label class="control-label" for="fullname">Task</label>
-                            <input type="text" class="form-control" id="task" name="task"/>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-8">
+                                <form id="taskForm">
+                                    <div class="form-group">
+                                        <label class="control-label" for="fullname">Task</label>
+                                        <input type="text" class="form-control" id="task" name="task"/>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="form-group no-margin">
+                                    <button id="submitTask" type="submit" value="Submit Task" class="btn btn-primary btn-block onclick=" void(0) "">
+                                        Enter Task
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </form>
-                    <div class="form-group no-margin">
-                        <button id="submitTask" type="submit" value="Submit Task" class="btn btn-primary btn-block onclick=" void(0) "">
-                            Enter Task
-                        </button>
                     </div>
                 </div>
                 <br />
