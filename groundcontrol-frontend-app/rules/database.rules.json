@@ -11,6 +11,10 @@
     "suitdata": {
       ".write": "auth != null && auth.token.email_verified == true",
       ".read": "auth != null && auth.token.email_verified == true"
+    },
+    "tasks": {
+      ".write": "auth != null && auth.token.email_verified == true",
+      ".read": "auth != null && auth.token.email_verified == true"
     }
   }
 }

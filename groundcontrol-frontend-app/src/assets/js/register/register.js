@@ -167,7 +167,7 @@ $(document).ready(function () {
             //console.log("sign out error occurred: " + error.message);
             signInGoogle();
         });
-
+        return false;
     });
 
     var usertype = "";
@@ -347,6 +347,7 @@ $(document).ready(function () {
         } else {
             console.log("form invalid");
         }
+        return false;
     });
 
     var expandedForm = 0; //collapsed = 0
@@ -363,5 +364,5 @@ $(document).ready(function () {
         $("#expandSecretKey").removeClass("collapse");
         validateForm();
     });
-
+    return false;
 });

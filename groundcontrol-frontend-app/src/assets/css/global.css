@@ -10,8 +10,8 @@
 /* Nav Bar */
 
 #mainNav {
-  border-color: rgba(206, 19, 28, .7);
-  background-color: #dc2430;
+  border-color: rgba(1, 16, 49, .7);
+  background-color: #152C4E;
   -webkit-transition: all .35s;
   -moz-transition: all .35s;
   transition: all .35s;
@@ -67,8 +67,8 @@
 
 @media (min-width: 992px) {
   #mainNav {
-    border-color: rgba(206, 19, 28, .7);
-    background-color: #dc2430;
+    border-color: rgba(1, 16, 49, .7);
+    background-color: #152C4E;
   }
   #mainNav .navbar-brand {
     color: white;
@@ -86,8 +86,8 @@
     color: white;
   }
   #mainNav.navbar-shrink {
-    border-color: rgba(206, 19, 28, .7);
-    background-color: #dc2430;
+    border-color: rgba(1, 16, 49, .7);
+    background-color: #152C4E;
   }
   #mainNav.navbar-shrink .navbar-brand {
     color: white;

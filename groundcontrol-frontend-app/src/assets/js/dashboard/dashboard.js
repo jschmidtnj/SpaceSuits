@@ -19,10 +19,8 @@ function handleError(error) {
     var errorMessage = error.message;
     //console.log(errorCode, errorMessage);
     var customMessage = "";
-    if (errorCode == "auth/notsignedin") {
-        customMessage = errorMessage;
-    }
     if (error.code !== "" && error.message !== "") {
+        customMessage = errorMessage;
         if (customMessage !== "") {
             $('#error-info').text(customMessage);
         } else {
@@ -83,18 +81,29 @@ $(document).ready(function () {
 
         function submitTask() {
             if ($("#taskForm").valid()) {
-                var formData = $("#registerForm").serializeArray();
+                var formData = $("#taskForm").serializeArray();
                 //console.log(formData);
                 var task = formData[0].value.toString();
+                var timestamp = Date.now().toString();
                 firebase.database().ref('tasks/').push({
-                    data: task
+                    data: task,
+                    time: timestamp
                 }).then(function() {
-                    console.log("task added");
+                    //console.log("task added");
+                    $('#task').val('');
+                    $('#alerttasksuccess').fadeIn();
+                    setTimeout(function () {
+                        $('#alerttasksuccess').fadeOut();
+                    }, config.other.alerttimeout);
                 }).catch(function(err){
                     handleError(err);
                 });
             } else {
-                console.log("form invalid");
+                //console.log("form invalid");
+                handleError({
+                    message: "form invalid",
+                    code: "tast-invalid"
+                });
             }
         }
 
@@ -111,11 +120,11 @@ $(document).ready(function () {
     }
 
     function getSuitData() {
-        console.log("get the suit data");
+        //console.log("get the suit data");
         var suitdataref = firebase.database().ref("suitdata");
         suitdataref.on("value", function(suitdata) {
             var suitdataval = suitdata.val();
-            console.log(suitdataval);
+            //console.log(suitdataval);
             var primaryo2 = suitdataval.primaryo2;
             $("#primaryo2").prop('disabled', false);
             $("#primaryo2").val(primaryo2);
@@ -174,7 +183,7 @@ $(document).ready(function () {
                 var userdataval = userdata.val();
                 var usertype = userdataval.usertype;
                 if (usertype == "groundcontrol") {
-                    console.log("ground control signed in");
+                    //console.log("ground control signed in");
                 }
             }).catch(function(err) {
                 handleError(err);

@@ -4,13 +4,6 @@ require("popper.js");
 require("bootstrap");
 window.$ = window.jQuery = jQuery;
 
-require('datatables.net-bs4');
-require('datatables.net-responsive-bs4');
-require('datatables.net-select-bs4');
-require('datatables.net-bs4/css/dataTables.bootstrap4.min.css');
-require('datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css');
-require('datatables.net-select-bs4/css/select.bootstrap4.min.css');
-
 var firebase = require("firebase/app");
 require("firebase/auth");
 require("firebase/database");
@@ -41,62 +34,6 @@ function handleError(error) {
     }, config.other.alerttimeout);
 }
 
-var tableInitialized = false;
-
-function createDoctorTable() {
-    var ranonce = false;
-
-    if (tableInitialized) {
-        $('#doctorlist').DataTable().destroy();
-        tableInitialized = false;
-    }
-
-    function generateDatatable() {
-        if (!(ranonce)) {
-            $("#nodoctorswarning").removeClass("collapse");
-            $("#doctorlistcollapse").addClass("collapse");
-            $("#selectactions").addClass("collapse");
-        } else {
-            if (!(tableInitialized)) {
-                $('#doctorlist').DataTable({
-                    responsive: true,
-                    select: {
-                        style: 'multi'
-                    }
-                });
-                tableInitialized = true;
-            }
-        }
-    }
-    firebase.database().ref('users/' + window.userId + '/doctors/').limitToLast(config.other.doctorviewmax).once('value').then(function (doctors) {
-        var numdoctors = doctors.numChildren();
-        var countdoctors = 0;
-        doctors.forEach(function (doctor) {
-            countdoctors++;
-            var doctorId = doctor.key;
-            //console.log(formId);
-            var doctordata = doctor.val();
-            var doctorName = doctordata.name;
-            $('#doctordata').append("<tr><td>" + doctorName + "</td><td><button value=\"" + doctorId +
-                "\" class=\"doctorDelete btn btn-primary btn-block onclick=\"" +
-                "void(0)\"\">Delete</button></td></tr>");
-            if (!(ranonce)) {
-                ranonce = true;
-                $("#nodoctorswarning").addClass("collapse");
-                $("#doctorlistcollapse").removeClass("collapse");
-                $("#selectactions").removeClass("collapse");
-            }
-            if (numdoctors == countdoctors) {
-                generateDatatable();
-            }
-        });
-        setTimeout(function () {
-            generateDatatable();
-        }, config.other.datatimeout);
-    }).catch(function (error) {
-        handleError(error);
-    });
-}
 
 function getInitialValues() {
     firebase.database().ref('users/' + window.userId).once('value').then(function (userData) {
@@ -104,9 +41,8 @@ function getInitialValues() {
         //console.log(userDataVal);
         var name = userDataVal.name;
         $("#fullname").val(name);
-        var username = userDataVal.username;
-        $("#username").val(username);
-        createDoctorTable();
+        //var username = userDataVal.username;
+        //$("#username").val(username);
     }).catch(function (err) {
         handleError(err);
     });
@@ -136,7 +72,6 @@ $(document).ready(function () {
             });
             $("#email").text(window.email);
             $("#bodycollapse").removeClass("collapse");
-            $("#changeDoctorsCollapse").removeClass("collapse");
             getInitialValues();
             //console.log(window.userstatus);
             //console.log(window.userId);
@@ -179,41 +114,6 @@ $(document).ready(function () {
         }
     });
 
-
-    $(document).on('click touchstart', ".doctorDelete", function () {
-        var valueArray = $(this).attr('value').split(',');
-        var doctorKey = valueArray[0];
-        var started = false;
-
-        function doctorlist(doctorKey) {
-            //console.log("delete the form");
-            firebase.database().ref('users/' + window.userId + '/doctors/' + doctorKey).remove().then(function () {
-                $("#doctordata").remove();
-                $("#doctorlist").append("<tbody id=\"doctordata\"></tbody>");
-                setTimeout(function () {
-                    $('#alertconfirmdeletedoctor').fadeOut();
-                }, config.other.alerttimeout);
-                createDoctorTable();
-            }).catch(function (error) {
-                handleError(error);
-            });
-        }
-
-        $('#alertconfirmdeletedoctor').fadeIn();
-        $("#cancelDeleteDoctor").on('click touchstart', function () {
-            if (!started) {
-                $('#alertconfirmdeletedoctor').fadeOut();
-                started = true;
-            }
-        });
-        $("#confirmDeleteDoctor").on('click touchstart', function () {
-            if (!started) {
-                doctorlist(doctorKey);
-                started = true;
-            }
-        });
-    });
-
     function changePasswordSub() {
         if ($("#changePassword").valid()) {
             var user = firebase.auth().currentUser;
@@ -233,6 +133,7 @@ $(document).ready(function () {
         }
     }
 
+    /*
     function changeUsernameSub() {
         if ($("#changeUsername").valid()) {
             var formdata = $("#changeUsername").serializeArray();
@@ -252,6 +153,7 @@ $(document).ready(function () {
             });
         }
     }
+    */
 
     function changeNameSub() {
         if ($("#changeName").valid()) {
@@ -321,6 +223,7 @@ $(document).ready(function () {
         }
     });
 
+    /*
     $("#changeUsernameSubmit").on('click touchstart', function () {
         changeUsernameSub();
     });
@@ -331,6 +234,7 @@ $(document).ready(function () {
             changeUsernameSub();
         }
     });
+    */
 
     $("#changePasswordSubmit").on('click touchstart', function () {
         changePasswordSub();
@@ -394,6 +298,7 @@ $(document).ready(function () {
         }
     });
 
+    /*
     $("#changeUsername").validate({
         rules: {
             username: {
@@ -422,6 +327,7 @@ $(document).ready(function () {
             $(element).addClass("is-valid").removeClass("is-invalid");
         }
     });
+    */
 
     $("#changePassword").validate({
         rules: {
