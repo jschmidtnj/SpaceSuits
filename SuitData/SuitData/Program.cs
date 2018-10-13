@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FirebaseConnect
+namespace SuitData
 {
     class Program
     {
@@ -38,16 +38,6 @@ namespace FirebaseConnect
             //suitdata:
             var suitdata = firebase
             .Child("suitdata")
-            .AsObservable<string>()
-            .Subscribe(d =>
-            {
-                Console.WriteLine(d.Key);
-                Console.WriteLine(d.Object);
-            });
-            Console.ReadKey();
-            //tasks:
-            var tasks = firebase
-            .Child("tasks")
             .AsObservable<string>()
             .Subscribe(d =>
             {

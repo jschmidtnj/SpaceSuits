@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FirebaseConnect
+namespace Tasks
 {
     class Program
     {
@@ -35,16 +35,6 @@ namespace FirebaseConnect
               {
                   AuthTokenAsyncFactory = () => Task.FromResult(secret)
               });
-            //suitdata:
-            var suitdata = firebase
-            .Child("suitdata")
-            .AsObservable<string>()
-            .Subscribe(d =>
-            {
-                Console.WriteLine(d.Key);
-                Console.WriteLine(d.Object);
-            });
-            Console.ReadKey();
             //tasks:
             var tasks = firebase
             .Child("tasks")
