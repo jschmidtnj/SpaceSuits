@@ -4,8 +4,12 @@ require("popper.js");
 require("bootstrap");
 window.$ = window.jQuery = jQuery;
 
-require("bootstrap-select");
-require("bootstrap-select/dist/css/bootstrap-select.css");
+require('datatables.net-bs4');
+require('datatables.net-responsive-bs4');
+require('datatables.net-select-bs4');
+require('datatables.net-bs4/css/dataTables.bootstrap4.min.css');
+require('datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css');
+require('datatables.net-select-bs4/css/select.bootstrap4.min.css');
 
 var firebase = require("firebase/app");
 require("firebase/auth");
@@ -35,6 +39,8 @@ function handleError(error) {
     }, config.other.alerttimeout);
 }
 
+window.tasksjson = {};
+
 $(document).ready(function () {
 
     $('#toslink').attr('href', config.other.tosUrl);
@@ -42,7 +48,7 @@ $(document).ready(function () {
     $('#helplink').attr('href', config.other.helpPageUrl);
 
     $.validator.addMethod(
-        "regex1",
+        "regex",
         function (value, element, regexp) {
             var re = new RegExp(regexp, 'i');
             return this.optional(element) || re.test(value);
@@ -50,21 +56,82 @@ $(document).ready(function () {
         ""
     );
 
-    function createTaskFormValidation() {
+    var tableinitialized = false;
+
+    function createTaskTable() {
+        console.log(window.tasksjson);
+        if (Object.keys(window.tasksjson).length === 0) {
+            $("#taskdata").remove();
+            $("#tasklist").append("<tbody id=\"taskdata\"></tbody>");
+            $("#tasklistcollapse").addClass("collapse");
+            $("#notaskswarning").removeClass("collapse");
+            tableinitialized = false;
+            $('#tasklist').DataTable().destroy();
+            return;
+        }
+        for (var majorkey in window.tasksjson) {
+            for (var subkey in window.tasksjson[majorkey]) {
+                var singletaskdata = window.tasksjson[majorkey][subkey];
+                var tasktimeutc = parseInt(singletaskdata.time);
+                console.log("time: " + tasktimeutc.toString());
+                var tasktimeutcdate = new Date(tasktimeutc);
+                var singletasktime = tasktimeutcdate.toString();
+                console.log("date: " + singletasktime);  
+                var singletaskdatavalue = singletaskdata.data;
+                console.log(majorkey + " -> " + subkey + " -> " + singletaskdatavalue);
+                var tasknum = majorkey + "." + subkey;
+                $('#taskdata').append("<tr><td>" + tasknum + "</td><td>" + singletaskdatavalue +
+                    "</td><td>" + singletasktime + "</td><td><button value=\"" + tasknum +
+                    "\" class=\"taskDelete btn btn-primary btn-block onclick=\"" +
+                    "void(0)\"\">Delete</button></td></tr>");
+            }
+        }
+        $("#notaskswarning").addClass("collapse");
+        $("#tasklistcollapse").removeClass("collapse");
+        if (!(tableinitialized)) {
+            $('#tasklist').DataTable({
+                responsive: true
+            });
+            tableinitialized = true;
+        }
+    }
+
+    function updateTasks() {
+        var updatedtasksjsonstr = JSON.stringify(window.tasksjson);
+        console.log(updatedtasksjsonstr);
+        firebase.database().ref('tasks').set({
+            data: updatedtasksjsonstr
+        }).then(function () {
+            //console.log("task added");
+            $('#task').val('');
+            $('#alerttaskupdatesuccess').fadeIn();
+            setTimeout(function () {
+                $('#alerttaskupdatesuccess').fadeOut();
+            }, config.other.alerttimeout);
+        }).catch(function (err) {
+            handleError(err);
+        });
+    }
+
+    function initializeTaskForm() {
         $("#taskForm").validate({
             rules: {
                 task: {
-                    required: true
+                    required: true,
+                    regex: config.regex.validtask
                 }
             },
             messages: {
-                task: "Please enter a task"
+                task: {
+                    required: "Please enter a task",
+                    regex: "Please enter task in format <1.0 taskinfo>"
+                }
             },
             errorElement: "div",
             errorPlacement: function (error, element) {
                 // Add the `invalid-feedback` class to the div element
                 error.addClass("invalid-feedback");
-    
+
                 if (element.prop("type") === "checkbox") {
                     error.insertAfter(element.parent("label"));
                 } else {
@@ -79,25 +146,48 @@ $(document).ready(function () {
             }
         });
 
+        function getInitialTasks() {
+            firebase.database().ref('tasks/data').once('value').then(function (taskdata) {
+                var taskdataval = taskdata.val();
+                console.log(taskdataval);
+                if (taskdataval === undefined || taskdataval === "" || taskdataval == null) {
+                    taskdataval = "{}";
+                }
+                window.tasksjson = JSON.parse(taskdataval);
+                console.log(window.tasksjson);
+            }).then(function () {
+                createTaskTable();
+            }).catch(function (err) {
+                handleError(err);
+            });
+        }
+
         function submitTask() {
             if ($("#taskForm").valid()) {
                 var formData = $("#taskForm").serializeArray();
                 //console.log(formData);
-                var task = formData[0].value.toString();
+                var completetask = formData[0].value.toString();
+                var tasksplit = completetask.split(" ");
+                var tasknum = tasksplit[0];
+                var tasknumsplit = tasknum.split(".");
+                var majortasknum = tasknumsplit[0];
+                var subtasknum = tasknumsplit[1];
+                var taskvalue = tasksplit[1];
                 var timestamp = Date.now().toString();
-                firebase.database().ref('tasks/').push({
-                    data: task,
-                    time: timestamp
-                }).then(function() {
-                    //console.log("task added");
-                    $('#task').val('');
-                    $('#alerttasksuccess').fadeIn();
-                    setTimeout(function () {
-                        $('#alerttasksuccess').fadeOut();
-                    }, config.other.alerttimeout);
-                }).catch(function(err){
-                    handleError(err);
-                });
+                var subtaskdata = {
+                    "data": taskvalue,
+                    "time": timestamp
+                };
+                var currenttaskdata = window.tasksjson[majortasknum];
+                if (currenttaskdata == undefined) {
+                    window.tasksjson[majortasknum] = {};
+                }
+                window.tasksjson[majortasknum][subtasknum] = subtaskdata;
+                console.log(window.tasksjson);
+                updateTasks();
+                $("#taskdata").remove();
+                $("#tasklist").append("<tbody id=\"taskdata\"></tbody>");
+                createTaskTable();
             } else {
                 //console.log("form invalid");
                 handleError({
@@ -106,6 +196,8 @@ $(document).ready(function () {
                 });
             }
         }
+
+        getInitialTasks();
 
         $("#submitTask").on('click touchstart', function () {
             submitTask();
@@ -122,7 +214,7 @@ $(document).ready(function () {
     function getSuitData() {
         //console.log("get the suit data");
         var suitdataref = firebase.database().ref("suitdata");
-        suitdataref.on("value", function(suitdata) {
+        suitdataref.on("value", function (suitdata) {
             var suitdataval = suitdata.val();
             //console.log(suitdataval);
             var primaryo2 = suitdataval.primaryo2;
@@ -173,6 +265,44 @@ $(document).ready(function () {
         });
     }
 
+    $(document).on('click touchstart', ".taskDelete", function () {
+        var valueArray = $(this).attr('value').split(',');
+        var taskKey = valueArray[0];
+        var started = false;
+
+        function deleteTask(taskKey) {
+            console.log("delete the task");
+            var taskKeySplit = taskKey.split(".");
+            var majorTaskKey = taskKeySplit[0];
+            var subTaskKey = taskKeySplit[1];
+            delete window.tasksjson[majorTaskKey][subTaskKey];
+            if (Object.keys(window.tasksjson[majorTaskKey]).length === 0) {
+                delete window.tasksjson[majorTaskKey];
+            }
+            updateTasks();
+            $("#taskdata").remove();
+            $("#tasklist").append("<tbody id=\"taskdata\"></tbody>");
+            setTimeout(function () {
+                $('#alertconfirmdeletetask').fadeOut();
+            }, config.other.alerttimeout);
+            createTaskTable();
+        }
+
+        $('#alertconfirmdeletetask').fadeIn();
+        $("#cancelDeleteTask").on('click touchstart', function () {
+            if (!started) {
+                $('#alertconfirmdeletetask').fadeOut();
+                started = true;
+            }
+        });
+        $("#confirmDeleteTask").on('click touchstart', function () {
+            if (!started) {
+                deleteTask(taskKey);
+                started = true;
+            }
+        });
+    });
+
     var signed_in_initially = false;
 
     firebase.auth().onAuthStateChanged(function (user) {
@@ -185,12 +315,12 @@ $(document).ready(function () {
                 if (usertype == "groundcontrol") {
                     //console.log("ground control signed in");
                 }
-            }).catch(function(err) {
+            }).catch(function (err) {
                 handleError(err);
             });
             $("#bodycollapse").removeClass("collapse");
             $("#taskmanagementcollapse").removeClass("collapse");
-            createTaskFormValidation();
+            initializeTaskForm();
             $("#suitdatacollapse").removeClass("collapse");
             getSuitData();
         } else {
