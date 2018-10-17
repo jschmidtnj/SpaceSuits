@@ -59,7 +59,7 @@ $(document).ready(function () {
     var tableinitialized = false;
 
     function createTaskTable() {
-        console.log(window.tasksjson);
+        //console.log(window.tasksjson);
         if (Object.keys(window.tasksjson).length === 0) {
             $("#taskdata").remove();
             $("#tasklist").append("<tbody id=\"taskdata\"></tbody>");
@@ -73,12 +73,12 @@ $(document).ready(function () {
             for (var subkey in window.tasksjson[majorkey]) {
                 var singletaskdata = window.tasksjson[majorkey][subkey];
                 var tasktimeutc = parseInt(singletaskdata.time);
-                console.log("time: " + tasktimeutc.toString());
+                //console.log("time: " + tasktimeutc.toString());
                 var tasktimeutcdate = new Date(tasktimeutc);
                 var singletasktime = tasktimeutcdate.toString();
-                console.log("date: " + singletasktime);  
+                //console.log("date: " + singletasktime);  
                 var singletaskdatavalue = singletaskdata.data;
-                console.log(majorkey + " -> " + subkey + " -> " + singletaskdatavalue);
+                //console.log(majorkey + " -> " + subkey + " -> " + singletaskdatavalue);
                 var tasknum = majorkey + "." + subkey;
                 $('#taskdata').append("<tr><td>" + tasknum + "</td><td>" + singletaskdatavalue +
                     "</td><td>" + singletasktime + "</td><td><button value=\"" + tasknum +
@@ -98,7 +98,7 @@ $(document).ready(function () {
 
     function updateTasks() {
         var updatedtasksjsonstr = JSON.stringify(window.tasksjson);
-        console.log(updatedtasksjsonstr);
+        //console.log(updatedtasksjsonstr);
         firebase.database().ref('tasks').set({
             data: updatedtasksjsonstr
         }).then(function () {
@@ -149,12 +149,12 @@ $(document).ready(function () {
         function getInitialTasks() {
             firebase.database().ref('tasks/data').once('value').then(function (taskdata) {
                 var taskdataval = taskdata.val();
-                console.log(taskdataval);
+                //console.log(taskdataval);
                 if (taskdataval === undefined || taskdataval === "" || taskdataval == null) {
                     taskdataval = "{}";
                 }
                 window.tasksjson = JSON.parse(taskdataval);
-                console.log(window.tasksjson);
+                //console.log(window.tasksjson);
             }).then(function () {
                 createTaskTable();
             }).catch(function (err) {
@@ -183,7 +183,7 @@ $(document).ready(function () {
                     window.tasksjson[majortasknum] = {};
                 }
                 window.tasksjson[majortasknum][subtasknum] = subtaskdata;
-                console.log(window.tasksjson);
+                //console.log(window.tasksjson);
                 updateTasks();
                 $("#taskdata").remove();
                 $("#tasklist").append("<tbody id=\"taskdata\"></tbody>");
@@ -271,7 +271,7 @@ $(document).ready(function () {
         var started = false;
 
         function deleteTask(taskKey) {
-            console.log("delete the task");
+            //console.log("delete the task");
             var taskKeySplit = taskKey.split(".");
             var majorTaskKey = taskKeySplit[0];
             var subTaskKey = taskKeySplit[1];
