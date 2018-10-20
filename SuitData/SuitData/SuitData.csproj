@@ -6,8 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="assembly-client-dotnet" Version="1.0.9" />
-    <PackageReference Include="Firebase.js" Version="2.1.2" />
     <PackageReference Include="FirebaseDatabase.net" Version="3.3.3" />
     <PackageReference Include="JSON" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
