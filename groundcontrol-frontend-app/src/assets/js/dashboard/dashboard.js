@@ -156,6 +156,8 @@ $(document).ready(function () {
                 window.tasksjson = JSON.parse(taskdataval);
                 //console.log(window.tasksjson);
             }).then(function () {
+                $("#taskdata").remove();
+                $("#tasklist").append("<tbody id=\"taskdata\"></tbody>");
                 createTaskTable();
             }).catch(function (err) {
                 handleError(err);
@@ -172,7 +174,8 @@ $(document).ready(function () {
                 var tasknumsplit = tasknum.split(".");
                 var majortasknum = tasknumsplit[0];
                 var subtasknum = tasknumsplit[1];
-                var taskvalue = tasksplit[1];
+                delete tasksplit[0];
+                var taskvalue = tasksplit.join(' ');
                 var timestamp = Date.now().toString();
                 var subtaskdata = {
                     "data": taskvalue,
@@ -199,8 +202,20 @@ $(document).ready(function () {
 
         getInitialTasks();
 
-        $("#submitTask").on('click touchstart', function () {
-            submitTask();
+        var submittedTask = false;
+        $("#submitTask").on('click touchstart', function (e) {
+            e.stopImmediatePropagation();
+            if (e.type == "touchstart") {
+                submittedTask = true;
+                submitTask();
+            }
+            else if (e.type == "click" && !submittedTask) {
+                submitTask();
+            }
+            else {
+                submittedTask = false;
+            }
+            return false;
         });
 
         $("#task").keypress(function (event) {
@@ -209,6 +224,20 @@ $(document).ready(function () {
                 submitTask();
             }
         });
+
+        var taskdata = firebase.database().ref("tasks");
+        taskdata.on("value", function (tasks) {
+            var taskdataval = tasks.val();
+            var tasksjson = taskdataval.data;
+            if (tasksjson !== JSON.stringify(window.tasksjson) && tableinitialized) {
+                //console.log("update tasks table if new data");
+                window.tasksjson = JSON.parse(tasksjson);
+                $("#taskdata").remove();
+                $("#tasklist").append("<tbody id=\"taskdata\"></tbody>");
+                createTaskTable();
+            }
+        });
+
     }
 
     function getSuitData() {
@@ -289,18 +318,24 @@ $(document).ready(function () {
         }
 
         $('#alertconfirmdeletetask').fadeIn();
+
         $("#cancelDeleteTask").on('click touchstart', function () {
             if (!started) {
                 $('#alertconfirmdeletetask').fadeOut();
                 started = true;
             }
+            return false;
         });
+
         $("#confirmDeleteTask").on('click touchstart', function () {
             if (!started) {
                 deleteTask(taskKey);
                 started = true;
             }
+            return false;
         });
+
+        return false;
     });
 
     var signed_in_initially = false;
@@ -350,13 +385,29 @@ $(document).ready(function () {
         }
     });
 
+    var handledLogout = false;
     $("#logoutButton").on('click touchstart', function () {
+        e.stopImmediatePropagation();
+        if (e.type == "touchstart") {
+            handledLogout = true;
+            handleLogout();
+        }
+        else if (e.type == "click" && !handledLogout) {
+            handleLogout();
+        }
+        else {
+            handledLogout = false;
+        }
+        return false;
+    });
+
+    function handleLogout() {
         firebase.auth().signOut().then(function () {
             // Sign-out successful.
         }).catch(function (error) {
             // An error happened.
             handleError(error);
         });
-    });
+    }
 
 });
