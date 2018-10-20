@@ -1,4 +1,5 @@
 # SpaceSuits
+
 A Hololens-based Space Suit.
 
 
@@ -23,6 +24,7 @@ Then follow these steps:
 Finally try `mono nuget.exe install <Package-to-install>`
 
 ### git dev
+
 1) `git checkout -b <branch name>`
 2) `git add .`, `git commit -a "<message>"`
 3) `git push --set-upstream origin <branch name>`
@@ -34,4 +36,8 @@ Finally try `mono nuget.exe install <Package-to-install>`
 9) `git commit -a "<message>"`
 10) `git push origin master`
 
-Notes: `git branch -av` lists the branches and the branch you are using
+Notes: `git branch -av` lists the branches and the branch you are using  
+
+### github pages update from master
+
+`git subtree push --prefix groundcontrol-frontend-app/dist/ origin gh-pages`
