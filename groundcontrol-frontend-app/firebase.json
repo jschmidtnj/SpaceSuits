@@ -80,6 +80,11 @@
         "source": "/help",
         "destination": "/help.html",
         "type" : 301
+      },
+      {
+        "source": "/reports",
+        "destination": "/reports.html",
+        "type" : 301
       }
     ],
     "headers": [{

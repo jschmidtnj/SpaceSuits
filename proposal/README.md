@@ -12,4 +12,4 @@ Made with Latex :).
 
 1. `pdflatex main`
 2. `biber main`
-3. `pdflatex main`
+3. `pdflatex main && cp main.pdf ../groundcontrol-frontend-app/src/assets/reports/proposal.pdf`

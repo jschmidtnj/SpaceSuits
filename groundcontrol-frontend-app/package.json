@@ -8,7 +8,7 @@
     "license": "MIT",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "rm -rf dist && webpack && cp -a src/assets/css dist/assets && cp -a src/html/. dist/ && cp -a src/assets/icons dist/assets && cp -a src/assets/images dist/assets && cp -a src/config dist && cp dist/assets/js/pwa/serviceworker.js dist/serviceworker.js"
+        "build": "rm -rf dist && webpack && cp -a src/assets/css dist/assets && cp -a src/html/. dist/ && cp -a src/assets/reports dist/assets && cp -a src/assets/icons dist/assets && cp -a src/assets/images dist/assets && cp -a src/config dist && cp dist/assets/js/pwa/serviceworker.js dist/serviceworker.js"
     },
     "keywords": [
         "data",
@@ -72,6 +72,7 @@
         "jquery.easing": "^1.4.1",
         "less": "^3.8.1",
         "particles.js": "^2.0.0",
+        "pdfobject": "^2.1.1",
         "popper.js": "^1.14.3",
         "sprity": "^1.0.8",
         "vue": "^2.5.16"
