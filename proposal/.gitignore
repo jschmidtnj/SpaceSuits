@@ -115,3 +115,4 @@ venv.bak/
 *.run.xml
 *.tex.bbl
 *.tex.blg
+*.toc
