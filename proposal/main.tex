@@ -24,7 +24,7 @@
 	\large Stevens Institute of Technology}
 
 \date{October 2018}
-\author{Joshua Schmidt, Ian Pizzolo, Ronnie Anker, Vincent Lee}
+\author{Joshua Schmidt, Ian Pizzolo, Ronnie Ankner, Vincent Lee}
 
 \usepackage{graphicx}
 
@@ -38,6 +38,90 @@
 
 \newpage
 
+\begin{center}
+
+\textbf{“The First (Virtual) Man”}
+
+\bigskip
+\bigskip
+
+\textbf{Stevens Institute of Technology}
+
+\href{http://maps.google.com/?q=1+Castle+Point+Terrace,+Hoboken,+NJ,+07030}{1 Castle Point Terrace, Hoboken, NJ, 07030}
+
+\bigskip
+\bigskip
+
+\textbf{Team Contact}
+
+Ronald Ankner
+
+\href{mailto:rankner@stevens.edu}{\nolinkurl{rankner@stevens.edu}}
+
+\href{tel:19738640251}{+1 (973) 864-0251}
+
+\bigskip
+\bigskip
+
+\textbf{Team Members}
+
+Ronald Ankner -- Team Lead and Electrical Design
+
+\href{mailto:rankner@stevens.edu}{\nolinkurl{rankner@stevens.edu}} -- Senior/Electrical Engineering
+
+\bigskip
+\bigskip
+
+Vincent Lee -- Software Development and Hololens Environment
+
+\href{mailto:vlee2@stevens.edu}{\nolinkurl{vlee2@stevens.edu}} -- Junior/Computer Science
+
+\bigskip
+\bigskip
+
+Ian Pizzolo -- Hardware and Electrical Design
+
+\href{mailto:ipizzolo@stevens.edu}{\nolinkurl{ipizzolo@stevens.edu}} -- Sophomore/Mechanical Engineering
+
+\bigskip
+\bigskip
+
+Joshua Schmidt -- Software Development and Data Management
+
+\href{mailto:jschmid3@stevens.edu}{\nolinkurl{jschmid3@stevens.edu}} -- Sophomore/Computer Engineering
+
+\bigskip
+\bigskip
+
+\textbf{Faculty Advisor}
+
+Mukundan Iyengar
+
+\href{mailto:miyengar@stevens.edu}{\nolinkurl{miyengar@stevens.edu}}
+
+\href{tel:12012165603}{+1 (201) 216-5603}
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+\begin{tabular}{@{}p{.5in}p{3.5in}@{}}
+Approved: & \hrulefill \\
+& Iyengar, Mukundan, 10/31/2018\\
+\end{tabular}
+
+\end{center}
+
+\newpage
+
 \section{Letter of Intent}
 
 \begin{center}
@@ -45,12 +129,16 @@
 \bigskip
 \bigskip
 \textbf{Institution}
+
 Stevens Institute of Technology
+
 \bigskip
 
 \textbf{Team Members}
+
 \bigskip
 \bigskip
+
 \begin{tabular}{||c c c c||} 
  \hline
  Name & Email & Academic Year & Major \\ [0.5ex] 
@@ -70,8 +158,10 @@ Stevens Institute of Technology
 
 \textbf{Advisor}
 \bigskip
-Mukundan Iyengar\newline
-\href{mailto:miyengar@stevens.edu}{\nolinkurl{miyengar@stevens.edu}}\newline
+Mukundan Iyengar
+
+\href{mailto:miyengar@stevens.edu}{\nolinkurl{miyengar@stevens.edu}}
+
 \href{tel:12012165603}{+1 (201) 216-5603}
 
 \bigskip
@@ -95,7 +185,7 @@ Mukundan Iyengar\newline
 
 The goal of our project is to aid astronauts on Extravehicular Activity (EVA) walks, which are activities or maneuvers performed by an astronaut outside a spacecraft. Currently EVAs are plagued by excessive amounts of information and minimal preparation time. During Gemini, Apollo, and the Space Shuttle era, specific space walks were heavily practiced prior to launch whereas now, the astronauts receive an EVA plan sometimes only a week prior to the walk \autocite{mannedspaceflight}. Moreover, astronauts no longer practice a specific EVA before launch, they prepare only generally for a multitude of possible EVAs. As shown in \textit{Figure \ref{fig:spacesuitdisplay}} due to the amount of planning and memorization needed, astronauts utilize notes for guidance. These notes are placed on the astronauts hand which can be inconvenient when they need to utilize both while still having access to the information written. Our goal for NASA SUITS is to remedy this archaic system and provide a solution that will reduce the minutia the astronaut has to worry about and allow them to focus on the main tasks of the EVA.
 
-Our solution addresses these issues on two fronts. Employing a Microsoft Hololens, we plan to implement a heads up display paired with minimalistic display actuators for a more fluid interaction with external information. Moreover, we plan to implement image processing and localization tools in order to augment an astronauts environment, on command, and facilitate the astronauts actions. Our implementation includes 8 key functions:
+Our solution addresses these issues on two fronts. Employing a Microsoft Hololens, we plan to implement a heads up display paired with minimalistic display actuators for a more fluid interaction with external information \autocite{mrbasics}. Moreover, we plan to implement image processing and localization tools in order to augment an astronauts environment, on command, and facilitate the astronauts actions. Our implementation includes 8 key functions:
 
 \begin{enumerate}
 \item Task Manager
@@ -120,7 +210,7 @@ Our solution addresses these issues on two fronts. Employing a Microsoft Hololen
   \label{fig:markedhandrail}
 \end{figure}
 
-As shown above in \textit{Figure \ref{fig:markedhandrail}}, the handhold helper will augment the astronauts perception by illuminating the next handhold to grab during his/her transit around the spacecraft. To achieve this, the system will employ both real time camera vision and known positions of various elements. Given the unique shape and distinct color of the handhold, the initial iteration of the camera vision algorithm will combine an edge detection element and a simple RGB threshold filter. If this proves not robust enough, the next iteration will emulate the Viola-Jones facial detection algorithm and utilize haar wavelets and training samples of handhold images in various orientations.
+As shown above in \textit{Figure \ref{fig:markedhandrail}}, the handhold helper will augment the astronauts perception by illuminating the next handhold to grab during his/her transit around the spacecraft. To achieve this, the system will employ both real time camera vision and known positions of various elements. Given the unique shape and distinct color of the handhold, the initial iteration of the camera vision algorithm will combine an edge detection element and a simple RGB threshold filter. If this proves not robust enough, the next iteration will emulate the Viola-Jones facial detection algorithm and utilize haar wavelets and training samples of handhold images in various orientations \autocite{violajones}.
 
 For positioning, the system will utilize the known positions of all handholds relative to spacecraft, the pre-planned progression of handholds provided in an EVA outline, and the known position of the astronaut relative to the spacecraft. The handhold positions and planned progression are assumed to be provided NASA prior to the EVA. The relative position of the astronaut will be supplied by our localization system, which will employ the Hololens built-in IMU and an external IMU that will interface with the Hololens. Using the known position of the next handhold relative to the spacecraft and the estimated position of the astronaut relative to the spacecraft, the position of the handhold relative to the astronaut can be found. Therefore, the estimated location of the handhold in the astronaut’s view is known and the handhold can be further discriminated via positioning.
 
@@ -247,9 +337,11 @@ Our physical actuators are the most optimal in this case in order to have the as
 \begin{figure}[!htb]
   \centering
   \caption{Schedule}
-  \includegraphics[width=0.75\textwidth]{assets/supertaskschedule.png}
+  \includegraphics[width=1\textwidth]{assets/supertaskschedule.png}
   \label{fig:supertaskschedule}
 \end{figure}
+
+\newpage
 
 \subsection{Technical References}
 
@@ -430,7 +522,7 @@ any invention described or made part of this proposal throughout the world.
 
 \begin{tabular}{@{}p{.5in}p{3.5in}@{}}
 Approved: & \hrulefill \\
-& Anker, Ronald, 10/30/2018\\
+& Anker, Ronald, 10/31/2018\\
 \end{tabular}
 
 \bigskip
@@ -439,7 +531,7 @@ Approved: & \hrulefill \\
 
 \begin{tabular}{@{}p{.5in}p{3.5in}@{}}
 Approved: & \hrulefill \\
-& Lee, Vincent, 10/30/2018\\
+& Lee, Vincent, 10/31/2018\\
 \end{tabular}
 
 \bigskip
@@ -448,7 +540,7 @@ Approved: & \hrulefill \\
 
 \begin{tabular}{@{}p{.5in}p{3.5in}@{}}
 Approved: & \hrulefill \\
-& Pizzolo, Ian, 10/30/2018\\
+& Pizzolo, Ian, 10/31/2018\\
 \end{tabular}
 
 \bigskip
@@ -457,7 +549,7 @@ Approved: & \hrulefill \\
 
 \begin{tabular}{@{}p{.5in}p{3.5in}@{}}
 Approved: & \hrulefill \\
-& Schmidt, Joshua, 10/30/2018\\
+& Schmidt, Joshua, 10/31/2018\\
 \end{tabular}
 
 \bigskip
@@ -466,7 +558,44 @@ Approved: & \hrulefill \\
 
 \begin{tabular}{@{}p{.5in}p{3.5in}@{}}
 Approved: & \hrulefill \\
-& Iyengar, Mukund, 10/30/2018\\
+& Iyengar, Mukund, 10/31/2018\\
 \end{tabular}
+
+\newpage
+
+\subsection{Funding and Budget Statement}
+
+\bigskip
+
+\hspace{4mm} Number of People Accommodating: 4
+
+\bigskip
+
+Estimated Number of Days: 7
+
+\bigskip
+
+Estimated Number of Nights: 6
+
+\bigskip
+\bigskip
+
+\begin{tabular}{||c c c||} 
+  \hline
+  Category & Unit Price Estimate & Category Total \\ [0.5ex] 
+  \hline\hline
+  Flights & \$250 per Person & \$1000 \\ 
+  \hline
+  Hotel/Housing & \$70 per Room per Night (4 People per room) & \$420 \\
+  \hline
+  Food & \$30 per Person per Day & \$840 \\
+  \hline
+  Ground Transportation & \$400 & \$400 \\
+  \hline
+  Miscellaneous & \$200 & \$200 \\
+  \hline
+   & Overall Total & \$2860 \\
+  \hline
+ \end{tabular}
 
 \end{document}
