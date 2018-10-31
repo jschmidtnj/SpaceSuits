@@ -1,0 +1,12 @@
+/* custom styles go here */
+
+input { 
+    text-align: center; 
+}
+
+.pdfobject-container {
+	width: 100%;
+	max-width: 800px;
+	height: 800px;
+	margin: 2em 0;
+}
