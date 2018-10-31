@@ -4,6 +4,7 @@
 \usepackage{csquotes}
 \usepackage{hyperref}
 \usepackage[backend=biber,style=numeric,hyperref=true,natbib=true,autocite=plain,sorting=none]{biblatex}
+\usepackage[margin=1in]{geometry}
 
 % this package and the below text is to force images to be added to the given section and subsection. See https://tex.stackexchange.com/questions/279/how-do-i-ensure-that-figures-appear-in-the-section-theyre-associated-with/235312#235312 for more information
 \usepackage{placeins}
@@ -31,11 +32,13 @@
 
 \maketitle
 
+\newpage
+
 \tableofcontents
 
+\newpage
+
 \section{Letter of Intent}
-
-
 
 \begin{center}
 
@@ -77,13 +80,15 @@ Mukundan Iyengar\newline
 
 \end{center}
 
+\newpage
+
 \section{Introduction}
 
 \subsection{Abstract}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/spacesuitdisplay.png}
+  \includegraphics[width=0.75\textwidth]{assets/spacesuitdisplay.png}
   \caption{EVA Reference Notebook}
   \label{fig:spacesuitdisplay}
 \end{figure}
@@ -110,7 +115,7 @@ Our solution addresses these issues on two fronts. Employing a Microsoft Hololen
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/markedhandrail.png}
+  \includegraphics[width=0.75\textwidth]{assets/markedhandrail.png}
   \caption{Augmented Handhold Illumination}
   \label{fig:markedhandrail}
 \end{figure}
@@ -127,7 +132,7 @@ Furthermore, in locating each handhold, the system can then compare its estimate
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/suitdatatasklist.png}
+  \includegraphics[width=0.75\textwidth]{assets/suitdatatasklist.png}
   \caption{Main Panel with Suit Status and Task Manager}
   \label{fig:suitdatatasklist}
 \end{figure}
@@ -136,7 +141,7 @@ The main User Interface (UI) is intended to be as minimalistic and intuitive as 
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/moresuitmetrics.png}
+  \includegraphics[width=0.75\textwidth]{assets/moresuitmetrics.png}
   \caption{Suit Status UI}
   \label{fig:moresuitmetrics}
 \end{figure}
@@ -145,7 +150,7 @@ Again, this panel aims to maintain the astronaut’s field of view. Therefore, a
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/task4.png}
+  \includegraphics[width=0.75\textwidth]{assets/task4.png}
   \caption{Main Task UI}
   \label{fig:task4}
 \end{figure}
@@ -154,7 +159,7 @@ The standard view is as shown above in Figure 5, where only the next major task 
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/moresubtasks.png}
+  \includegraphics[width=0.75\textwidth]{assets/moresubtasks.png}
   \caption{Expanded Task View}
   \label{fig:moresubtasks}
 \end{figure}
@@ -165,21 +170,21 @@ To input the tasks and subtasks for the prototype system, a progressive web appl
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/groundcontrolsuitmetrics.png}
+  \includegraphics[width=0.75\textwidth]{assets/groundcontrolsuitmetrics.png}
   \caption{Suit Metrics Panel}
   \label{fig:groundcontrolsuitmetrics}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/taskmanagment.png}
+  \includegraphics[width=0.75\textwidth]{assets/taskmanagment.png}
   \caption{Task Entry and View Panel}
   \label{fig:syntheticfiberuse}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/subtask.png}
+  \includegraphics[width=0.75\textwidth]{assets/subtask.png}
   \caption{Tool and Object Visualization}
   \label{fig:subtask}
 \end{figure}
@@ -190,7 +195,7 @@ Displayed above in \textit{Figure 7} \ref{fig:groundcontrolsuitmetrics} is an op
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/suitmetrics.png}
+  \includegraphics[width=0.75\textwidth]{assets/suitmetrics.png}
   \caption{Inertial Monitor Panel}
   \label{fig:suitmetrics}
 \end{figure}
@@ -201,7 +206,7 @@ The inertial monitor as shown above in \textit{Figure 10} \ref{fig:suitmetrics} 
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/wayhome.png}
+  \includegraphics[width=0.75\textwidth]{assets/wayhome.png}
   \caption{“Way Back Home” Direction Indicator}
   \label{fig:wayhome}
 \end{figure}
@@ -241,7 +246,7 @@ Our physical actuators are the most optimal in this case in order to have the as
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/supertaskschedule.png}
+  \includegraphics[width=0.75\textwidth]{assets/supertaskschedule.png}
   \caption{Schedule}
   \label{fig:supertaskschedule}
 \end{figure}
@@ -249,6 +254,8 @@ Our physical actuators are the most optimal in this case in order to have the as
 \subsection{Technical References}
 
 \printbibliography
+
+\newpage
 
 \section{Public Outreach}
 
@@ -283,7 +290,7 @@ Science, Technology, Engineering, and Mathematics, colloquially known as STEM, o
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/smilingatthemoon.jpg}
+  \includegraphics[width=0.75\textwidth]{assets/smilingatthemoon.jpg}
   \caption{Moon Shot}
   \label{fig:smilingatthemoon}
 \end{figure}
@@ -298,28 +305,28 @@ Overall, working with NASA can provide great experiences, incredible application
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/bigoutreachgroup.jpg}
+  \includegraphics[width=0.75\textwidth]{assets/bigoutreachgroup.jpg}
   \caption{Gene Kranz Lecture}
   \label{fig:bigoutreachgroup}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/smalleroutreachgroup.png}
+  \includegraphics[width=0.75\textwidth]{assets/smalleroutreachgroup.png}
   \caption{Victor Glover Lecture}
   \label{fig:smalleroutreachgroup}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/videodemonstration.png}
+  \includegraphics[width=0.75\textwidth]{assets/videodemonstration.png}
   \caption{ISS Downlink}
   \label{fig:videodemonstration}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/welcometonbl.png}
+  \includegraphics[width=0.75\textwidth]{assets/welcometonbl.png}
   \caption{Neutral Buoyancy Lab}
   \label{fig:welcometonbl}
 \end{figure}
@@ -328,14 +335,14 @@ Above, \textit{Figure 15} \ref{fig:videodemonstration} and \textit{Figure 16} \r
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/ronniewithfriends.png}
+  \includegraphics[width=0.75\textwidth]{assets/ronniewithfriends.png}
   \caption{Intern Family}
   \label{fig:ronniewithfriends}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/guywithpsu.jpg}
+  \includegraphics[width=0.75\textwidth]{assets/guywithpsu.jpg}
   \caption{Work Family}
   \label{fig:guywithpsu}
 \end{figure}
@@ -358,21 +365,21 @@ Ronnie Ankner: EXPERIENCE DESCRIPTION
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/staringatrover.jpg}
+  \includegraphics[width=0.75\textwidth]{assets/staringatrover.jpg}
   \caption{Day-in-the-life of an Astronaut 1}
   \label{fig:staringatrover}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/vrtest.png}
+  \includegraphics[width=0.75\textwidth]{assets/vrtest.png}
   \caption{Day-in-the-life of an Astronaut 2}
   \label{fig:vrtest}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/ronnieandplane.png}
+  \includegraphics[width=0.75\textwidth]{assets/ronnieandplane.png}
   \caption{Intern Space Program}
   \label{fig:ronnieandplane}
 \end{figure}
@@ -383,15 +390,21 @@ This section is relatively explanatory. We will open the floor to any and every 
 
 We plan on visiting high schools in Hoboken as well as previous high schools that we have attended. Attached is a letter from Wayne Hills high school expressing interest in a presentation given by us to students that will encourage them to explore the field of stem. This system of outreach would, in our opinion, prove the most effective as high schoolers who have ambition in pursuing stem aren’t really introduced to ways to pursue outside of academics and therefore a presentation encouraging NASA and specific ways to get involved in STEM would definitely help usher the new generation in the right direction.
 
+\newpage
+
 \section{Administrative Section}
 
 \subsection{Institutional Letter of Endorsement}
 
 Ronnie do this
 
+\newpage
+
 \subsection{Statement of Supervising Faculty}
 
 Someone needs to do this
+
+\newpage
 
 \subsection{Statement of Rights of Use}
 
