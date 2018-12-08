@@ -3,10 +3,11 @@
     "version": "1.0.0",
     "description": "This application is created with Firebase, Bootstrap, Vuejs, jQuery, and vanilla html for outlook contact management.",
     "private": true,
-    "repository": "https://github.com/jschmidtnj/healthblock.git",
+    "repository": "https://github.com/jschmidtnj/spacesuits.git",
     "author": "Joshua Schmidt",
     "license": "MIT",
     "scripts": {
+        "start": "node server.js",
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "rm -rf dist && webpack && cp -a src/assets/css dist/assets && cp -a src/html/. dist/ && cp -a src/assets/reports dist/assets && cp -a src/assets/icons dist/assets && cp -a src/assets/images dist/assets && cp -a src/config dist && cp dist/assets/js/pwa/serviceworker.js dist/serviceworker.js"
     },
@@ -50,6 +51,7 @@
     "dependencies": {
         "bootstrap": "^4.1.2",
         "bootstrap-select": "^1.13.1",
+        "connect": "^3.6.6",
         "datatables.net-autofill-bs4": "^2.3.1",
         "datatables.net-bs4": "^1.10.19",
         "datatables.net-buttons-bs4": "^1.5.3",
@@ -74,6 +76,7 @@
         "particles.js": "^2.0.0",
         "pdfobject": "^2.1.1",
         "popper.js": "^1.14.3",
+        "serve-static": "^1.13.2",
         "sprity": "^1.0.8",
         "vue": "^2.5.16"
     }

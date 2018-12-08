@@ -386,7 +386,7 @@ $(document).ready(function () {
     });
 
     var handledLogout = false;
-    $("#logoutButton").on('click touchstart', function () {
+    $("#logoutButton").on('click touchstart', function (e) {
         e.stopImmediatePropagation();
         if (e.type == "touchstart") {
             handledLogout = true;
