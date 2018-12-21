@@ -4,6 +4,8 @@
 \usepackage{csquotes}
 \usepackage{hyperref}
 \usepackage[backend=biber,style=numeric,hyperref=true,natbib=true,autocite=plain,sorting=none]{biblatex}
+\usepackage[margin=1in]{geometry}
+\usepackage{fixltx2e}
 
 % this package and the below text is to force images to be added to the given section and subsection. See https://tex.stackexchange.com/questions/279/how-do-i-ensure-that-figures-appear-in-the-section-theyre-associated-with/235312#235312 for more information
 \usepackage{placeins}
@@ -19,11 +21,11 @@
 \addbibresource{references.bib}
 
 \title{%
-	NASA Suits Proposal \\
+  NASA SUITS Proposal: Clearing the Clutter \\
 	\large Stevens Institute of Technology}
 
 \date{October 2018}
-\author{Joshua Schmidt, Ian Pizzolo, Ronnie Anker, Vincent Lee}
+\author{Joshua Schmidt, Ian Pizzolo, Ronnie Ankner, Vincent Lee}
 
 \usepackage{graphicx}
 
@@ -31,23 +33,124 @@
 
 \maketitle
 
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/logo.png}
+  \label{fig:logo}
+\end{figure}
+
+\newpage
+
 \tableofcontents
 
+\newpage
+
+\begin{center}
+
+\textbf{“The First (Virtual) Man”}
+
+\bigskip
+\bigskip
+
+\textbf{Stevens Institute of Technology}
+
+\href{http://maps.google.com/?q=1+Castle+Point+Terrace,+Hoboken,+NJ,+07030}{1 Castle Point Terrace, Hoboken, NJ, 07030}
+
+\bigskip
+\bigskip
+
+\textbf{Team Contact}
+
+Ronald Ankner
+
+\href{mailto:rankner@stevens.edu}{\nolinkurl{rankner@stevens.edu}}
+
+\href{tel:19738640251}{+1 (973) 864-0251}
+
+\bigskip
+\bigskip
+
+\textbf{Team Members}
+
+Ronald Ankner -- Team Lead and Electrical Design
+
+\href{mailto:rankner@stevens.edu}{\nolinkurl{rankner@stevens.edu}} -- Senior/Electrical Engineering
+
+\bigskip
+\bigskip
+
+Vincent Lee -- Software Development and Hololens Environment
+
+\href{mailto:vlee2@stevens.edu}{\nolinkurl{vlee2@stevens.edu}} -- Junior/Computer Science
+
+\bigskip
+\bigskip
+
+Ian Pizzolo -- Hardware and Electrical Design
+
+\href{mailto:ipizzolo@stevens.edu}{\nolinkurl{ipizzolo@stevens.edu}} -- Sophomore/Mechanical Engineering
+
+\bigskip
+\bigskip
+
+Joshua Schmidt -- Software Development and Data Management
+
+\href{mailto:jschmid3@stevens.edu}{\nolinkurl{jschmid3@stevens.edu}} -- Sophomore/Computer Engineering
+
+\bigskip
+\bigskip
+
+\textbf{Faculty Advisor}
+
+Mukundan Iyengar
+
+\href{mailto:miyengar@stevens.edu}{\nolinkurl{miyengar@stevens.edu}}
+
+\href{tel:12012165603}{+1 (201) 216-5603}
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+\begin{tabular}{@{}p{.5in}p{3.5in}@{}}
+Approved: & \hrulefill \\
+& Iyengar, Mukundan, 10/31/2018\\
+\end{tabular}
+
+\end{center}
+
+\newpage
+
 \section{Letter of Intent}
-
-
 
 \begin{center}
 
 \bigskip
 \bigskip
 \textbf{Institution}
+
 Stevens Institute of Technology
+
 \bigskip
 
 \textbf{Team Members}
+
 \bigskip
 \bigskip
+
 \begin{tabular}{||c c c c||} 
  \hline
  Name & Email & Academic Year & Major \\ [0.5ex] 
@@ -67,8 +170,10 @@ Stevens Institute of Technology
 
 \textbf{Advisor}
 \bigskip
-Mukundan Iyengar\newline
-\href{mailto:miyengar@stevens.edu}{\nolinkurl{miyengar@stevens.edu}}\newline
+Mukundan Iyengar
+
+\href{mailto:miyengar@stevens.edu}{\nolinkurl{miyengar@stevens.edu}}
+
 \href{tel:12012165603}{+1 (201) 216-5603}
 
 \bigskip
@@ -77,20 +182,22 @@ Mukundan Iyengar\newline
 
 \end{center}
 
+\newpage
+
 \section{Introduction}
 
 \subsection{Abstract}
 
+The goal of our project is to aid astronauts on Extravehicular Activity (EVA) walks, which are activities or maneuvers performed by an astronaut outside a spacecraft. Currently EVAs are plagued by excessive amounts of information and minimal preparation time. During Gemini, Apollo, and the Space Shuttle era, specific space walks were heavily practiced prior to launch whereas now, the astronauts receive an EVA plan sometimes only a week prior to the walk \autocite{mannedspaceflight}. Moreover, astronauts no longer practice a specific EVA before launch, they prepare only generally for a multitude of possible EVAs. As shown in Figure \ref{fig:spacesuitdisplay} due to the amount of planning and memorization needed, astronauts utilize notes for guidance. These notes are placed on the astronauts hand which can be inconvenient when they need to utilize both while still having access to the information written. Our goal for NASA SUITS is to remedy this archaic system and provide a solution that will reduce the minutia the astronaut has to worry about and allow them to focus on the main tasks of the EVA.
+
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/spacesuitdisplay.png}
+  \includegraphics[width=0.75\textwidth]{assets/spacesuitdisplay.png}
   \caption{EVA Reference Notebook}
   \label{fig:spacesuitdisplay}
 \end{figure}
 
-The goal of our project is to aid astronauts on Extravehicular Activity (EVA) walks, which are activities or maneuvers performed by an astronaut outside a spacecraft. Currently EVAs are plagued by excessive amounts of information and minimal preparation time. During Gemini, Apollo, and the Space Shuttle era, specific space walks were heavily practiced prior to launch whereas now, the astronauts receive an EVA plan sometimes only a week prior to the walk \autocite{mannedspaceflight}. Moreover, astronauts no longer practice a specific EVA before launch, they prepare only generally for a multitude of possible EVAs. As shown in \textit{Figure 1} \ref{fig:spacesuitdisplay} due to the amount of planning and memorization needed, astronauts utilize notes for guidance. These notes are placed on the astronauts hand which can be inconvenient when they need to utilize both while still having access to the information written. Our goal for NASA SUITS is to remedy this archaic system and provide a solution that will reduce the minutia the astronaut has to worry about and allow them to focus on the main tasks of the EVA.
-
-Our solution addresses these issues on two fronts. Employing a Microsoft Hololens, we plan to implement a heads up display paired with minimalistic display actuators for a more fluid interaction with external information. Moreover, we plan to implement image processing and localization tools in order to augment an astronauts environment, on command, and facilitate the astronauts actions. Our implementation includes 8 key functions:
+Our solution addresses these issues on two fronts. Employing a Microsoft Hololens, we plan to implement a heads up display paired with minimalistic display actuators for a more fluid interaction with external information \autocite{mrbasics}. Moreover, we plan to implement image processing and localization tools in order to augment an astronauts environment, on command, and facilitate the astronauts actions. Our implementation includes 8 key functions:
 
 \begin{enumerate}
 \item Task Manager
@@ -110,14 +217,14 @@ Our solution addresses these issues on two fronts. Employing a Microsoft Hololen
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/markedhandrail.png}
+  \includegraphics[width=0.75\textwidth]{assets/markedhandrail.png}
   \caption{Augmented Handhold Illumination}
   \label{fig:markedhandrail}
 \end{figure}
 
-As shown above in \textit{Figure 2} \ref{fig:markedhandrail}, the handhold helper will augment the astronauts perception by illuminating the next handhold to grab during his/her transit around the spacecraft. To achieve this, the system will employ both real time camera vision and known positions of various elements. Given the unique shape and distinct color of the handhold, the initial iteration of the camera vision algorithm will combine an edge detection element and a simple RGB threshold filter. If this proves not robust enough, the next iteration will emulate the Viola-Jones facial detection algorithm and utilize haar wavelets and training samples of handhold images in various orientations.
+As shown above in Figure \ref{fig:markedhandrail}, the handhold helper will augment the astronauts perception by illuminating the next handhold to grab during his/her transit around the spacecraft. To achieve this, the system will employ both real time camera vision and known positions of various elements. Given the unique shape and distinct color of the handhold, the initial iteration of the camera vision algorithm will combine an edge detection element and a simple RGB threshold filter. If this proves not robust enough, the next iteration will emulate the Viola-Jones facial detection algorithm and utilize haar wavelets and training samples of handhold images in various orientations \autocite{violajones}.
 
-For positioning, the system will utilize the known positions of all handholds relative to spacecraft, the pre-planned progression of handholds provided in an EVA outline, and the known position of the astronaut relative to the spacecraft. The handhold positions and planned progression are assumed to be provided NASA prior to the EVA. The relative position of the astronaut will be supplied by our localization system, which will employ the Hololens built-in IMU and an external IMU that will interface with the Hololens. Using the known position of the next handhold relative to the spacecraft and the estimated position of the astronaut relative to the spacecraft, the position of the handhold relative to the astronaut can be found. Therefore, the estimated location of the handhold in the astronaut’s view is known and the handhold can be further discriminated via positioning.
+For positioning, the system will utilize the known positions of all handholds relative to spacecraft, the pre-planned progression of handholds provided in an EVA outline, and the known position of the astronaut relative to the spacecraft. The handhold positions and planned progression are assumed to be provided by NASA prior to the EVA. The relative position of the astronaut will be supplied by our localization system, which will employ the Hololens built-in IMU and an external IMU that will interface with the Hololens. Using the known position of the next handhold relative to the spacecraft and the estimated position of the astronaut relative to the spacecraft, the position of the handhold relative to the astronaut can be found. Therefore, the estimated location of the handhold in the astronaut’s view is known and the handhold can be further discriminated via positioning.
 
 Overall, our system will correctly discriminate the next handhold by filtering with edges, color, and position. The combination of this information will provide a robust method of determining the next handhold. With the handhold determined, the Hololens will then illuminate the handhold a distinct color, providing the astronaut an intuitive sense of which handhold to grab next.
 
@@ -127,86 +234,86 @@ Furthermore, in locating each handhold, the system can then compare its estimate
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/suitdatatasklist.png}
+  \includegraphics[width=0.75\textwidth]{assets/suitdatatasklist.png}
   \caption{Main Panel with Suit Status and Task Manager}
   \label{fig:suitdatatasklist}
 \end{figure}
 
-The main User Interface (UI) is intended to be as minimalistic and intuitive as possible; minimalistic so as not to detract from the astronaut’s field of view and intuitive to allow for quick and seamless use. On voice command, via the hololens and unity, the main panel displayed above in \textit{Figure 3} \ref{fig:suitdatatasklist} will appear. From this main panel, the astronaut can select between two options - suit status and task list. This selection will be done by physical actuators that the astronaut has located on the glove. The Suit Status displays all suit telemetry in a minimalistic manner, with an interface similar to \textit{Figure 4} \ref{fig:moresuitmetrics}. This data is mocked up and emulated for our use with a website that takes in data from a form and alerts the hololens and our program of the change to display. Showing our capability to dynamically change our information and eventually integrate with various endpoints to retrieve such information.
+The main User Interface (UI) is intended to be as minimalistic and intuitive as possible; minimalistic so as not to detract from the astronaut’s field of view and intuitive to allow for quick and seamless use. On voice command, via the hololens and unity, the main panel displayed above in Figure \ref{fig:suitdatatasklist} will appear. From this main panel, the astronaut can select between two options - suit status and task list. This selection will be done by physical actuators that the astronaut has located on the glove. The Suit Status displays all suit telemetry in a minimalistic manner, with an interface similar to Figure \ref{fig:moresuitmetrics}. This data is mocked up and emulated for our use with a website that takes in data from a form and alerts the hololens and our program of the change to display. Showing our capability to dynamically change our information and eventually integrate with various endpoints to retrieve such information.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/moresuitmetrics.png}
+  \includegraphics[width=0.75\textwidth]{assets/moresuitmetrics.png}
   \caption{Suit Status UI}
   \label{fig:moresuitmetrics}
 \end{figure}
 
-Again, this panel aims to maintain the astronaut’s field of view. Therefore, all metrics are placed outside of the astronaut’s main focus. The suit status panel shows the current suit pressure at differing regions, the astronaut’s heart rate, the current battery percentage, and oxygen levels. All metrics have intuitive indications of status: nominal operation in green, cautions in yellow, and warnings in red. For example, in the image above, battery level is dangerously low, primary O2 may require some attention, and secondary O2 is nominal. This color scheme will hopefully provide an intuitive sense of the suits status. The second panel, the Task Manager, displays the main task for the astronaut to complete \textit{Figure 5} \ref{fig:task4}.
+Again, this panel aims to maintain the astronaut’s field of view. Therefore, all metrics are placed outside of the astronaut’s main focus. The suit status panel shows the current suit pressure at differing regions, the astronaut’s heart rate, the current battery percentage, and oxygen levels. All metrics have intuitive indications of status: nominal operation in green, cautions in yellow, and warnings in red. For example, in the image above, battery level is dangerously low, primary O\textsubscript{2} may require some attention, and secondary O\textsubscript{2} is nominal. This color scheme will hopefully provide an intuitive sense of the suits status. The second panel, the Task Manager, displays the main task for the astronaut to complete Figure \ref{fig:task4}.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/task4.png}
+  \includegraphics[width=0.75\textwidth]{assets/task4.png}
   \caption{Main Task UI}
   \label{fig:task4}
 \end{figure}
 
-The standard view is as shown above in Figure 5, where only the next major task of the EVA is displayed. If need be, the astronaut can access subtasks required to complete the main task via an actuator toggle (\textit{Figure 6} \ref{fig:moresubtasks}).
+The standard view is as shown above in Figure \ref{fig:task4}, where only the next major task of the EVA is displayed. If need be, the astronaut can access subtasks required to complete the main task via an actuator toggle (Figure \ref{fig:moresubtasks}).
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/moresubtasks.png}
+  \includegraphics[width=0.75\textwidth]{assets/moresubtasks.png}
   \caption{Expanded Task View}
   \label{fig:moresubtasks}
 \end{figure}
 
 It is assumed that the tasks and subtasks will be meticulously prepared well ahead of the EVA, in which case all tasks and subtasks will be uploaded the the Hololens prior to the EVA. However, if and when plans change during the space walk, our system incorporates real time editing and addition of tasks and subtasks.
 
-To input the tasks and subtasks for the prototype system, a progressive web application is used. It is currently hosted on Firebase but can be deployed anywhere, including on servers on the ISS, with slight modification. Tasks can be added in real time from multiple ground station nodes, and the webapp is updated in real time as well. This way both the astronaut and the ground station see the most up-to-date tasks and subtasks at all times. Additionally, the space suit sends sensor data and metrics to the webapp so the ground station can monitor the integrity of the suit. See \textit{Figure 8} \ref{fig:taskmanagment} and \textit{Figure 9} \ref{fig:subtask} for the user interface of the web application (\href{https://spacesuit.site}{spacesuit.site}). See the github repo for the source code (\href{https://github.com/jschmidtnj/spacesuits}{@jschmidtnj.SpaceSuits}).
+To input the tasks and subtasks for the prototype system, a progressive web application is used. It is currently hosted on Firebase but can be deployed anywhere, including on servers on the ISS, with slight modification. Tasks can be added in real time from multiple ground station nodes, and the webapp is updated in real time as well. This way both the astronaut and the ground station see the most up-to-date tasks and subtasks at all times. Additionally, the space suit sends sensor data and metrics to the webapp so the ground station can monitor the integrity of the suit. See Figure \ref{fig:taskmanagment} and Figure \ref{fig:subtask} for the user interface of the web application (\href{https://spacesuit.site}{spacesuit.site}). See the github repo for the source code (\href{https://github.com/jschmidtnj/spacesuits}{@jschmidtnj.SpaceSuits}).
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/groundcontrolsuitmetrics.png}
+  \includegraphics[width=0.75\textwidth]{assets/groundcontrolsuitmetrics.png}
   \caption{Suit Metrics Panel}
   \label{fig:groundcontrolsuitmetrics}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/taskmanagment.png}
+  \includegraphics[width=0.75\textwidth]{assets/taskmanagment.png}
   \caption{Task Entry and View Panel}
-  \label{fig:syntheticfiberuse}
+  \label{fig:taskmanagment}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/subtask.png}
+  \includegraphics[width=0.75\textwidth]{assets/subtask.png}
   \caption{Tool and Object Visualization}
   \label{fig:subtask}
 \end{figure}
 
-Displayed above in \textit{Figure 7} \ref{fig:groundcontrolsuitmetrics} is an optional addition to the Task Manager. If a task requires the use of an uncommon tool or manipulation of an unusual object, the astronaut has the option of toggling the appearance of this tool next to the task manager. It is assumed that the CAD files any of these tools or objects in question will be uploaded to the Hololens well before the EVA and appear only on command from the astronaut via peripheral actuation.
+Displayed above in Figure \ref{fig:groundcontrolsuitmetrics} is an optional addition to the Task Manager. If a task requires the use of an uncommon tool or manipulation of an unusual object, the astronaut has the option of toggling the appearance of this tool next to the task manager. It is assumed that the CAD files any of these tools or objects in question will be uploaded to the Hololens well before the EVA and appear only on command from the astronaut via peripheral actuation.
 
 \subsubsection{Inertial Monitor Panel}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/suitmetrics.png}
+  \includegraphics[width=0.75\textwidth]{assets/suitmetrics.png}
   \caption{Inertial Monitor Panel}
   \label{fig:suitmetrics}
 \end{figure}
 
-The inertial monitor as shown above in \textit{Figure 10} \ref{fig:suitmetrics} will provide a simple way to view the current inertial status. This panel will be used primarily for displaying warnings regarding the inertial data, for example if the astronaut is accelerating too significantly in any given direction as shown in \textit{Figure 10} \ref{fig:suitmetrics} by the “Acc Z” in red.  This panel can also be accessed via voice command by the astronaut. The inertial data for this panel will be provided by both the Hololens internal IMU and an external IMU we will be incorporating into our system.
+The inertial monitor as shown above in Figure \ref{fig:suitmetrics} will provide a simple way to view the current inertial status. This panel will be used primarily for displaying warnings regarding the inertial data, for example if the astronaut is accelerating too significantly in any given direction as shown in Figure \ref{fig:suitmetrics} by the “Acc Z” in red.  This panel can also be accessed via voice command by the astronaut. The inertial data for this panel will be provided by both the Hololens internal IMU and an external IMU we will be incorporating into our system.
 
 \subsubsection{Way Back Home}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/wayhome.png}
+  \includegraphics[width=0.75\textwidth]{assets/wayhome.png}
   \caption{“Way Back Home” Direction Indicator}
   \label{fig:wayhome}
 \end{figure}
 
-The “Way Back Home” \ref{fig:wayhome} will appear only in emergency situations. The system will continuously keep a position relative to the spacecraft access point. In times of emergency when an astronaut must get inside the spacecraft as quick as possible, this panel will appear and display a red indicator as shown in Figure 11 pointing toward the access point: an arrow when the access point is in the field of view and a red crescent when not in the field of view. 
+The “Way Back Home” \ref{fig:wayhome} will appear only in emergency situations. The system will continuously keep a position relative to the spacecraft access point. In times of emergency when an astronaut must get inside the spacecraft as quick as possible, this panel will appear and display a red indicator as shown in Figure \ref{fig:wayhome} pointing toward the access point: an arrow when the access point is in the field of view and a red crescent when not in the field of view. 
 
 \subsubsection{Caution and Warning System}
 
@@ -241,14 +348,18 @@ Our physical actuators are the most optimal in this case in order to have the as
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/supertaskschedule.png}
+  \includegraphics[width=1\textwidth]{assets/supertaskschedule.png}
   \caption{Schedule}
   \label{fig:supertaskschedule}
 \end{figure}
 
+\newpage
+
 \subsection{Technical References}
 
 \printbibliography
+
+\newpage
 
 \section{Public Outreach}
 
@@ -283,7 +394,7 @@ Science, Technology, Engineering, and Mathematics, colloquially known as STEM, o
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/smilingatthemoon.jpg}
+  \includegraphics[width=0.75\textwidth]{assets/smilingatthemoon.jpg}
   \caption{Moon Shot}
   \label{fig:smilingatthemoon}
 \end{figure}
@@ -294,41 +405,39 @@ Furthermore, NASA’s mission is the benefit of humanity, which is very quiet li
 
 \subsection{What NASA can provide to you}
 
-Overall, working with NASA can provide great experiences, incredible applications in STEM, some of the hardest problems on and off this world, and more powerfully, a family. Below in \textit{Figure 13} \ref{fig:bigoutreachgroup} and \textit{Figure 14} \ref{fig:smalleroutreachgroup} are pictures taken of a lectures given my Apollo flight director Gene Kranz and current Astronaut Victor Glover to interns. Even as an intern, working at NASA can provide the opportunity to hear such influential and accomplished people as Gene Kranz and Victor Glover speak. Moreover, working at NASA can provide the opportunity to become those people.
+Overall, working with NASA can provide great experiences, incredible applications in STEM, some of the hardest problems on and off this world, and more powerfully, a family. Below in Figure \ref{fig:bigoutreachgroup} and Figure \ref{fig:smalleroutreachgroup} are pictures taken of a lectures given my Apollo flight director Gene Kranz and current Astronaut Victor Glover to interns. Even as an intern, working at NASA can provide the opportunity to hear such influential and accomplished people as Gene Kranz and Victor Glover speak. Moreover, working at NASA can provide the opportunity to become those people.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/bigoutreachgroup.jpg}
+  \includegraphics[width=0.75\textwidth]{assets/bigoutreachgroup.jpg}
   \caption{Gene Kranz Lecture}
   \label{fig:bigoutreachgroup}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/smalleroutreachgroup.png}
+  \includegraphics[width=0.75\textwidth]{assets/smalleroutreachgroup.png}
   \caption{Victor Glover Lecture}
   \label{fig:smalleroutreachgroup}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/videodemonstration.png}
+  \includegraphics[width=0.75\textwidth]{assets/videodemonstration.png}
   \caption{ISS Downlink}
   \label{fig:videodemonstration}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/welcometonbl.png}
+  \includegraphics[width=0.75\textwidth]{assets/welcometonbl.png}
   \caption{Neutral Buoyancy Lab}
   \label{fig:welcometonbl}
 \end{figure}
 
-Above, \textit{Figure 15} \ref{fig:videodemonstration} and \textit{Figure 16} \ref{fig:welcometonbl} more of the amazing experiences working for NASA can provide. \textit{Figure 15} \ref{fig:videodemonstration} displays a live chat between interns and Astronaut Ricky Arnold on the International Space Station. \textit{Figure 16} \ref{fig:welcometonbl} shows one of the many impressive facilities NASA has to offer, both for tours and for serious research and training.
-
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/ronniewithfriends.png}
+  \includegraphics[width=0.75\textwidth]{assets/ronniewithfriends.png}
   \caption{Intern Family}
   \label{fig:ronniewithfriends}
 \end{figure}
@@ -340,7 +449,7 @@ Above, \textit{Figure 15} \ref{fig:videodemonstration} and \textit{Figure 16} \r
   \label{fig:guywithpsu}
 \end{figure}
 
-Above all else though, NASA provides an incredible sense of family and community as shown in \textit{Figure 17} \ref{fig:ronniewithfriends} and \textit{Figure 18} \ref{fig:guywithpsu}.
+Figure \ref{fig:videodemonstration} and Figure \ref{fig:welcometonbl} show more of the amazing experiences working for NASA can provide. Figure \ref{fig:videodemonstration} displays a live chat between interns and Astronaut Ricky Arnold on the International Space Station. Figure \ref{fig:welcometonbl} shows one of the many impressive facilities NASA has to offer, both for tours and for serious research and training. Above all else though, NASA provides an incredible sense of family and community as shown in Figure \ref{fig:ronniewithfriends} and Figure \ref{fig:guywithpsu}.
 
 \subsection{What you can provide to NASA}
 
@@ -348,31 +457,33 @@ In this section, we will go through our NASA Suits Project, its results, and our
 
 \subsection{Personal STEM / NASA Experiences}
 
-Vincent Lee: EXPERIENCE DESCRIPTION
+Vincent Lee: Over the past 3 years of my college career I've had  the privilege of pursuing a STEM field. It is a unique experience where I’ve had the opportunity to learn a lot and put my ambition to good use. In particular computer science has provided me the platform to benefit others with my work. I have worked for a government contractor, Entegra Systems, as well as the Maritime Security Center at my university, a Department of Homeland Security funded research center of excellence. At both these positions I was able to work on Virtual Reality applications similar to the Augmented Reality application we have created for the Hololens. Besides being exposed to cool new tech, being able to serve my country through my knowledge of computer science has been truly rewarding and is what I believe is a huge benefit of pursuing a STEM field.When thinking of service to one’s nation, computer science and other STEM careers are rarely associated. However, this is what I believe to be the future. The Department of Defense is being more and more technology oriented and specialist in these fields are in high demand. Being able to fill this need while pursuing my own ambition at the same time is an amazing gift that STEM offers me.
 
 Joshua Schmidt: I have been involved in science and engineering for nearly my entire life. Since middle school in the gifted and talented program I have been programming and working with computer hardware, experimenting with OCR, networking, ML, and emerging technologies on various platforms. In highschool I was captain of my First robotics team, working closely with the design and programming divisions to create amazing robots. Now in Stevens I am working as a teaching assistant in intro to computer science. I do freelance work building web and native apps, and this past summer worked for Colgate-Palmolive developing their cloud infrastructure on GCP. I recently took a position at L3 technologies building communications and encryption software starting in the Spring. And I am a Computer Engineering major, pursuing a minor (possibly a major) in Computer Science.
 
 Ian Pizzolo: One of my most memorable engineering experiences was back in a high school engineering class. I was in a class of about 25 students each split into 5 different teams. Each group was tasked with designing a vertical farming system. The system needed to be composed of multiple parts to be fabricated by each group. Each group made a design and the class voted on the design to be built. The design my group made was chosen and I was made the project leader. I delegated each part of the system to the 5 groups and made sure everyone stayed on task to complete the project. This developed my communication and leadership skills. This event also helped me make my decision to pursue engineering. Working with or for NASA has always been a dream of mine. NASA is on the front of aerospace technology and continue to lead the way and set the standards for others.
 
-Ronnie Ankner: EXPERIENCE DESCRIPTION
+Ronnie Ankner: Space has always had a special place in my heart. I grew up always curious, always wanting to know more, and space held all of the curiosities of the universe, a seemly bottomless cauldron of discovery. NASA in turn also had this aire of discovery and something extraordinary to me growing up and like many, I had dreams of being an astronaut (still do as you can see below in Figure 19 and Figure 20). STEM naturally gave me a perfect conduit to fulfill my curiosities and understand the world around me. I didn’t realize I wanted to do engineering until late in highschool during an ordinary bottle rocket project that I took way over the top: building my own test stand at home to test different design iterations, studying fluid dynamics and partial differential equations when I barely had a grasp on a regular derivative, and using excel to make a rudimentary state calculator to give all of the important metrics of the rocket at tiny steps in time.
+
+Fortunately, I have had the opportunity to explore amazing opportunities that STEM has to offer, both at my college and in two NASA internships. My first internship at Glenn Research Center in Ohio, gave me the opportunity to work in aeronautics on a team of other interns in different majors and from schools across the country. My second internship at Johnson Space Center in Houston Texas opened me up to everything space had to offer. Within my first week there, I had written software that will be going into space shortly. And, during my time, I worked with various NASA employees and a PhD at a local college to create a totally experimental device that I was the point contact for. I got a chance to realize my dreams of being an astronaut (only for a day though), doing a full day of training and lab visits, and meeting some of the smartest most accomplished people I have ever met. But, above all else, I found a home there and incredible sense of family both with my fellow interns and work colleagues.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/staringatrover.jpg}
+  \includegraphics[width=0.75\textwidth]{assets/staringatrover.jpg}
   \caption{Day-in-the-life of an Astronaut 1}
   \label{fig:staringatrover}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/vrtest.png}
+  \includegraphics[width=0.75\textwidth]{assets/vrtest.png}
   \caption{Day-in-the-life of an Astronaut 2}
   \label{fig:vrtest}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/ronnieandplane.png}
+  \includegraphics[width=0.75\textwidth]{assets/ronnieandplane.png}
   \caption{Intern Space Program}
   \label{fig:ronnieandplane}
 \end{figure}
@@ -383,15 +494,28 @@ This section is relatively explanatory. We will open the floor to any and every 
 
 We plan on visiting high schools in Hoboken as well as previous high schools that we have attended. Attached is a letter from Wayne Hills high school expressing interest in a presentation given by us to students that will encourage them to explore the field of stem. This system of outreach would, in our opinion, prove the most effective as high schoolers who have ambition in pursuing stem aren’t really introduced to ways to pursue outside of academics and therefore a presentation encouraging NASA and specific ways to get involved in STEM would definitely help usher the new generation in the right direction.
 
+\subsection{Summary}
+
+In total, we hope that this presentation will inform up-and-coming students of the great opportunities that NASA provides, encouraging them to participate in and really sink their teeth into real, meaningful projects in STEM. Moreover, we want to bring excitement to subjects commonly-viewed as hard or dry by kids going through middle and high school. Lastly, we really want to \textit{show} them why STEM can be phenomenally exciting, instead of just saying “there is an application to this derivative topic, I promise”.
+
+\newpage
+
 \section{Administrative Section}
 
 \subsection{Institutional Letter of Endorsement}
 
-Ronnie do this
+letter
+
+\newpage
 
 \subsection{Statement of Supervising Faculty}
 
-Someone needs to do this
+
+It is my great pleasure to endorse this team for the NASA S.U.I.T.S competition. Over the past 5 to 6 weeks they have been very diligent; meeting with me on a regular basis and setting up a schedule to meet multiple times a week on their own. They have been exceptional with their time management skills, working on their proposal and developing multiple pieces for this project. The amount of headway they have made in this short period is a true testament to their work ethic.  
+
+They have a clear, well thought out plan which they have been following and developing since they first brought this project to me. I truly believe that this team has accomplished a great amount and have demonstrated a clear understanding and strong grasp of the development process and how to innovate while maintaining practicality. I truly have enjoyed watching this project develop since its installation and am excited to see it continue.
+
+\newpage
 
 \subsection{Statement of Rights of Use}
 
@@ -414,7 +538,7 @@ any invention described or made part of this proposal throughout the world.
 
 \begin{tabular}{@{}p{.5in}p{3.5in}@{}}
 Approved: & \hrulefill \\
-& Anker, Ronald, 10/30/2018\\
+& Anker, Ronald, 10/31/2018\\
 \end{tabular}
 
 \bigskip
@@ -423,7 +547,7 @@ Approved: & \hrulefill \\
 
 \begin{tabular}{@{}p{.5in}p{3.5in}@{}}
 Approved: & \hrulefill \\
-& Lee, Vincent, 10/30/2018\\
+& Lee, Vincent, 10/31/2018\\
 \end{tabular}
 
 \bigskip
@@ -432,7 +556,7 @@ Approved: & \hrulefill \\
 
 \begin{tabular}{@{}p{.5in}p{3.5in}@{}}
 Approved: & \hrulefill \\
-& Pizzolo, Ian, 10/30/2018\\
+& Pizzolo, Ian, 10/31/2018\\
 \end{tabular}
 
 \bigskip
@@ -441,7 +565,7 @@ Approved: & \hrulefill \\
 
 \begin{tabular}{@{}p{.5in}p{3.5in}@{}}
 Approved: & \hrulefill \\
-& Schmidt, Joshua, 10/30/2018\\
+& Schmidt, Joshua, 10/31/2018\\
 \end{tabular}
 
 \bigskip
@@ -450,7 +574,44 @@ Approved: & \hrulefill \\
 
 \begin{tabular}{@{}p{.5in}p{3.5in}@{}}
 Approved: & \hrulefill \\
-& Iyengar, Mukund, 10/30/2018\\
+& Iyengar, Mukund, 10/31/2018\\
 \end{tabular}
+
+\newpage
+
+\subsection{Funding and Budget Statement}
+
+\bigskip
+
+\hspace{4mm} Number of People Accommodating: 4
+
+\bigskip
+
+Estimated Number of Days: 7
+
+\bigskip
+
+Estimated Number of Nights: 6
+
+\bigskip
+\bigskip
+
+\begin{tabular}{||c c c||} 
+  \hline
+  Category & Unit Price Estimate & Category Total \\ [0.5ex] 
+  \hline\hline
+  Flights & \$250 per Person & \$1000 \\ 
+  \hline
+  Hotel/Housing & \$70 per Room per Night (4 People per room) & \$420 \\
+  \hline
+  Food & \$30 per Person per Day & \$840 \\
+  \hline
+  Ground Transportation & \$400 & \$400 \\
+  \hline
+  Miscellaneous & \$200 & \$200 \\
+  \hline
+   & Overall Total & \$2860 \\
+  \hline
+ \end{tabular}
 
 \end{document}
