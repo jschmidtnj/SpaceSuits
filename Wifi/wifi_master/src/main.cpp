@@ -8,6 +8,7 @@
 #include "SPI.h"
 #include "ArduinoJson.h"
 #include "SD.h"
+#include "esp_wifi.h"
 
 const char *ssid = "SPACESUIT1";
 const char *password = "N@sASu!t";
@@ -17,6 +18,9 @@ const int pin_CS_SDcard = 15;
 AsyncWebServer server(80);
 const byte DNS_PORT = 53;
 DNSServer dnsServer;
+
+static const unsigned long REFRESH_INTERVAL =10000; // ms
+static unsigned long lastRefreshTime = 0;
 
 void returnOK(AsyncWebServerRequest *request) {request->send(200, "text/plain", "");}
 
@@ -211,6 +215,7 @@ void handleNotFound(AsyncWebServerRequest *request){
   String path = request->url();
   if(path.endsWith("/")) path += "index.htm";
   //DBG_OUTPUT_PORT.println(path);
+  if(path.endsWith("hello")) return;
   if(loadFromSdCard(request)){
     return;
   }
@@ -228,6 +233,51 @@ void handleNotFound(AsyncWebServerRequest *request){
   }
   request->send(404, "text/plain", message);
   DBG_OUTPUT_PORT.print(message);
+}
+
+bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
+
+  Serial.printf("[REQUEST]\t%s\r\n", (const char*)datas);
+  
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& _test = jsonBuffer.parseObject((const char*)datas); 
+  if (!_test.success()) return 0;
+
+  if (!_test.containsKey("command")) return 0;
+  String _command = _test["command"].asString();
+  Serial.println(_command);
+  DBG_OUTPUT_PORT.println("hello post request");
+  request->send(200, "text/plain", "Hello World Post");
+  
+  return 1;
+}
+
+void PrintStations() {
+  wifi_sta_list_t stationList;
+ 
+  esp_wifi_ap_get_sta_list(&stationList);  
+ 
+  Serial.print("N of connected stations: ");
+  Serial.println(stationList.num);
+ 
+  for(int i = 0; i < stationList.num; i++) {
+ 
+    wifi_sta_info_t station = stationList.sta[i];
+ 
+    for(int j = 0; j< 6; j++){
+      char str[3];
+ 
+      sprintf(str, "%02x", (int)station.mac[j]);
+      Serial.print(str);
+ 
+      if(j<5){
+        Serial.print(":");
+      }
+    }
+    Serial.println();
+  }
+ 
+  Serial.println("-----------------");
 }
 
 void setup(void){
@@ -264,6 +314,16 @@ void setup(void){
   server.on("/edit", HTTP_DELETE, handleDelete);
   server.on("/edit", HTTP_PUT, handleCreate);
   server.on("/edit", HTTP_POST, returnOK, handleSDUpload);
+  server.on("/hello", HTTP_GET, [](AsyncWebServerRequest *request){
+    DBG_OUTPUT_PORT.println("hello get request");
+    request->send(200, "text/plain", "Hello World Get");
+  });
+  server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+    if (request->url() == "/hello") {
+      if (!handleTest(request, data)) request->send(200, "text/plain", "false");
+      request->send(200, "text/plain", "true");
+    }
+  });
   server.onNotFound(handleNotFound);
   DBG_OUTPUT_PORT.println("finished creating server");
   server.begin();
@@ -272,4 +332,10 @@ void setup(void){
 
 void loop(void){
   if (redirect_all_to_host) dnsServer.processNextRequest();
+	
+	if(millis() - lastRefreshTime >= REFRESH_INTERVAL)
+	{
+		lastRefreshTime += REFRESH_INTERVAL;
+    PrintStations();
+	}
 }
