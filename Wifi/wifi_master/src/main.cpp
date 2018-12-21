@@ -9,6 +9,7 @@
 #include "ArduinoJson.h"
 #include "SD.h"
 #include "esp_wifi.h"
+#include <U8x8lib.h>
 
 const char *ssid = "SPACESUIT1";
 const char *password = "N@sASu!t";
@@ -21,6 +22,9 @@ DNSServer dnsServer;
 
 static const unsigned long REFRESH_INTERVAL =10000; // ms
 static unsigned long lastRefreshTime = 0;
+
+// the OLED used
+U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
 
 void returnOK(AsyncWebServerRequest *request) {request->send(200, "text/plain", "");}
 
@@ -237,7 +241,7 @@ void handleNotFound(AsyncWebServerRequest *request){
 
 bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
 
-  Serial.printf("[REQUEST]\t%s\r\n", (const char*)datas);
+  DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char*)datas);
   
   DynamicJsonBuffer jsonBuffer;
   JsonObject& _test = jsonBuffer.parseObject((const char*)datas); 
@@ -245,7 +249,7 @@ bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
 
   if (!_test.containsKey("command")) return 0;
   String _command = _test["command"].asString();
-  Serial.println(_command);
+  DBG_OUTPUT_PORT.println(_command);
   DBG_OUTPUT_PORT.println("hello post request");
   request->send(200, "text/plain", "Hello World Post");
   
@@ -255,29 +259,35 @@ bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
 void PrintStations() {
   wifi_sta_list_t stationList;
  
-  esp_wifi_ap_get_sta_list(&stationList);  
- 
-  Serial.print("N of connected stations: ");
-  Serial.println(stationList.num);
+  esp_wifi_ap_get_sta_list(&stationList);
+
+  char headerChar[50];
+  String headerStr = "Num Connect: " + String(stationList.num);
+  headerStr.toCharArray(headerChar, 50);
+  DBG_OUTPUT_PORT.println(headerStr);
+
+  u8x8.drawString(0, 0, headerChar);
  
   for(int i = 0; i < stationList.num; i++) {
  
     wifi_sta_info_t station = stationList.sta[i];
+
+    String mac = "";
  
     for(int j = 0; j< 6; j++){
       char str[3];
- 
-      sprintf(str, "%02x", (int)station.mac[j]);
-      Serial.print(str);
- 
-      if(j<5){
-        Serial.print(":");
+      mac += (str, "%02x", (int)station.mac[j]);
+      if(j<5) {
+        mac += ":";
       }
     }
-    Serial.println();
+    DBG_OUTPUT_PORT.println(mac);
+    char macChar[25];
+    mac.substring(0, 16).toCharArray(macChar, 50);
+    u8x8.drawString(0, i + 1, macChar);
   }
  
-  Serial.println("-----------------");
+  DBG_OUTPUT_PORT.println("-----------------");
 }
 
 void setup(void){
@@ -293,6 +303,11 @@ void setup(void){
     } 
   }
   DBG_OUTPUT_PORT.println("SD Initialized.");
+
+  u8x8.begin();
+  u8x8.setFont(u8x8_font_chroma48medium8_r);
+
+  DBG_OUTPUT_PORT.println("oled initialized");
 
   WiFi.mode(WIFI_AP);
   DBG_OUTPUT_PORT.println("Wait 100 ms for AP_START...");

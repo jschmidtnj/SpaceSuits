@@ -7,7 +7,11 @@
 const char* ssid = "SPACESUIT1";
 const char* password =  "N@sASu!t";
 
-void connectToNetwork() {
+void(* resetFunc) (void) = 0; 
+
+void setup() {
+  Serial.begin(115200);
+  delay(500);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -16,12 +20,6 @@ void connectToNetwork() {
   }
  
   Serial.println("Connected to the WiFi network");
-}
-
-void setup() {
-  Serial.begin(115200);
-  delay(500);
-  connectToNetwork();
  
   Serial.println("Connected to the WiFi network");
 }
@@ -40,7 +38,8 @@ void loop() {
       Serial.println(payload);
     } else {
       Serial.println("Error on HTTP get request");
-      connectToNetwork();
+      Serial.println("Resetting...");
+      resetFunc(); //call reset
     }
 
     StaticJsonBuffer<200> jsonBuffer;
@@ -58,7 +57,8 @@ void loop() {
       Serial.println(payload);
     } else {
       Serial.println("Error on HTTP post request");
-      connectToNetwork();
+      Serial.println("Resetting...");
+      resetFunc(); //call reset
     }
 
     http.end(); //Free the resources
