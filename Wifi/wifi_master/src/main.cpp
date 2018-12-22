@@ -9,10 +9,12 @@
 #include "ArduinoJson.h"
 #include "SD.h"
 #include "esp_wifi.h"
-#include <U8x8lib.h>
+#include "U8x8lib.h"
+#include "BluetoothSerial.h"
 
 const char *ssid = "SPACESUIT1";
 const char *password = "N@sASu!t";
+const char *bluetooth = "SPACESUIT1";
 IPAddress Ip(192, 168, 1, 1); // ip address for website
 bool redirect_all_to_host = false; // works sometimes but not all
 const int pin_CS_SDcard = 15;
@@ -25,6 +27,13 @@ static unsigned long lastRefreshTime = 0;
 
 // the OLED used
 U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
+
+// Bluetooth
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+BluetoothSerial SerialBT;
 
 void returnOK(AsyncWebServerRequest *request) {request->send(200, "text/plain", "");}
 
@@ -104,7 +113,7 @@ void handleSDUpload(AsyncWebServerRequest *request, String filename, size_t inde
   static uploadRequest uploadRequestHead;
   uploadRequest* thisUploadRequest = NULL;
 
-  if( ! index){
+  if (!index){
     if(SD.exists((char *)filename.c_str())) SD.remove((char *)filename.c_str());
     thisUploadRequest = new uploadRequest;
     thisUploadRequest->request = request;
@@ -343,9 +352,15 @@ void setup(void){
   DBG_OUTPUT_PORT.println("finished creating server");
   server.begin();
   DBG_OUTPUT_PORT.println("HTTP server started");
+
+  // Bluetooth
+
+  //SerialBT.begin(bluetooth); //Bluetooth device name
+  //DBG_OUTPUT_PORT.println("The bluetooth device started, now you can pair it.");
 }
 
 void loop(void){
+
   if (redirect_all_to_host) dnsServer.processNextRequest();
 	
 	if(millis() - lastRefreshTime >= REFRESH_INTERVAL)
@@ -353,4 +368,9 @@ void loop(void){
 		lastRefreshTime += REFRESH_INTERVAL;
     PrintStations();
 	}
+
+  if (SerialBT.available()) {
+    DBG_OUTPUT_PORT.write(SerialBT.read());
+  }
+  delay(100);
 }
