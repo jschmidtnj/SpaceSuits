@@ -10,8 +10,9 @@
 #include "SD.h"
 #include "esp_wifi.h"
 #include "U8x8lib.h"
-#include "BluetoothSerial.h"
 
+#define debug_mode true
+#define BAUD_RATE 9600
 const char *ssid = "SPACESUIT1";
 const char *password = "N@sASu!t";
 const char *bluetooth = "SPACESUIT1";
@@ -22,7 +23,7 @@ AsyncWebServer server(80);
 const byte DNS_PORT = 53;
 DNSServer dnsServer;
 
-static const unsigned long REFRESH_INTERVAL =10000; // ms
+static const unsigned long REFRESH_INTERVAL = 10000; // ms
 static unsigned long lastRefreshTime = 0;
 
 // the OLED used
@@ -33,7 +34,6 @@ U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
 
-BluetoothSerial SerialBT;
 
 void returnOK(AsyncWebServerRequest *request) {request->send(200, "text/plain", "");}
 
@@ -120,7 +120,11 @@ void handleSDUpload(AsyncWebServerRequest *request, String filename, size_t inde
     thisUploadRequest->next = uploadRequestHead.next;
     uploadRequestHead.next = thisUploadRequest;
     thisUploadRequest->uploadFile = SD.open(filename.c_str(), FILE_WRITE);
-    DBG_OUTPUT_PORT.print("Upload: START, filename: "); DBG_OUTPUT_PORT.println(filename);
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.print("Upload: START, filename: ");
+      DBG_OUTPUT_PORT.println(filename);
+    }
+    
   }
   else{
     thisUploadRequest = uploadRequestHead.next;
@@ -136,7 +140,11 @@ void handleSDUpload(AsyncWebServerRequest *request, String filename, size_t inde
   
   if(final){
     thisUploadRequest->uploadFile.close();
-    DBG_OUTPUT_PORT.print("Upload: END, Size: "); DBG_OUTPUT_PORT.println(thisUploadRequest->fileSize);
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.print("Upload: END, Size: ");
+      DBG_OUTPUT_PORT.println(thisUploadRequest->fileSize);
+    }
+    
     uploadRequest* linkUploadRequest = &uploadRequestHead;
     while(linkUploadRequest->next != thisUploadRequest) linkUploadRequest = linkUploadRequest->next;
     linkUploadRequest->next = thisUploadRequest->next;
@@ -227,7 +235,6 @@ void printDirectory(AsyncWebServerRequest *request) {
 void handleNotFound(AsyncWebServerRequest *request){
   String path = request->url();
   if(path.endsWith("/")) path += "index.htm";
-  //DBG_OUTPUT_PORT.println(path);
   if(path.endsWith("hello")) return;
   if(loadFromSdCard(request)){
     return;
@@ -245,21 +252,25 @@ void handleNotFound(AsyncWebServerRequest *request){
     message += String(p->name().c_str()) + " : " + String(p->value().c_str()) + "\r\n";
   }
   request->send(404, "text/plain", message);
-  DBG_OUTPUT_PORT.print(message);
+  if (debug_mode)
+    DBG_OUTPUT_PORT.print(message);
 }
 
 bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
 
-  DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char*)datas);
+  if (debug_mode)
+    DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char*)datas);
   
   DynamicJsonBuffer jsonBuffer;
   JsonObject& _test = jsonBuffer.parseObject((const char*)datas); 
   if (!_test.success()) return 0;
 
   if (!_test.containsKey("command")) return 0;
-  String _command = _test["command"].asString();
-  DBG_OUTPUT_PORT.println(_command);
-  DBG_OUTPUT_PORT.println("hello post request");
+  String _command = _test["command"];
+  if (debug_mode) {
+    DBG_OUTPUT_PORT.println(_command);
+    DBG_OUTPUT_PORT.println("hello post request");
+  }
   request->send(200, "text/plain", "Hello World Post");
   
   return 1;
@@ -284,8 +295,7 @@ void PrintStations() {
     String mac = "";
  
     for(int j = 0; j< 6; j++){
-      char str[3];
-      mac += (str, "%02x", (int)station.mac[j]);
+      mac += (String)station.mac[j];
       if(j<5) {
         mac += ":";
       }
@@ -295,42 +305,49 @@ void PrintStations() {
     mac.substring(0, 16).toCharArray(macChar, 50);
     u8x8.drawString(0, i + 1, macChar);
   }
- 
+
   DBG_OUTPUT_PORT.println("-----------------");
 }
 
 void setup(void){
-  
-  DBG_OUTPUT_PORT.begin(115200);
-  DBG_OUTPUT_PORT.setDebugOutput(true);
-  DBG_OUTPUT_PORT.print("\n");
+
+  DBG_OUTPUT_PORT.begin(BAUD_RATE);
+  DBG_OUTPUT_PORT.setDebugOutput(debug_mode);
 
   if( ! SD.begin(pin_CS_SDcard)){
-    DBG_OUTPUT_PORT.println("SD initiatization failed. Retrying.");
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("#SD initiatization failed. Retrying.");
     while(!SD.begin(pin_CS_SDcard)){
       delay(250); 
     } 
   }
-  DBG_OUTPUT_PORT.println("SD Initialized.");
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#SD Initialized.");
 
   u8x8.begin();
   u8x8.setFont(u8x8_font_chroma48medium8_r);
 
-  DBG_OUTPUT_PORT.println("oled initialized");
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#oled initialized");
 
   WiFi.mode(WIFI_AP);
-  DBG_OUTPUT_PORT.println("Wait 100 ms for AP_START...");
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#Wait 100 ms for AP_START...");
   delay(100);
   WiFi.softAP(ssid, password);
 
-  DBG_OUTPUT_PORT.println("Set softAPConfig");
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#Set softAPConfig");
   IPAddress NMask(255, 255, 255, 0);
   WiFi.softAPConfig(Ip, Ip, NMask);
  
   IPAddress IP = WiFi.softAPIP();
 
-  DBG_OUTPUT_PORT.print("IP address: ");
-  DBG_OUTPUT_PORT.println(IP);
+  if (debug_mode) {
+    DBG_OUTPUT_PORT.print("#IP address: ");
+    DBG_OUTPUT_PORT.println(IP);
+  }
+  
 
   if (redirect_all_to_host) dnsServer.start(DNS_PORT, "*", IP);
 
@@ -339,7 +356,7 @@ void setup(void){
   server.on("/edit", HTTP_PUT, handleCreate);
   server.on("/edit", HTTP_POST, returnOK, handleSDUpload);
   server.on("/hello", HTTP_GET, [](AsyncWebServerRequest *request){
-    DBG_OUTPUT_PORT.println("hello get request");
+    DBG_OUTPUT_PORT.println("#hello get request");
     request->send(200, "text/plain", "Hello World Get");
   });
   server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
@@ -349,14 +366,15 @@ void setup(void){
     }
   });
   server.onNotFound(handleNotFound);
-  DBG_OUTPUT_PORT.println("finished creating server");
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#finished creating server");
   server.begin();
-  DBG_OUTPUT_PORT.println("HTTP server started");
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#HTTP server started");
 
   // Bluetooth
-
-  //SerialBT.begin(bluetooth); //Bluetooth device name
-  //DBG_OUTPUT_PORT.println("The bluetooth device started, now you can pair it.");
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#The bluetooth device started, now you can pair it.");
 }
 
 void loop(void){
@@ -366,11 +384,7 @@ void loop(void){
 	if(millis() - lastRefreshTime >= REFRESH_INTERVAL)
 	{
 		lastRefreshTime += REFRESH_INTERVAL;
-    PrintStations();
+    if (debug_mode)
+      PrintStations();
 	}
-
-  if (SerialBT.available()) {
-    DBG_OUTPUT_PORT.write(SerialBT.read());
-  }
-  delay(100);
 }
