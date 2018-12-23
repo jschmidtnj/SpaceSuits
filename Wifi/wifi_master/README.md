@@ -2,7 +2,9 @@
 
 master code for Arduino communicating with Hololens via Bluetooth.
 
-See [this](http://docs.platformio.org/en/latest/platforms/espressif32.html#partition-tables), [this](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/partition-tables.html), and [this](https://desire.giesecke.tk/index.php/2018/01/30/change-partition-size/) for partition changing for bluetooth.
+See [this](http://docs.platformio.org/en/latest/platforms/espressif32.html#partition-tables), [this](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/partition-tables.html), and [this](https://desire.giesecke.tk/index.php/2018/01/30/change-partition-size/) for partition changing for bluetooth.  
+
+See [this](https://github.com/esp8266/Arduino/issues/570) for increasing max connections to access point.
 
 ## Trying ESP32-IDF Compiler
 

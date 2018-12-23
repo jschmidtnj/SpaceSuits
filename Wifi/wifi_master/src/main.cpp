@@ -10,12 +10,15 @@
 #include "SD.h"
 #include "esp_wifi.h"
 #include "U8x8lib.h"
+#include "SoftwareSerial.h"
 
 #define debug_mode true
-#define BAUD_RATE 9600
+#define DBG_BAUD_RATE 9600
+#define BT_BAUD_RATE 9600
+#define RX_PIN 13 // rx pin on bluetooth module connected to this pin on Arduino
+#define TX_PIN 12 // tx pin on bluetooth module connected to this pin on Arduino
 const char *ssid = "SPACESUIT1";
 const char *password = "N@sASu!t";
-const char *bluetooth = "SPACESUIT1";
 IPAddress Ip(192, 168, 1, 1); // ip address for website
 bool redirect_all_to_host = false; // works sometimes but not all
 const int pin_CS_SDcard = 15;
@@ -23,8 +26,10 @@ AsyncWebServer server(80);
 const byte DNS_PORT = 53;
 DNSServer dnsServer;
 
-static const unsigned long REFRESH_INTERVAL = 10000; // ms
-static unsigned long lastRefreshTime = 0;
+static const unsigned long WIFI_REFRESH_INTERVAL = 10000; // ms
+static unsigned long wifiLastRefreshTime = 0;
+static const unsigned long BLUETOOTH_REFRESH_INTERVAL = 1000; //ms
+static unsigned long bluetoothLastRefreshTime = 0;
 
 // the OLED used
 U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
@@ -34,6 +39,8 @@ U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
 
+// tx pin on bluetooth module connected to rx pin on Arduino, and vice-versa
+SoftwareSerial btSerial(RX_PIN, TX_PIN, false, 256);
 
 void returnOK(AsyncWebServerRequest *request) {request->send(200, "text/plain", "");}
 
@@ -256,6 +263,41 @@ void handleNotFound(AsyncWebServerRequest *request){
     DBG_OUTPUT_PORT.print(message);
 }
 
+void PrintStations() {
+  wifi_sta_list_t stationList;
+ 
+  esp_wifi_ap_get_sta_list(&stationList);
+
+  char headerChar[50];
+  String headerStr = "Num Connect: " + String(stationList.num);
+  headerStr.toCharArray(headerChar, 50);
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println(headerStr);
+
+  u8x8.drawString(0, 0, headerChar);
+ 
+  for(int i = 0; i < stationList.num; i++) {
+ 
+    wifi_sta_info_t station = stationList.sta[i];
+
+    String mac = "#";
+ 
+    for(int j = 0; j< 6; j++){
+      mac += (String)station.mac[j];
+      if(j<5) {
+        mac += ":";
+      }
+    }
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println(mac);
+    char macChar[25];
+    mac.substring(1, 16).toCharArray(macChar, 25);
+    u8x8.drawString(0, i + 1, macChar);
+  }
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#-----------------");
+}
+
 bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
 
   if (debug_mode)
@@ -276,45 +318,16 @@ bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
   return 1;
 }
 
-void PrintStations() {
-  wifi_sta_list_t stationList;
- 
-  esp_wifi_ap_get_sta_list(&stationList);
-
-  char headerChar[50];
-  String headerStr = "Num Connect: " + String(stationList.num);
-  headerStr.toCharArray(headerChar, 50);
-  DBG_OUTPUT_PORT.println(headerStr);
-
-  u8x8.drawString(0, 0, headerChar);
- 
-  for(int i = 0; i < stationList.num; i++) {
- 
-    wifi_sta_info_t station = stationList.sta[i];
-
-    String mac = "";
- 
-    for(int j = 0; j< 6; j++){
-      mac += (String)station.mac[j];
-      if(j<5) {
-        mac += ":";
-      }
-    }
-    DBG_OUTPUT_PORT.println(mac);
-    char macChar[25];
-    mac.substring(0, 16).toCharArray(macChar, 50);
-    u8x8.drawString(0, i + 1, macChar);
-  }
-
-  DBG_OUTPUT_PORT.println("-----------------");
+void SendData(void) {
+  btSerial.println("testing123");
 }
 
-void setup(void){
+void setup(void) {
 
-  DBG_OUTPUT_PORT.begin(BAUD_RATE);
+  DBG_OUTPUT_PORT.begin(DBG_BAUD_RATE);
   DBG_OUTPUT_PORT.setDebugOutput(debug_mode);
 
-  if( ! SD.begin(pin_CS_SDcard)){
+  if (! SD.begin(pin_CS_SDcard)){
     if (debug_mode)
       DBG_OUTPUT_PORT.println("#SD initiatization failed. Retrying.");
     while(!SD.begin(pin_CS_SDcard)){
@@ -352,17 +365,25 @@ void setup(void){
   if (redirect_all_to_host) dnsServer.start(DNS_PORT, "*", IP);
 
   server.on("/list", HTTP_GET, printDirectory);
-  server.on("/edit", HTTP_DELETE, handleDelete);
-  server.on("/edit", HTTP_PUT, handleCreate);
-  server.on("/edit", HTTP_POST, returnOK, handleSDUpload);
+  //server.on("/edit", HTTP_DELETE, handleDelete);
+  //server.on("/edit", HTTP_PUT, handleCreate);
+  //server.on("/edit", HTTP_POST, returnOK, handleSDUpload);
   server.on("/hello", HTTP_GET, [](AsyncWebServerRequest *request){
     DBG_OUTPUT_PORT.println("#hello get request");
     request->send(200, "text/plain", "Hello World Get");
   });
   server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
-    if (request->url() == "/hello") {
-      if (!handleTest(request, data)) request->send(200, "text/plain", "false");
-      request->send(200, "text/plain", "true");
+    String url = request->url();
+    if (url == "/glove1") {
+      if (!handleTest(request, data))
+        request->send(200, "text/plain", "false");
+      else
+        request->send(200, "text/plain", "true");
+    } else if (request->url() == "/hello") {
+      if (!handleTest(request, data))
+        request->send(200, "text/plain", "false");
+      else
+        request->send(200, "text/plain", "true");
     }
   });
   server.onNotFound(handleNotFound);
@@ -373,18 +394,23 @@ void setup(void){
     DBG_OUTPUT_PORT.println("#HTTP server started");
 
   // Bluetooth
+  btSerial.begin(BT_BAUD_RATE);
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#The bluetooth device started, now you can pair it.");
 }
 
 void loop(void){
 
-  if (redirect_all_to_host) dnsServer.processNextRequest();
+  if (redirect_all_to_host)
+    dnsServer.processNextRequest();
 	
-	if(millis() - lastRefreshTime >= REFRESH_INTERVAL)
-	{
-		lastRefreshTime += REFRESH_INTERVAL;
-    if (debug_mode)
-      PrintStations();
+	if(millis() - wifiLastRefreshTime >= WIFI_REFRESH_INTERVAL) {
+		wifiLastRefreshTime += WIFI_REFRESH_INTERVAL;
+    PrintStations();
+	}
+
+  if(millis() - bluetoothLastRefreshTime >= BLUETOOTH_REFRESH_INTERVAL) {
+		bluetoothLastRefreshTime += BLUETOOTH_REFRESH_INTERVAL;
+    SendData();
 	}
 }
