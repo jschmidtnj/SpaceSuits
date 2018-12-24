@@ -4,7 +4,7 @@
 #include "ESP8266HTTPClient.h"
 #include "ArduinoJson.h"
 
-const char* ssid = "SPACESUIT1";
+const char* ssid = "SPACESUITWIFI";
 const char* password =  "N@sASu!t";
 
 void(* resetFunc) (void) = 0; 
