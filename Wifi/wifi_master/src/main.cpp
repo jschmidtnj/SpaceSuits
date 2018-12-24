@@ -15,9 +15,10 @@
 #define debug_mode true
 #define DBG_BAUD_RATE 9600
 #define BT_BAUD_RATE 9600
+#define BT_POWER_PIN 25
 #define RX_PIN 13 // rx pin on bluetooth module connected to this pin on Arduino
 #define TX_PIN 12 // tx pin on bluetooth module connected to this pin on Arduino
-const char *ssid = "SPACESUIT1";
+const char *ssid = "SPACESUITWIFI";
 const char *password = "N@sASu!t";
 IPAddress Ip(192, 168, 1, 1); // ip address for website
 bool redirect_all_to_host = false; // works sometimes but not all
@@ -326,6 +327,10 @@ void setup(void) {
 
   DBG_OUTPUT_PORT.begin(DBG_BAUD_RATE);
   DBG_OUTPUT_PORT.setDebugOutput(debug_mode);
+
+  // turn on bluetooth module
+  pinMode(BT_POWER_PIN, OUTPUT);
+  digitalWrite(BT_POWER_PIN, HIGH);
 
   if (! SD.begin(pin_CS_SDcard)){
     if (debug_mode)
