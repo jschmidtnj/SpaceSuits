@@ -13,15 +13,18 @@
 #include "SoftwareSerial.h"
 
 #define debug_mode true
-#define DBG_BAUD_RATE 9600
+#define bt_mode false // false = send data after every requst, true = send data in intervals
+#define redirect_all_to_host true
+#define DBG_BAUD_RATE 115200
 #define BT_BAUD_RATE 9600
 #define BT_POWER_PIN 25
 #define RX_PIN 13 // rx pin on bluetooth module connected to this pin on Arduino
 #define TX_PIN 12 // tx pin on bluetooth module connected to this pin on Arduino
+#define ttl 300 // ttl for dns
 const char *ssid = "SPACESUITWIFI";
 const char *password = "N@sASu!t";
+const char *host = "spacesuit.local";
 IPAddress Ip(192, 168, 1, 1); // ip address for website
-bool redirect_all_to_host = false; // works sometimes but not all
 const int pin_CS_SDcard = 15;
 AsyncWebServer server(80);
 const byte DNS_PORT = 53;
@@ -42,6 +45,10 @@ U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/
 
 // tx pin on bluetooth module connected to rx pin on Arduino, and vice-versa
 SoftwareSerial btSerial(RX_PIN, TX_PIN, false, 256);
+
+// JSON data
+DynamicJsonBuffer jsonDataBuffer;
+JsonObject& jsonData = jsonDataBuffer.createObject();
 
 void returnOK(AsyncWebServerRequest *request) {request->send(200, "text/plain", "");}
 
@@ -230,7 +237,7 @@ void printDirectory(AsyncWebServerRequest *request) {
   while(entry = dir.openNextFile()){
     JsonObject& object = jsonBuffer.createObject();
     object["type"] = (entry.isDirectory()) ? "dir" : "file";
-    object["name"] = String(entry.name());
+    object["name"] = entry.name();
     array.add(object);
     entry.close();
   }  
@@ -244,6 +251,7 @@ void handleNotFound(AsyncWebServerRequest *request){
   String path = request->url();
   if(path.endsWith("/")) path += "index.htm";
   if(path.endsWith("hello")) return;
+  if(path.endsWith("glove1")) return;
   if(loadFromSdCard(request)){
     return;
   }
@@ -257,7 +265,9 @@ void handleNotFound(AsyncWebServerRequest *request){
   message += "\n";
   for (uint8_t i=0; i<request->params(); i++){
     AsyncWebParameter* p = request->getParam(i);
-    message += String(p->name().c_str()) + " : " + String(p->value().c_str()) + "\r\n";
+    String name = p->name().c_str();
+    String val = p->value().c_str();
+    message += (name + " : " + val + "\r\n");
   }
   request->send(404, "text/plain", message);
   if (debug_mode)
@@ -270,7 +280,9 @@ void PrintStations() {
   esp_wifi_ap_get_sta_list(&stationList);
 
   char headerChar[50];
-  String headerStr = "Num Connect: " + String(stationList.num);
+  char buffer [5];
+  String stationNumStr = itoa(stationList.num, buffer, 10);
+  String headerStr = "Num Connect: " + stationNumStr;
   headerStr.toCharArray(headerChar, 50);
   if (debug_mode)
     DBG_OUTPUT_PORT.println(headerStr);
@@ -281,7 +293,7 @@ void PrintStations() {
  
     wifi_sta_info_t station = stationList.sta[i];
 
-    String mac = "#";
+    String mac = "";
  
     for(int j = 0; j< 6; j++){
       mac += (String)station.mac[j];
@@ -296,7 +308,7 @@ void PrintStations() {
     u8x8.drawString(0, i + 1, macChar);
   }
   if (debug_mode)
-    DBG_OUTPUT_PORT.println("#-----------------");
+    DBG_OUTPUT_PORT.println("-----------------");
 }
 
 bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
@@ -320,7 +332,32 @@ bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
 }
 
 void SendData(void) {
-  btSerial.println("testing123");
+  String data = "";
+  jsonData.printTo(data);
+  btSerial.println(data);
+}
+
+bool handleData(AsyncWebServerRequest *request, uint8_t *datas) {
+
+  if (debug_mode)
+    DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char*)datas);
+  
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& data = jsonBuffer.parseObject((const char*)datas); 
+  if (!data.success()) return 0;
+
+  if (!data.containsKey("id")) return 0;
+  String id = data["id"];
+  if (debug_mode) {
+    DBG_OUTPUT_PORT.println("data from " + id);
+  }
+  JsonObject& nested = jsonBuffer.parseObject((const char*)datas);
+  jsonData[id] = nested;
+  // send data through bluetooth immediately
+  if (! bt_mode)
+    SendData();
+  request->send(200, "text/plain", id + ": OK");
+  return 1;
 }
 
 void setup(void) {
@@ -367,7 +404,12 @@ void setup(void) {
   }
   
 
-  if (redirect_all_to_host) dnsServer.start(DNS_PORT, "*", IP);
+  if (redirect_all_to_host) {
+    //dnsServer.start(DNS_PORT, "*", IP);
+    dnsServer.setTTL(ttl);
+    dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
+    dnsServer.start(DNS_PORT, host, IP);
+  }
 
   server.on("/list", HTTP_GET, printDirectory);
   //server.on("/edit", HTTP_DELETE, handleDelete);
@@ -377,10 +419,21 @@ void setup(void) {
     DBG_OUTPUT_PORT.println("#hello get request");
     request->send(200, "text/plain", "Hello World Get");
   });
+  /*
+  server.on("/glove1", HTTP_PUT, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", "Put route");
+  });*/
+  server.on("/glove1", HTTP_PUT, [](AsyncWebServerRequest *request){
+  }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+    if (!handleData(request, data))
+        request->send(200, "text/plain", "false");
+      else
+        request->send(200, "text/plain", "true");
+  });/*
   server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
     String url = request->url();
     if (url == "/glove1") {
-      if (!handleTest(request, data))
+      if (!handleData(request, data))
         request->send(200, "text/plain", "false");
       else
         request->send(200, "text/plain", "true");
@@ -390,7 +443,8 @@ void setup(void) {
       else
         request->send(200, "text/plain", "true");
     }
-  });
+    return;
+  });*/
   server.onNotFound(handleNotFound);
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#finished creating server");
@@ -414,8 +468,11 @@ void loop(void){
     PrintStations();
 	}
 
-  if(millis() - bluetoothLastRefreshTime >= BLUETOOTH_REFRESH_INTERVAL) {
-		bluetoothLastRefreshTime += BLUETOOTH_REFRESH_INTERVAL;
-    SendData();
-	}
+  // send data after interval
+  if (bt_mode) {
+    if(millis() - bluetoothLastRefreshTime >= BLUETOOTH_REFRESH_INTERVAL) {
+      bluetoothLastRefreshTime += BLUETOOTH_REFRESH_INTERVAL;
+      SendData();
+    }
+  }
 }
