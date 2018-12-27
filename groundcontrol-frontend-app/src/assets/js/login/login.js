@@ -197,8 +197,20 @@ $(document).ready(function () {
         }
     });
 
-    $("#loginSubmitEmail").on('click touchstart', function () {
-        loginsubmit();
+    var loginSubmitted = false;
+    $("#loginSubmitEmail").on('click touchstart', function (e) {
+        e.stopImmediatePropagation();
+        if(e.type == "touchstart") {
+            loginSubmitted = true;
+            loginsubmit();
+        }
+        else if(e.type == "click" && !loginSubmitted) {
+            loginsubmit();
+        }
+        else {
+            loginSubmitted = false;
+        }
+        return false;
     });
 
     $.validator.addMethod(

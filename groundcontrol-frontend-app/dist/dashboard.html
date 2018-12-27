@@ -50,9 +50,20 @@
                 <div id="error-info"></div>
             </p>
         </div>
-        <div class="alert alert-success collapse" role="alert" id="alerttasksuccess">
-            <h5 class="alert-heading">Task Submitted Successfully</h5>
+        <div class="alert alert-success collapse" role="alert" id="alerttaskupdatesuccess">
+            <h5 class="alert-heading">Tasks Updated Successfully</h5>
             <hr>
+        </div>
+        <div class="alert alert-danger collapse" role="alert" id="alertconfirmdeletetask">
+            <h5 class="alert-heading">Confirm Delete
+                <button type="button" class="close" aria-label="Close" id="cancelDeleteTask">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </h5>
+            <hr>
+            <button value="Comfirm" class="btn btn-primary onclick=" void(0) "" id="confirmDeleteTask">
+                Confirm
+            </button>
         </div>
     </div>
 </section>
@@ -190,9 +201,27 @@
                     <hr>
                 </div>
                 <div id="taskmanagementcollapse" class="collapse">
+                    <br />
                     <h5>Task Management</h5>
-                    <br/>
-                    <br/>
+                    <br />
+                    <div id="notaskswarning" class="text-center collapse">
+                        <br />
+                        <h6>No tasks found. Add one below.</h6>
+                        <br />
+                    </div>
+                    <div id="tasklistcollapse" class="collapse">
+                        <table id="tasklist" class="table table-hover table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Id Number</th>
+                                    <th>Task</th>
+                                    <th>Submission Time</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody id="taskdata"></tbody>
+                        </table>
+                    </div>
                     <div class="container">
                         <div class="row justify-content-center">
                             <div class="col-8">

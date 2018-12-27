@@ -62,14 +62,29 @@ $(document).ready(function () {
             // User is signed in.
             //console.log("signed in");
             signed_in_initially = true;
-            $(".logoutButton").on('click touchstart', function () {
+            var handledLogout = false;
+            $(".logoutButton").on('click touchstart', function (e) {
+                e.stopImmediatePropagation();
+                if (e.type == "touchstart") {
+                    handledLogout = true;
+                    signoutComplete();
+                }
+                else if (e.type == "click" && !handledLogout) {
+                    signoutComplete();
+                }
+                else {
+                    handledLogout = false;
+                }
+                return false;
+            });
+            function signoutComplete() {
                 firebase.auth().signOut().then(function () {
                     // Sign-out successful.
                 }).catch(function (error) {
                     // An error happened.
                     handleError(error);
                 });
-            });
+            }
             $("#email").text(window.email);
             $("#bodycollapse").removeClass("collapse");
             getInitialValues();
@@ -181,18 +196,17 @@ $(document).ready(function () {
     }
 
     $("#deleteAccount").on('click touchstart', function () {
-        var button = $(this);
-        //console.log(button);
-        var valueArray = button.attr('value').split(',');
-        //console.log(valueArray);
         var started = false;
         $('#alertconfirmdeleteaccount').fadeIn();
+
         $("#cancelDeleteAccount").on('click touchstart', function () {
             if (!started) {
                 $('#alertconfirmdeleteaccount').fadeOut();
                 started = true;
             }
+            return false;
         });
+
         $("#confirmDeleteAccount").on('click touchstart', function () {
             if (!started) {
                 var user = firebase.auth().currentUser;
@@ -209,11 +223,25 @@ $(document).ready(function () {
                     });
                 });
             }
+            return false;
         });
+        return false;
     });
 
-    $("#changeNameSubmit").on('click touchstart', function () {
-        changeNameSub();
+    var changedName = false;
+    $("#changeNameSubmit").on('click touchstart', function (e) {
+        e.stopImmediatePropagation();
+        if (e.type == "touchstart") {
+            changedName = true;
+            changeNameSub();
+        }
+        else if (e.type == "click" && !changedName) {
+            changeNameSub();
+        }
+        else {
+            changedName = false;
+        }
+        return false;
     });
 
     $("#fullname").keypress(function (event) {
@@ -236,8 +264,20 @@ $(document).ready(function () {
     });
     */
 
-    $("#changePasswordSubmit").on('click touchstart', function () {
-        changePasswordSub();
+    var changedPassword = false;
+    $("#changePasswordSubmit").on('click touchstart', function (e) {
+        e.stopImmediatePropagation();
+        if(e.type == "touchstart") {
+            changedPassword = true;
+            changePasswordSub();
+        }
+        else if(e.type == "click" && !changedPassword) {
+            changePasswordSub();
+        }
+        else {
+            changedPassword = false;
+        }
+        return false;
     });
 
     $("#confirm_password").keypress(function (event) {

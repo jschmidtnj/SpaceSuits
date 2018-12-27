@@ -156,7 +156,8 @@ $(document).ready(function () {
     $('#privacypolicylink').attr('href', config.other.privacyPolicyUrl);
     $('#helplink').attr('href', config.other.helpPageUrl);
 
-    $("#loginSubmitGoogle").on('click touchstart', function () {
+    $("#loginSubmitGoogle").on('click touchstart', function (e) {
+        e.stopImmediatePropagation();
         //console.log("signing into google");
         firebase.auth().signOut().then(function () {
             // Sign-out successful.
@@ -334,7 +335,24 @@ $(document).ready(function () {
         });
     }
 
-    $("#submitData").on('click touchstart', function () {
+    var submittedData = false;
+
+    $("#submitData").on('click touchstart', function (e) {
+        e.stopImmediatePropagation();
+        if(e.type == "touchstart") {
+            submittedData = true;
+            submitDataHandle();
+        }
+        else if(e.type == "click" && !submittedData) {
+            submitDataHandle();
+        }
+        else {
+            submittedData = false;
+        }
+        return false;
+    });
+
+    function submitDataHandle() {
         if ($("#registerForm").valid()) {
             var formData = $("#registerForm").serializeArray();
             //console.log(formData);
@@ -347,12 +365,27 @@ $(document).ready(function () {
         } else {
             console.log("form invalid");
         }
+    }
+
+    var expandedForm = 0; //collapsed = 0
+    var handledEmail = false;
+
+    $("#registerEmail").on('click touchstart', function (e) {
+        e.stopImmediatePropagation();
+        if(e.type == "touchstart") {
+            handledEmail = true;
+            toggleEmail();
+        }
+        else if(e.type == "click" && !handledEmail) {
+            toggleEmail();
+        }
+        else {
+            handledEmail = false;
+        }
         return false;
     });
 
-    var expandedForm = 0; //collapsed = 0
-
-    $("#registerEmail").on('click touchstart', function () {
+    function toggleEmail() {
         usertype = "groundcontrol";
         if (expandedForm == 1) { //if it is mode 1 collapse
             $("#expandForm").addClass("collapse");
@@ -363,6 +396,5 @@ $(document).ready(function () {
         }
         $("#expandSecretKey").removeClass("collapse");
         validateForm();
-    });
-    return false;
+    }
 });

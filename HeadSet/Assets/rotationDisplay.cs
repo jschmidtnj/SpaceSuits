@@ -16,5 +16,4 @@ public class rotationDisplay : MonoBehaviour {
 	void Update () {
         textElement.text = camera.transform.localEulerAngles.ToString() ;
 	}
-
 }

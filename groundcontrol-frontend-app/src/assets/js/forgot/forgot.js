@@ -78,8 +78,20 @@ $(document).ready(function () {
         }
     }
     
-    $("#sendResetEmail").on('click touchstart', function () {
-        resetTheEmail();
+    var emailsent = false;
+    $("#sendResetEmail").on('click touchstart', function (e) {
+        e.stopImmediatePropagation();
+        if(e.type == "touchstart") {
+            emailsent = true;
+            resetTheEmail();
+        }
+        else if(e.type == "click" && !emailsent) {
+            resetTheEmail();
+        }
+        else {
+            emailsent = false;
+        }
+        return false;
     });
 
     $("#sendResetEmail").keypress(function (event) {

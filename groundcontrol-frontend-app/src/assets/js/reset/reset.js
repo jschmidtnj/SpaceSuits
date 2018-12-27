@@ -84,7 +84,23 @@ $(document).ready(function () {
     });
 
 
-    $("#resetPassword").on('click touchstart', function () {
+    var passwordResetted = false;
+    $("#resetPassword").on('click touchstart', function (e) {
+        e.stopImmediatePropagation();
+        if(e.type == "touchstart") {
+            passwordResetted = true;
+            completeReset();
+        }
+        else if(e.type == "click" && !passwordResetted) {
+            completeReset();
+        }
+        else {
+            passwordResetted = false;
+        }
+        return false;
+    });
+
+    function completeReset() {
         if ($("#resetForm").valid()) {
             var formData = $("#resetForm").serializeArray();
             var newPassword = formData[0].value.toString();
@@ -106,7 +122,7 @@ $(document).ready(function () {
         } else {
             //console.log("invalid input");
         }
-    });
+    }
 
     $.validator.addMethod(
         "regex1",
