@@ -1,4 +1,3 @@
-#define DBG_OUTPUT_PORT Serial
 #define FS_NO_GLOBALS
 #include <Arduino.h>
 #include "WiFi.h"
@@ -10,17 +9,20 @@
 #include "SD.h"
 #include "esp_wifi.h"
 #include "U8x8lib.h"
-#include "SoftwareSerial.h"
+//#include "SoftwareSerial.h" // optional softwareserial library
+//#include "EDB.h" // Extended database library - see https://github.com/jwhiddon/EDB?utm_source=platformio&utm_medium=piohome
 
+#define DBG_OUTPUT_PORT Serial
 #define debug_mode true
 #define bt_mode false // false = send data after every requst, true = send data in intervals
 #define redirect_all_to_host true
 #define DBG_BAUD_RATE 115200
 #define BT_BAUD_RATE 9600
-#define BT_POWER_PIN 25
 #define RX_PIN 13 // rx pin on bluetooth module connected to this pin on Arduino
 #define TX_PIN 12 // tx pin on bluetooth module connected to this pin on Arduino
 #define ttl 300 // ttl for dns
+#define channel_num 1 // channel number for softAP
+#define max_connection 10 // max connections to AP
 const char *ssid = "SPACESUITWIFI";
 const char *password = "N@sASu!t";
 const char *host = "spacesuit.local";
@@ -29,11 +31,16 @@ const int pin_CS_SDcard = 15;
 AsyncWebServer server(80);
 const byte DNS_PORT = 53;
 DNSServer dnsServer;
+static const String devices[] = {"glove1", "glove2", "imu"};
 
 static const unsigned long WIFI_REFRESH_INTERVAL = 10000; // ms
 static unsigned long wifiLastRefreshTime = 0;
 static const unsigned long BLUETOOTH_REFRESH_INTERVAL = 1000; //ms
 static unsigned long bluetoothLastRefreshTime = 0;
+
+static const unsigned long BLINK_INTERVAL = 1000; //ms
+static unsigned long lastBlink = 0;
+bool blinkState = false; // false = off
 
 // the OLED used
 U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
@@ -44,11 +51,13 @@ U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/
 #endif
 
 // tx pin on bluetooth module connected to rx pin on Arduino, and vice-versa
-SoftwareSerial btSerial(RX_PIN, TX_PIN, false, 256);
+//SoftwareSerial btSerial(RX_PIN, TX_PIN, false, 256);
+//not using softwareserial anymore because it had errors with data receive.
+HardwareSerial btSerial(1);
 
-// JSON data
-DynamicJsonBuffer jsonDataBuffer;
-JsonObject& jsonData = jsonDataBuffer.createObject();
+// JSON data - does not work with async
+//DynamicJsonBuffer jsonDataBuffer;
+//JsonObject& jsonData = jsonDataBuffer.createObject();
 
 void returnOK(AsyncWebServerRequest *request) {request->send(200, "text/plain", "");}
 
@@ -62,7 +71,7 @@ bool loadFromSdCard(AsyncWebServerRequest *request) {
     File dataFile;
   };
   fileBlk *fileObj = new fileBlk;
-  
+
   if (path.endsWith("/")) path += "index.htm";
   if (path.endsWith(".src")) path = path.substring(0, path.lastIndexOf("."));
   else if (path.endsWith(".html")) dataType = "text/html";
@@ -250,9 +259,11 @@ void printDirectory(AsyncWebServerRequest *request) {
 void handleNotFound(AsyncWebServerRequest *request){
   String path = request->url();
   if(path.endsWith("/")) path += "index.htm";
-  if(path.endsWith("hello")) return;
-  if(path.endsWith("glove1")) return;
-  if(loadFromSdCard(request)){
+  for (String device: devices) {
+    if (path.endsWith(device)) return;
+  }
+  if (path.endsWith("hello")) return;
+  if (loadFromSdCard(request)){
     return;
   }
   String message = "\nNo Handler\r\n";
@@ -331,17 +342,41 @@ bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
   return 1;
 }
 
+/*
 void SendData(void) {
   String data = "";
   jsonData.printTo(data);
   btSerial.println(data);
 }
+*/
 
-bool handleData(AsyncWebServerRequest *request, uint8_t *datas) {
-
+bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
   if (debug_mode)
     DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char*)datas);
-  
+  int paramsNr = request->params();
+  if (debug_mode) {
+    DBG_OUTPUT_PORT.print(paramsNr);
+    DBG_OUTPUT_PORT.println(" queries");
+  }
+  String dataStr;
+  for(int i=0;i < paramsNr;i++){
+    AsyncWebParameter* p = request->getParam(i);
+    String name = p->name();
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.print("Param name: ");
+      DBG_OUTPUT_PORT.println(name);
+    }
+    String val = p->value();
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.print("Param value: ");
+      DBG_OUTPUT_PORT.println(val);
+    }
+    if (name == "data")
+      dataStr = val;
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("------");
+  }
+  const char* querychar = dataStr.c_str();
   DynamicJsonBuffer jsonBuffer;
   JsonObject& data = jsonBuffer.parseObject((const char*)datas); 
   if (!data.success()) return 0;
@@ -351,23 +386,32 @@ bool handleData(AsyncWebServerRequest *request, uint8_t *datas) {
   if (debug_mode) {
     DBG_OUTPUT_PORT.println("data from " + id);
   }
-  JsonObject& nested = jsonBuffer.parseObject((const char*)datas);
-  jsonData[id] = nested;
+  //JsonObject& nested = jsonBuffer.parseObject((const char*)datas);
+  //jsonData[id] = nested;
   // send data through bluetooth immediately
-  if (! bt_mode)
-    SendData();
-  request->send(200, "text/plain", id + ": OK");
+  //if (!bt_mode)
+  //  SendData();
+  btSerial.println((const char*)datas);
   return 1;
 }
+
+void handleCommand(String command) {
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("received command: " + command);
+}
+
+void removeChar(char *s, int c){
+  int j, n = strlen(s); 
+  for (int i=j=0; i<n; i++) 
+      if (s[i] != c) 
+        s[j++] = s[i];
+  s[j] = '\0';
+} 
 
 void setup(void) {
 
   DBG_OUTPUT_PORT.begin(DBG_BAUD_RATE);
   DBG_OUTPUT_PORT.setDebugOutput(debug_mode);
-
-  // turn on bluetooth module
-  pinMode(BT_POWER_PIN, OUTPUT);
-  digitalWrite(BT_POWER_PIN, HIGH);
 
   if (! SD.begin(pin_CS_SDcard)){
     if (debug_mode)
@@ -389,7 +433,8 @@ void setup(void) {
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#Wait 100 ms for AP_START...");
   delay(100);
-  WiFi.softAP(ssid, password);
+  // const char *ssid, const char *passphrase = (const char *)__null, int channel = 1, int ssid_hidden = 0, int max_connection = 4)
+  WiFi.softAP(ssid, password, channel_num, 0, max_connection);
 
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#Set softAPConfig");
@@ -402,7 +447,6 @@ void setup(void) {
     DBG_OUTPUT_PORT.print("#IP address: ");
     DBG_OUTPUT_PORT.println(IP);
   }
-  
 
   if (redirect_all_to_host) {
     //dnsServer.start(DNS_PORT, "*", IP);
@@ -412,39 +456,43 @@ void setup(void) {
   }
 
   server.on("/list", HTTP_GET, printDirectory);
-  //server.on("/edit", HTTP_DELETE, handleDelete);
-  //server.on("/edit", HTTP_PUT, handleCreate);
-  //server.on("/edit", HTTP_POST, returnOK, handleSDUpload);
-  server.on("/hello", HTTP_GET, [](AsyncWebServerRequest *request){
-    DBG_OUTPUT_PORT.println("#hello get request");
-    request->send(200, "text/plain", "Hello World Get");
-  });
-  /*
-  server.on("/glove1", HTTP_PUT, [](AsyncWebServerRequest *request){
-    request->send(200, "text/plain", "Put route");
-  });*/
-  server.on("/glove1", HTTP_PUT, [](AsyncWebServerRequest *request){
-  }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
-    if (!handleData(request, data))
-        request->send(200, "text/plain", "false");
-      else
-        request->send(200, "text/plain", "true");
-  });/*
-  server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
-    String url = request->url();
-    if (url == "/glove1") {
-      if (!handleData(request, data))
-        request->send(200, "text/plain", "false");
-      else
-        request->send(200, "text/plain", "true");
-    } else if (request->url() == "/hello") {
-      if (!handleTest(request, data))
-        request->send(200, "text/plain", "false");
-      else
-        request->send(200, "text/plain", "true");
-    }
-    return;
-  });*/
+  for (String device: devices) {
+    String path = "/" + device;
+    const char *pathChar = path.c_str();
+    server.on(pathChar, HTTP_PUT, [](AsyncWebServerRequest *request){
+    }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+      if (!handleDataPut(request, data))
+          request->send(200, "text/plain", "false");
+        else
+          request->send(200, "text/plain", "true");
+    });
+  }
+  // extra features for debugging
+  if (debug_mode) {
+    server.on("/edit", HTTP_DELETE, handleDelete);
+    server.on("/edit", HTTP_PUT, handleCreate);
+    server.on("/edit", HTTP_POST, returnOK, handleSDUpload);
+  }
+  // test1
+  if (debug_mode) {
+    server.on("/hello", HTTP_GET, [](AsyncWebServerRequest *request){
+      DBG_OUTPUT_PORT.println("#hello get request");
+      request->send(200, "text/plain", "Hello World Get");
+    });
+  }
+  // test2
+  if (debug_mode) {
+    server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+      String url = request->url();
+      if (request->url() == "/hello") {
+        if (!handleTest(request, data))
+          request->send(200, "text/plain", "false");
+        else
+          request->send(200, "text/plain", "true");
+      }
+      return;
+    });
+  }
   server.onNotFound(handleNotFound);
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#finished creating server");
@@ -453,12 +501,17 @@ void setup(void) {
     DBG_OUTPUT_PORT.println("#HTTP server started");
 
   // Bluetooth
-  btSerial.begin(BT_BAUD_RATE);
+  btSerial.begin(BT_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#The bluetooth device started, now you can pair it.");
+
+  // set built-in led to output
+  pinMode(BUILTIN_LED, OUTPUT);
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#The LED is now enabled.");
 }
 
-void loop(void){
+void loop(void) {
 
   if (redirect_all_to_host)
     dnsServer.processNextRequest();
@@ -472,7 +525,37 @@ void loop(void){
   if (bt_mode) {
     if(millis() - bluetoothLastRefreshTime >= BLUETOOTH_REFRESH_INTERVAL) {
       bluetoothLastRefreshTime += BLUETOOTH_REFRESH_INTERVAL;
-      SendData();
+      //SendData();
     }
   }
+
+  // Keep reading from HC-05 and send to Arduino Serial Monitor
+  String command;
+  bool foundcommand = false;
+  while (btSerial.available()) {
+    delay(10); // delay to make it work well
+    char c = btSerial.read(); //Conduct a serial read
+    command += c; //build the string.
+    if (!foundcommand)
+      foundcommand = true;
+  }
+  if (foundcommand) {
+    char *commandchar = new char[command.length() + 1];
+    strcpy(commandchar, command.c_str());
+    removeChar(commandchar, '\n');
+    removeChar(commandchar, '\r');
+    String commandstr = commandchar;
+    delete commandchar;
+    handleCommand(commandstr);
+  }
+
+  // Keep reading from Arduino Serial Monitor and send to HC-05
+  if (DBG_OUTPUT_PORT.available())
+    btSerial.write(DBG_OUTPUT_PORT.read());
+  
+  if(millis() - lastBlink >= BLINK_INTERVAL) {
+		lastBlink += BLINK_INTERVAL;
+    blinkState = !blinkState;
+    digitalWrite(LED_BUILTIN, blinkState);
+	}
 }
