@@ -1,5 +1,9 @@
 # Configure Bluetooth Module (HC-05)
 
+This program changes the name and other information on an HC-05 module, using an Arduino UNO.
+
+## Logs
+
 Finally got this working with AT commands. Originally tried to run commands on ESP32 board, but SoftwareSerial libraries did not work. Switched to Arduino UNO board and got good results. Followed information in [this](http://www.techbitar.com/modify-the-hc-05-bluetooth-module-defaults-using-at-commands.html) webpage for AT commands and changing the information of the device.  
   
 Currently there are issues with changing the baud rate and passkey of the device, which might be due to wrong AT commands. This can be fixed by changing commented out section in the `config_bt/` diretory. `test_bt/` allows for connection and testing using bluetooth terminal on Android device (see [this](https://play.google.com/store/search?q=bluetooth+terminal&c=apps) - most of them work).  

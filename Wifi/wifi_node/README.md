@@ -1,0 +1,3 @@
+# Wifi Node
+
+These wifi nodes are for every modular component used in the the suit, such as the glove and inertial measuring device (imu). The template should be copied to a new folder when creating a new node, in the current directory. The device name needs to be changed in the example node, and the wifi_master code needs to be updated slightly, in order for the node to connect and function correctly. The `test_node` is used to test if the connection is working, and for development purposes (not production).
