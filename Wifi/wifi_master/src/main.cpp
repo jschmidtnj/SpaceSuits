@@ -14,7 +14,7 @@
 
 #define DBG_OUTPUT_PORT Serial
 #define debug_mode true
-#define bt_mode false // false = send data after every requst, true = send data in intervals
+#define bt_mode true // false = send data after every requst, true = send data in intervals
 #define redirect_all_to_host true
 #define DBG_BAUD_RATE 115200
 #define BT_BAUD_RATE 9600
@@ -32,10 +32,17 @@ AsyncWebServer server(80);
 const byte DNS_PORT = 53;
 DNSServer dnsServer;
 static const String devices[] = {"glove1", "glove2", "imu"};
+// to add another device add to devices[], create a JsonObject below, and modify the setup() and handleDataPut() functions accordingly.
+// JSON data
+DynamicJsonBuffer jsonBuffer;
+JsonObject& glove1 = jsonBuffer.createObject();
+JsonObject& glove2 = jsonBuffer.createObject();
+JsonObject& imu = jsonBuffer.createObject();
+JsonObject& jsonData = jsonBuffer.createObject();
 
 static const unsigned long WIFI_REFRESH_INTERVAL = 10000; // ms
 static unsigned long wifiLastRefreshTime = 0;
-static const unsigned long BLUETOOTH_REFRESH_INTERVAL = 1000; //ms
+static const unsigned long BLUETOOTH_REFRESH_INTERVAL = 1000; //ms // 100 ms works well
 static unsigned long bluetoothLastRefreshTime = 0;
 
 static const unsigned long BLINK_INTERVAL = 1000; //ms
@@ -54,10 +61,6 @@ U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/
 //SoftwareSerial btSerial(RX_PIN, TX_PIN, false, 256);
 //not using softwareserial anymore because it had errors with data receive.
 HardwareSerial btSerial(1);
-
-// JSON data - does not work with async
-//DynamicJsonBuffer jsonDataBuffer;
-//JsonObject& jsonData = jsonDataBuffer.createObject();
 
 void returnOK(AsyncWebServerRequest *request) {request->send(200, "text/plain", "");}
 
@@ -239,7 +242,6 @@ void printDirectory(AsyncWebServerRequest *request) {
     dir.close();
     return returnFail(request, "NOT DIR");
   }
-  DynamicJsonBuffer jsonBuffer;
   JsonArray& array = jsonBuffer.createArray();
   dir.rewindDirectory();
   File entry;
@@ -327,7 +329,6 @@ bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
   if (debug_mode)
     DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char*)datas);
   
-  DynamicJsonBuffer jsonBuffer;
   JsonObject& _test = jsonBuffer.parseObject((const char*)datas); 
   if (!_test.success()) return 0;
 
@@ -342,13 +343,11 @@ bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
   return 1;
 }
 
-/*
 void SendData(void) {
   String data = "";
   jsonData.printTo(data);
   btSerial.println(data);
 }
-*/
 
 bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
   if (debug_mode)
@@ -376,8 +375,7 @@ bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
     if (debug_mode)
       DBG_OUTPUT_PORT.println("------");
   }
-  const char* querychar = dataStr.c_str();
-  DynamicJsonBuffer jsonBuffer;
+  //const char* querychar = dataStr.c_str();
   JsonObject& data = jsonBuffer.parseObject((const char*)datas); 
   if (!data.success()) return 0;
 
@@ -386,12 +384,26 @@ bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
   if (debug_mode) {
     DBG_OUTPUT_PORT.println("data from " + id);
   }
-  //JsonObject& nested = jsonBuffer.parseObject((const char*)datas);
-  //jsonData[id] = nested;
+  if (id == "glove1") {
+    // using C++11 syntax (preferred):
+    for (auto kv : data) {
+      glove1[kv.key] = data[kv.key];
+      // DBG_OUTPUT_PORT.println(kv.key);
+      // DBG_OUTPUT_PORT.println(kv.value.as<char*>());
+    }
+  } else if (id == "glove2") {
+    for (auto kv : data)
+      glove2[kv.key] = data[kv.key];
+  } else if (id == "imu") {
+    for (auto kv : data)
+      imu[kv.key] = data[kv.key];
+  }
   // send data through bluetooth immediately
-  //if (!bt_mode)
-  //  SendData();
-  btSerial.println((const char*)datas);
+  if (!bt_mode)
+    SendData();
+  // do not delete querychar (results in error)
+  // uncomment this to print data instead of SendData()
+  // btSerial.println((const char*)datas);
   return 1;
 }
 
@@ -412,6 +424,16 @@ void setup(void) {
 
   DBG_OUTPUT_PORT.begin(DBG_BAUD_RATE);
   DBG_OUTPUT_PORT.setDebugOutput(debug_mode);
+
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("started debug mode");
+
+  jsonData["glove1"] = glove1;
+  jsonData["glove2"] = glove2;
+  jsonData["imu"] = imu;
+
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("initialized global variables");
 
   if (! SD.begin(pin_CS_SDcard)){
     if (debug_mode)
@@ -525,7 +547,7 @@ void loop(void) {
   if (bt_mode) {
     if(millis() - bluetoothLastRefreshTime >= BLUETOOTH_REFRESH_INTERVAL) {
       bluetoothLastRefreshTime += BLUETOOTH_REFRESH_INTERVAL;
-      //SendData();
+      SendData();
     }
   }
 

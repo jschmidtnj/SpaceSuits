@@ -9,7 +9,7 @@ const char* ssid = "SPACESUITWIFI";
 const char* password =  "N@sASu!t";
 String url = "http://192.168.1.1:80";
 String id = "glove1";
-#define SEND_DELAY 500 //ms
+#define SEND_DELAY 500 //ms // 50 ms works well
 
 void (*resetFunc) (void) = 0;
 
