@@ -13,6 +13,10 @@ A Hololens-based Space Suit.
 
 4) Merge your branch into master
 
+### See current repo data
+
+Follow [this](https://api.github.com/repos/jschmidtnj/spacesuits) link.
+
 ### C Sharp for Linux
 
 `wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe`  
