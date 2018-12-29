@@ -1,0 +1,3 @@
+# WebSocket-powered Node
+
+Unfortunately websockets are too buggy to use right now. Will maybe attempt a different day...

@@ -1,5 +1,9 @@
 # Wifi Master
 
+try this for hc-06 config: [here](https://mcuoneclipse.com/2013/06/19/using-the-hc-06-bluetooth-module/).  
+
+potentially use both put requests and web sockets. put requests for the fast data and web sockets for the 2-way communication.  
+
 Master code for Arduino communicating with Hololens via Bluetooth. Deployed on ESP32: [this](http://a.co/d/21BAwOl) exact board. Utilized led and oled screen included on the board. SD card breakout board used for getting static files (asyncronously). HC-05 board used because platformio does not allow for setting enabling concurrent wifi and bluetooth connections on ESP-32 board. Software serial avoided because it caused too many errors when sending data from Hololens or other connected device to the board. Hardware Serial used instead.
 
 See [this](http://docs.platformio.org/en/latest/platforms/espressif32.html#partition-tables), [this](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/partition-tables.html), and [this](https://desire.giesecke.tk/index.php/2018/01/30/change-partition-size/) for partition changing for bluetooth.  
