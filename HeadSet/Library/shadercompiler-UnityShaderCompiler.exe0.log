@@ -1,3 +1,43 @@
 Base path: C:/Program Files/Unity/Editor/Data
 Cmd: initializeCompiler
+Cmd: preprocess
+  insize=842 outsize=842 ok=1
+Cmd: preprocess
+  insize=2345 outsize=898 ok=1
+Cmd: preprocess
+  insize=1558 outsize=1558 ok=1
+Cmd: preprocess
+  insize=1321 outsize=1321 ok=1
+Cmd: preprocess
+  insize=1197 outsize=498 ok=1
+Cmd: preprocess
+  insize=1913 outsize=1037 ok=1
+Cmd: preprocess
+  insize=923 outsize=923 ok=1
+Cmd: preprocess
+  insize=3170 outsize=811 ok=1
+Cmd: preprocess
+  insize=690 outsize=690 ok=1
+Cmd: preprocess
+  insize=3034 outsize=1427 ok=1
 Cmd: initializeCompiler
+Cmd: preprocess
+  insize=816 outsize=816 ok=1
+Cmd: preprocess
+  insize=2345 outsize=898 ok=1
+Cmd: preprocess
+  insize=1515 outsize=1515 ok=1
+Cmd: preprocess
+  insize=1140 outsize=476 ok=1
+Cmd: preprocess
+  insize=1913 outsize=1037 ok=1
+Cmd: preprocess
+  insize=890 outsize=890 ok=1
+Cmd: preprocess
+  insize=3170 outsize=811 ok=1
+Cmd: preprocess
+  insize=690 outsize=690 ok=1
+Cmd: compileSnippet
+  api=4 type=0 insize=725 outsize=858 kw=ETC1_EXTERNAL_ALPHA pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_USE_DITHER_MASK_FOR_ALPHABLENDED_SHADOWS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_ENABLE_DETAIL_NORMALMAP SHADER_API_DESKTOP UNITY_HARDWARE_TIER3 UNITY_COLORSPACE_GAMMA UNITY_LIGHT_PROBE_PROXY_VOLUME UNITY_LIGHTMAP_RGBM_ENCODING ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=725 outsize=574 kw=ETC1_EXTERNAL_ALPHA pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_USE_DITHER_MASK_FOR_ALPHABLENDED_SHADOWS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_ENABLE_DETAIL_NORMALMAP SHADER_API_DESKTOP UNITY_HARDWARE_TIER3 UNITY_COLORSPACE_GAMMA UNITY_LIGHT_PROBE_PROXY_VOLUME UNITY_LIGHTMAP_RGBM_ENCODING ok=1

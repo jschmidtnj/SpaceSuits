@@ -325,7 +325,7 @@ void PrintStations() {
     u8x8.drawString(0, i + 1, macChar);
   }
   for (int i = 0; i < 8 - stationList.num; i++) {
-    u8x8.drawString(0, i + 1 + stationList.num, "             ");
+    u8x8.drawString(0, i + 1 + stationList.num, "                ");
   }
   if (debug_mode)
     DBG_OUTPUT_PORT.println("-----------------");
@@ -730,6 +730,11 @@ void setup() {
   pinMode(BUILTIN_LED, OUTPUT);
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#The LED is now enabled.");
+
+  // print initial stations (0)
+  PrintStations();
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#printed initial stations.");
 }
 
 void loop() {
