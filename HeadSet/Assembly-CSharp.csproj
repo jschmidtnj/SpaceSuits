@@ -63,14 +63,15 @@
   <ItemGroup>
     <Compile Include="Assets\multipleBluetooth.cs" />
     <Compile Include="Assets\rotationDisplay.cs" />
-    <Compile Include="Assets\Vuforia\Scripts\DefaultInitializationErrorHandler.cs" />
-    <Compile Include="Assets\Vuforia\Scripts\DefaultTrackableEventHandler.cs" />
     <None Include="Assets\Vuforia\Shaders\ColoredLines.shader" />
     <None Include="Assets\Vuforia\Shaders\CameraDiffuse.shader" />
     <None Include="Assets\Vuforia\Shaders\VertexLitWithZ.shader" />
+    <None Include="Assets\Vuforia\Shaders\VideoBackground.shader" />
     <None Include="Assets\Vuforia\Shaders\OutlineOpaque.shader" />
     <None Include="Assets\Vuforia\Shaders\DepthMask.shader" />
+    <None Include="Assets\Vuforia\Databases\Emulator\VuforiaEmulator.xml" />
     <None Include="Assets\StreamingAssets\Vuforia\VuforiaMars_Images.xml" />
+    <None Include="Assets\Vuforia\Shaders\ClippingMask.shader" />
     <None Include="Assets\Vuforia\Shaders\BrightTexture.shader" />
     <None Include="Assets\Vuforia\Shaders\DepthContour.shader" />
     <None Include="Assets\Vuforia\Shaders\Text3D.shader" />
@@ -284,14 +285,14 @@
     <Reference Include="UnityEngine.SpatialTracking">
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
+    <Reference Include="InTheHand.Net.Personal">
+      <HintPath>C:/Users/vince/Documents/repos/SpaceSuits/HeadSet/Assets/Plugins/InTheHand.Net.Personal.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>C:/Users/vince/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.16/UnityEngine.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.StandardEvents">
       <HintPath>C:/Users/vince/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.13/UnityEngine.StandardEvents.dll</HintPath>
-    </Reference>
-    <Reference Include="InTheHand.Net.Personal">
-      <HintPath>C:/Users/vince/Documents/repos/SpaceSuits/HeadSet/Assets/Plugins/InTheHand.Net.Personal.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Editor/Data/MonoBleedingEdge/lib/mono/2.0-api/mscorlib.dll</HintPath>
@@ -320,6 +321,16 @@
     <Reference Include="Boo.Lang">
       <HintPath>C:/Program Files/Unity/Editor/Data/MonoBleedingEdge/lib/mono/2.0-api/Boo.Lang.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="VuforiaScripts.csproj">
+      <Project>{E949A1A7-B915-0361-236C-63EB440970EE}</Project>
+      <Name>VuforiaScripts</Name>
+    </ProjectReference>
+    <ProjectReference Include="VuforiaEditorScripts.csproj">
+      <Project>{E3076364-94E4-3854-9960-FB0E82D4B843}</Project>
+      <Name>VuforiaEditorScripts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

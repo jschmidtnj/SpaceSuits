@@ -37,7 +37,7 @@ public class bluetooth
 }
 
 public class multipleBluetooth : MonoBehaviour {
-    UnityEngine.UI.Text text;
+    public UnityEngine.UI.Text text;
    
     Semaphore semaphore = new Semaphore(1, 1);
     Queue<string> inputQueue = new Queue<string>();
