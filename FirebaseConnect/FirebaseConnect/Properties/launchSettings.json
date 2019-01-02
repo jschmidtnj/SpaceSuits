@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FirebaseConnect": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\vince\\Documents\\repos\\SpaceSuits\\FirebaseConnect\\FirebaseConnect"
+    }
+  }
+}
