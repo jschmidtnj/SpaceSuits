@@ -312,7 +312,7 @@ void PrintStations() {
 
     String mac = "";
  
-    for(int j = 0; j< 6; j++){
+    for(int j = 0; j < 6; j++){
       mac += (String)station.mac[j];
       if(j<5) {
         mac += ":";
@@ -324,7 +324,7 @@ void PrintStations() {
     mac.substring(1, 16).toCharArray(macChar, 25);
     u8x8.drawString(0, i + 1, macChar);
   }
-  for (int i = 0; i < 8 - stationList.num; i++) {
+  for (int i = 0; i < 7 - stationList.num; i++) {
     u8x8.drawString(0, i + 1 + stationList.num, "                ");
   }
   if (debug_mode)
@@ -682,6 +682,13 @@ void setup() {
           request->send(200, "text/plain", "true");
     });
   }
+  server.on("/getdata", HTTP_GET, [](AsyncWebServerRequest *request){
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("#data get request");
+    String data = "";
+    jsonData.printTo(data);
+    request->send(200, "application/json", data);
+  });
   // add web sockets
   if (websocket || debug_mode) {
     ws.onEvent(handleWs);
@@ -717,6 +724,7 @@ void setup() {
   server.onNotFound(handleNotFound);
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#finished creating server");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
   server.begin();
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#HTTP server started");
