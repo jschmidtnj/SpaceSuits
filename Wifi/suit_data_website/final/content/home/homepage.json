@@ -1,0 +1,22 @@
+{
+  "title": "Home",
+  "content": "intro.md",
+  "gallery": [
+  {
+    "title": "SpaceX Launch",
+    "copy": "First SpaceX Launch for NASA",
+    "image": "../images/gallery/nasa-spacex-launch.jpg"
+  }],
+  "other_pictures": [
+  {
+    "title": "Earth",
+    "copy": "Our Home",
+    "image": "../images/gallery/earth.jpg"
+  },
+  {
+    "title": "ISS",
+    "copy": "International Space Station",
+    "image": "../images/gallery/iss.jpg"
+  }
+  ]
+}

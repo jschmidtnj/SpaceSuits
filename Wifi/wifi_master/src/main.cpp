@@ -9,13 +9,14 @@
 #include "SD.h"
 #include "esp_wifi.h"
 #include "U8x8lib.h"
+#include "HTTPClient.h"
 //#include "SoftwareSerial.h" // optional softwareserial library
 //#include "EDB.h" // Extended database library - see https://github.com/jwhiddon/EDB?utm_source=platformio&utm_medium=piohome
 
 #define DBG_OUTPUT_PORT Serial
 #define debug_mode true
 #define bt_mode true // false = send data after every requst, true = send data in intervals
-#define redirect_all_to_host true
+#define create_local_host true // creates DNS for host and can be used to redirect all to host
 #define DBG_BAUD_RATE 115200
 #define BT_BAUD_RATE 9600
 #define RX_PIN 13 // rx pin on bluetooth module connected to this pin on Arduino
@@ -23,16 +24,19 @@
 #define ttl 300 // ttl for dns
 #define channel_num 1 // channel number for softAP
 #define max_connection 10 // max connections to AP
+#define websocket false // web socket on = true, off = false. has relatively high latancy (fast for first 30 requests and then slows down)
+#define websocketslow false // turn on if web socket requests >= 500 ms apart
 const char *ssid = "SPACESUITWIFI";
 const char *password = "N@sASu!t";
 const char *host = "spacesuit.local";
 IPAddress Ip(192, 168, 1, 1); // ip address for website
 const int pin_CS_SDcard = 15;
 AsyncWebServer server(80);
+AsyncWebSocket ws("/ws"); // starting web socket
 const byte DNS_PORT = 53;
 DNSServer dnsServer;
 static const String devices[] = {"glove1", "glove2", "imu"};
-// to add another device add to devices[], create a JsonObject below, and modify the setup() and handleDataPut() functions accordingly.
+// to add another device add to devices[], create a JsonObject below, and modify the setup() function accordingly.
 // JSON data
 DynamicJsonBuffer jsonBuffer;
 JsonObject& glove1 = jsonBuffer.createObject();
@@ -42,7 +46,7 @@ JsonObject& jsonData = jsonBuffer.createObject();
 
 static const unsigned long WIFI_REFRESH_INTERVAL = 10000; // ms
 static unsigned long wifiLastRefreshTime = 0;
-static const unsigned long BLUETOOTH_REFRESH_INTERVAL = 1000; //ms // 100 ms works well
+static const unsigned long BLUETOOTH_REFRESH_INTERVAL = 2000; //ms // 100 ms works well
 static unsigned long bluetoothLastRefreshTime = 0;
 
 static const unsigned long BLINK_INTERVAL = 1000; //ms
@@ -233,7 +237,7 @@ void handleCreate(AsyncWebServerRequest *request){
 }
 
 void printDirectory(AsyncWebServerRequest *request) {
-  if( ! request->hasParam("dir")) return returnFail(request, "BAD ARGS");
+  if (!request->hasParam("dir")) return returnFail(request, "BAD ARGS");
   String path = request->arg("dir");
   if(path != "/" && !SD.exists((char *)path.c_str())) return returnFail(request, "BAD PATH");
   File dir = SD.open((char *)path.c_str());
@@ -302,7 +306,7 @@ void PrintStations() {
 
   u8x8.drawString(0, 0, headerChar);
  
-  for(int i = 0; i < stationList.num; i++) {
+  for (int i = 0; i < stationList.num; i++) {
  
     wifi_sta_info_t station = stationList.sta[i];
 
@@ -319,6 +323,9 @@ void PrintStations() {
     char macChar[25];
     mac.substring(1, 16).toCharArray(macChar, 25);
     u8x8.drawString(0, i + 1, macChar);
+  }
+  for (int i = 0; i < 8 - stationList.num; i++) {
+    u8x8.drawString(0, i + 1 + stationList.num, "                ");
   }
   if (debug_mode)
     DBG_OUTPUT_PORT.println("-----------------");
@@ -343,20 +350,16 @@ bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
   return 1;
 }
 
-void SendData(void) {
+void sendDataBT() {
   String data = "";
   jsonData.printTo(data);
   btSerial.println(data);
 }
 
-bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
-  if (debug_mode)
-    DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char*)datas);
+void handleQuery(AsyncWebServerRequest *request) {
   int paramsNr = request->params();
-  if (debug_mode) {
-    DBG_OUTPUT_PORT.print(paramsNr);
-    DBG_OUTPUT_PORT.println(" queries");
-  }
+  DBG_OUTPUT_PORT.print(paramsNr);
+  DBG_OUTPUT_PORT.println(" queries");
   String dataStr;
   for(int i=0;i < paramsNr;i++){
     AsyncWebParameter* p = request->getParam(i);
@@ -376,6 +379,14 @@ bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
       DBG_OUTPUT_PORT.println("------");
   }
   //const char* querychar = dataStr.c_str();
+  // do not delete querychar (results in error)
+}
+
+bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
+  if (debug_mode)
+    DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char*)datas);
+  if (debug_mode)
+    handleQuery(request);
   JsonObject& data = jsonBuffer.parseObject((const char*)datas); 
   if (!data.success()) return 0;
 
@@ -384,6 +395,12 @@ bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
   if (debug_mode) {
     DBG_OUTPUT_PORT.println("data from " + id);
   }
+  for (auto kv: jsonData) {
+    if (id == kv.key) {
+      jsonData[kv.key] = data;
+    }
+  }
+  /*
   if (id == "glove1") {
     // using C++11 syntax (preferred):
     for (auto kv : data) {
@@ -397,19 +414,103 @@ bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
   } else if (id == "imu") {
     for (auto kv : data)
       imu[kv.key] = data[kv.key];
-  }
+  }*/
   // send data through bluetooth immediately
   if (!bt_mode)
-    SendData();
-  // do not delete querychar (results in error)
-  // uncomment this to print data instead of SendData()
+    sendDataBT();
+  // uncomment this to print data instead of sendDataBT()
   // btSerial.println((const char*)datas);
   return 1;
+}
+
+void sendToAllWs(String message) {
+  const char *dataChar = message.c_str();
+  ws.printfAll(dataChar);
+}
+
+void sendToSpecificIp(String message, String ip) {
+  HTTPClient http;
+  String urlfull = "http://" + ip + ":80/command";
+  http.addHeader("operator", "text/plain");
+  http.begin(urlfull); //Specify the URL
+  // put request
+  int httpCode = http.PUT(message);
+  if (httpCode > 0) { //Check for the returning code
+    String payload = http.getString();
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.println(httpCode);
+      DBG_OUTPUT_PORT.println(payload);
+    }
+  } else {
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.println("Error on HTTP put request");
+    }
+  }
+  http.end(); //Free the resources
+}
+
+void testIPGet(String ip) {
+  HTTPClient http;
+  String urlfull = "http://" + ip + "/test";
+  DBG_OUTPUT_PORT.println(urlfull);
+  http.addHeader("operator", "text/plain");
+  http.begin(urlfull); //Specify the URL
+  // put request
+  int httpCode = http.GET();
+  if (httpCode > 0) { //Check for the returning code
+    String payload = http.getString();
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.println(httpCode);
+      DBG_OUTPUT_PORT.println(payload);
+    }
+  } else {
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.println("Error on HTTP get request");
+      DBG_OUTPUT_PORT.println("Resetting...");
+    }
+    //resetFunc(); //call reset
+  }
+  http.end(); //Free the resources
+}
+
+void sendToAllHttp(String message) {
+  for (auto kv : jsonData) {
+    JsonObject& tempObj = jsonData[kv.key];
+    if (tempObj.containsKey("ip"))
+      sendToSpecificIp(message, tempObj["ip"]);
+  }
 }
 
 void handleCommand(String command) {
   if (debug_mode)
     DBG_OUTPUT_PORT.println("received command: " + command);
+  JsonObject& data = jsonBuffer.parseObject(command);
+  if (data.success()) {
+    if (data.containsKey("id") && data["id"] != "all") {
+      const char* ip = "";
+      for (auto kv : jsonData) {
+        JsonObject& tempObj = jsonData[kv.key];
+        if (tempObj.containsKey("id") && tempObj["id"] == data["id"] && tempObj.containsKey("ip")) {
+          ip = tempObj["ip"];
+          break;
+        }
+      }
+      if (ip[0] != '\0') {
+        sendToSpecificIp(command, ip);
+        //testIPGet(ip);
+      } else {
+        if (debug_mode)
+          DBG_OUTPUT_PORT.println("did not find ip address");
+      }
+    } else {
+      sendToAllHttp(command);
+    }
+    if (websocket || debug_mode)
+      sendToAllWs(command);
+  } else {
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("received invalid json command");
+  }
 }
 
 void removeChar(char *s, int c){
@@ -418,9 +519,98 @@ void removeChar(char *s, int c){
       if (s[i] != c) 
         s[j++] = s[i];
   s[j] = '\0';
-} 
+}
 
-void setup(void) {
+void handleWs(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+  // currently a bug preventing messages to be sent faster than 500ms intervals to clients
+  if(type == WS_EVT_CONNECT){
+    //client connected
+    if (debug_mode)
+      DBG_OUTPUT_PORT.printf("ws[%s][%u] connect\n", server->url(), client->id());
+    if (websocketslow)
+      client->printf("{\"status\": 200, \"message\": \"Connected to client %u\"}", client->id());
+    client->ping();
+  } else if(type == WS_EVT_DISCONNECT){
+    //client disconnected
+    if (debug_mode)
+      DBG_OUTPUT_PORT.printf("ws[%s][%u] disconnect: %u\n", server->url(), client->id(), client->id());
+  } else if(type == WS_EVT_ERROR){
+    //error was received from the other end
+    if (debug_mode)
+      DBG_OUTPUT_PORT.printf("ws[%s][%u] error(%u): %s\n", server->url(), client->id(), *((uint16_t*)arg), (char*)data);
+  } else if(type == WS_EVT_PONG){
+    //pong message was received (in response to a ping request maybe)
+    if (debug_mode)
+      DBG_OUTPUT_PORT.printf("ws[%s][%u] pong[%u]: %s\n", server->url(), client->id(), len, (len)?(char*)data:"");
+  } else if(type == WS_EVT_DATA){
+    //data packet
+    AwsFrameInfo * info = (AwsFrameInfo*)arg;
+    if(info->final && info->index == 0 && info->len == len){
+      //the whole message is in a single frame and we got all of it's data
+      if (debug_mode)
+        DBG_OUTPUT_PORT.printf("ws[%s][%u] %s-message[%llu]: ", server->url(), client->id(), (info->opcode == WS_TEXT)?"text":"binary", info->len);
+      if(info->opcode == WS_TEXT){
+        data[len] = 0;
+        if (debug_mode)
+          DBG_OUTPUT_PORT.printf("%s\n", (char*)data);
+      } else {
+        for(size_t i=0; i < info->len; i++){
+          if (debug_mode)
+            DBG_OUTPUT_PORT.printf("%02x ", data[i]);
+        }
+        if (debug_mode)
+          DBG_OUTPUT_PORT.printf("\n");
+      }
+      if (websocketslow) {
+        if(info->opcode == WS_TEXT)
+          client->text("{\"status\": 200, \"message\": \"received text message\"}");
+        else
+          client->binary("{\"status\": 200, \"message\": \"received binary message\"}");
+      }
+    } else {
+      //message is comprised of multiple frames or the frame is split into multiple packets
+      if(info->index == 0){
+        if(info->num == 0)
+          if (debug_mode)
+            DBG_OUTPUT_PORT.printf("ws[%s][%u] %s-message start\n", server->url(), client->id(), (info->message_opcode == WS_TEXT)?"text":"binary");
+        if (debug_mode)
+          DBG_OUTPUT_PORT.printf("ws[%s][%u] frame[%u] start[%llu]\n", server->url(), client->id(), info->num, info->len);
+      }
+
+      if (debug_mode)
+        DBG_OUTPUT_PORT.printf("ws[%s][%u] frame[%u] %s[%llu - %llu]: ", server->url(), client->id(), info->num, (info->message_opcode == WS_TEXT)?"text":"binary", info->index, info->index + len);
+      if(info->message_opcode == WS_TEXT){
+        data[len] = 0;
+        if (debug_mode)
+          DBG_OUTPUT_PORT.printf("%s\n", (char*)data);
+      } else {
+        for(size_t i=0; i < len; i++){
+          if (debug_mode)
+            DBG_OUTPUT_PORT.printf("%02x ", data[i]);
+        }
+        if (debug_mode)
+          DBG_OUTPUT_PORT.printf("\n");
+      }
+
+      if((info->index + len) == info->len){
+        if (debug_mode)
+          DBG_OUTPUT_PORT.printf("ws[%s][%u] frame[%u] end[%llu]\n", server->url(), client->id(), info->num, info->len);
+        if(info->final){
+          if (debug_mode)
+            DBG_OUTPUT_PORT.printf("ws[%s][%u] %s-message end\n", server->url(), client->id(), (info->message_opcode == WS_TEXT)?"text":"binary");
+          if (websocketslow) {
+            if(info->message_opcode == WS_TEXT)
+              client->text("{\"status\": 200, \"message\": \"received text message\"}");
+            else
+              client->binary("{\"status\": 200, \"message\": \"received binary message\"}");
+          }
+        }
+      }
+    }
+  }
+}
+
+void setup() {
 
   DBG_OUTPUT_PORT.begin(DBG_BAUD_RATE);
   DBG_OUTPUT_PORT.setDebugOutput(debug_mode);
@@ -470,14 +660,17 @@ void setup(void) {
     DBG_OUTPUT_PORT.println(IP);
   }
 
-  if (redirect_all_to_host) {
+  if (create_local_host) {
     //dnsServer.start(DNS_PORT, "*", IP);
     dnsServer.setTTL(ttl);
     dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
     dnsServer.start(DNS_PORT, host, IP);
   }
 
+  // Server requests
+  // list directories
   server.on("/list", HTTP_GET, printDirectory);
+  // create put requests
   for (String device: devices) {
     String path = "/" + device;
     const char *pathChar = path.c_str();
@@ -488,6 +681,11 @@ void setup(void) {
         else
           request->send(200, "text/plain", "true");
     });
+  }
+  // add web sockets
+  if (websocket || debug_mode) {
+    ws.onEvent(handleWs);
+    server.addHandler(&ws);
   }
   // extra features for debugging
   if (debug_mode) {
@@ -515,6 +713,7 @@ void setup(void) {
       return;
     });
   }
+  //handle not found
   server.onNotFound(handleNotFound);
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#finished creating server");
@@ -531,11 +730,16 @@ void setup(void) {
   pinMode(BUILTIN_LED, OUTPUT);
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#The LED is now enabled.");
+
+  // print initial stations (0)
+  PrintStations();
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("#printed initial stations.");
 }
 
-void loop(void) {
+void loop() {
 
-  if (redirect_all_to_host)
+  if (create_local_host)
     dnsServer.processNextRequest();
 	
 	if(millis() - wifiLastRefreshTime >= WIFI_REFRESH_INTERVAL) {
@@ -547,7 +751,7 @@ void loop(void) {
   if (bt_mode) {
     if(millis() - bluetoothLastRefreshTime >= BLUETOOTH_REFRESH_INTERVAL) {
       bluetoothLastRefreshTime += BLUETOOTH_REFRESH_INTERVAL;
-      SendData();
+      sendDataBT();
     }
   }
 
@@ -566,6 +770,7 @@ void loop(void) {
     strcpy(commandchar, command.c_str());
     removeChar(commandchar, '\n');
     removeChar(commandchar, '\r');
+    //removeChar(commandchar, ' ');
     String commandstr = commandchar;
     delete commandchar;
     handleCommand(commandstr);

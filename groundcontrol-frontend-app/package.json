@@ -1,14 +1,15 @@
 {
     "name": "spacesuit",
     "version": "1.0.0",
-    "description": "This application is created with Firebase, Bootstrap, Vuejs, jQuery, and vanilla html for outlook contact management.",
+    "description": "This application is created with Firebase, Bootstrap, Vuejs, jQuery, and vanilla html for ground control.",
     "private": true,
-    "repository": "https://github.com/jschmidtnj/healthblock.git",
+    "repository": "https://github.com/jschmidtnj/spacesuits.git",
     "author": "Joshua Schmidt",
     "license": "MIT",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "rm -rf dist && webpack && cp -a src/assets/css dist/assets && cp -a src/html/. dist/ && cp -a src/assets/reports dist/assets && cp -a src/assets/icons dist/assets && cp -a src/assets/images dist/assets && cp -a src/config dist && cp dist/assets/js/pwa/serviceworker.js dist/serviceworker.js"
+        "build": "rm -rf dist && webpack && cp -a src/assets/css dist/assets && cp -a src/html/. dist/ && cp -a src/assets/reports dist/assets && cp -a src/assets/icons dist/assets && cp -a src/assets/images dist/assets && cp -a src/config dist && cp dist/assets/js/pwa/serviceworker.js dist/serviceworker.js",
+        "start": "node server.js"
     },
     "keywords": [
         "data",
@@ -33,6 +34,7 @@
     ],
     "devDependencies": {
         "autoprefixer": "^9.0.1",
+        "connect": "^3.6.6",
         "css-loader": "^1.0.0",
         "file-loader": "^1.1.11",
         "node-sass": "^4.9.2",
@@ -40,7 +42,9 @@
         "precss": "^3.1.2",
         "sass-loader": "^7.0.3",
         "scriptjs": "^2.5.8",
+        "serve-static": "^1.13.2",
         "style-loader": "^0.21.0",
+        "uglifyjs-webpack-plugin": "^2.1.1",
         "url-loader": "^1.1.0",
         "webpack": "^4.16.2",
         "webpack-cli": "^3.1.0",
@@ -50,18 +54,6 @@
     "dependencies": {
         "bootstrap": "^4.1.2",
         "bootstrap-select": "^1.13.1",
-        "datatables.net-autofill-bs4": "^2.3.1",
-        "datatables.net-bs4": "^1.10.19",
-        "datatables.net-buttons-bs4": "^1.5.3",
-        "datatables.net-colreorder-bs4": "^1.5.1",
-        "datatables.net-fixedcolumns-bs4": "^3.2.6",
-        "datatables.net-fixedheader-bs4": "^3.1.5",
-        "datatables.net-keytable-bs4": "^2.4.1",
-        "datatables.net-responsive-bs4": "^2.2.3",
-        "datatables.net-rowgroup-bs4": "^1.0.4",
-        "datatables.net-rowreorder-bs4": "^1.2.5",
-        "datatables.net-scroller-bs4": "^1.5.1",
-        "datatables.net-select-bs4": "^1.2.7",
         "file-saver": "^1.3.8",
         "firebase": "^5.3.0",
         "firebaseui": "^3.1.1",

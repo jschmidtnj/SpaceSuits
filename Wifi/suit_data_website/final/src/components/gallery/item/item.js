@@ -1,0 +1,28 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import Img from 'gatsby-image';
+import { Title, Copy } from './item.css';
+
+const Item = ({ title, copy, image }) => (
+  <figure>
+    <Img
+      fluid={image ? image.childImageSharp.fluid : {}}
+      alt={title}
+      critical
+      fadeIn={false}
+    />
+    {/* Remove critical and fadeIn to make better loading times when not using ESP32 */}
+    <figcaption>
+      <Title>{title}</Title>
+      <Copy>{copy}</Copy>
+    </figcaption>
+  </figure>
+);
+
+Item.propTypes = {
+  title: PropTypes.string,
+  copy: PropTypes.string,
+  image: PropTypes.object.isRequired,
+};
+
+export default Item;

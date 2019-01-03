@@ -1,0 +1,53 @@
+{
+    "name": "spacesuit-diagnostics",
+    "version": "1.0.0",
+    "description": "This application is created with Bootstrap, Vuejs, jQuery, and vanilla html for spacesuit diagnostics.",
+    "private": true,
+    "repository": "https://github.com/jschmidtnj/spacesuits.git",
+    "author": "Joshua Schmidt",
+    "license": "MIT",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "rm -rf dist && webpack && rsync -avz --exclude 'index.html' src/html/ dist/ && cp -a src/assets/css dist/assets && cp -a src/assets/icons dist/assets && cp -a src/assets/images dist/assets && cp -a src/config dist && cp dist/assets/js/pwa/serviceworker.js dist/serviceworker.js && mv dist/index.html dist/index.htm",
+        "start": "node server.js",
+        "runwebpack": "webpack"
+    },
+    "keywords": [
+        "space",
+        "nodejs",
+        "webpack",
+        "vuejs",
+        "jquery",
+        "bootstrap4"
+    ],
+    "devDependencies": {
+        "autoprefixer": "^9.0.1",
+        "connect": "^3.6.6",
+        "css-loader": "^1.0.0",
+        "file-loader": "^1.1.11",
+        "html-webpack-plugin": "^3.2.0",
+        "node-sass": "^4.9.2",
+        "postcss-loader": "^2.1.6",
+        "precss": "^3.1.2",
+        "sass-loader": "^7.0.3",
+        "serve-static": "^1.13.2",
+        "style-loader": "^0.21.0",
+        "uglifyjs-webpack-plugin": "^2.1.1",
+        "url-loader": "^1.1.0",
+        "webpack": "^4.16.2",
+        "webpack-cli": "^3.1.0",
+        "webpack-pwa-manifest": "^4.0.0",
+        "webpack-sweet-entry": "^1.1.5",
+        "yarn": "^1.7.0"
+    },
+    "dependencies": {
+        "bootstrap": "^4.1.2",
+        "bootstrap-select": "^1.13.1",
+        "font-awesome": "^4.7.0",
+        "jquery": "^3.3.1",
+        "jquery-ui": "^1.12.1",
+        "particles.js": "^2.0.0",
+        "popper.js": "^1.14.6",
+        "vue": "^2.5.16"
+    }
+}
