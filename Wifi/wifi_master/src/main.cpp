@@ -18,14 +18,20 @@
 #define bt_mode true // false = send data after every requst, true = send data in intervals
 #define create_local_host true // creates DNS for host and can be used to redirect all to host
 #define DBG_BAUD_RATE 115200
-#define BT_BAUD_RATE 9600
-#define RX_PIN 13 // rx pin on bluetooth module connected to this pin on Arduino
-#define TX_PIN 12 // tx pin on bluetooth module connected to this pin on Arduino
 #define ttl 300 // ttl for dns
 #define channel_num 1 // channel number for softAP
 #define max_connection 10 // max connections to AP
 #define websocket false // web socket on = true, off = false. has relatively high latancy (fast for first 30 requests and then slows down)
 #define websocketslow false // turn on if web socket requests >= 500 ms apart
+#define BT_BAUD_RATE 9600
+#define RX_PIN 13 // rx pin on bluetooth module connected to this pin on Arduino
+#define TX_PIN 12 // tx pin on bluetooth module connected to this pin on Arduino
+#define bluetooth_device_config true // true = configure hc-06 on start
+#define NEW_BT_NAME "SPACESUITBT"
+#define NEW_BT_SECURITY_KEY "1234"
+#define AT_COMMAND_DELAY_TIME 1000 //ms
+#define INITIAL_BT_DELAY 1000 //ms
+const char* NEW_BT_BAUD_RATE = "9600";
 const char *ssid = "SPACESUITWIFI";
 const char *password = "N@sASu!t";
 const char *host = "spacesuit.local";
@@ -610,10 +616,27 @@ void handleWs(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTy
   }
 }
 
+void runATCommand(String command) {
+  btSerial.print(command);
+  bool cont = false;
+  while (!cont) {
+    if (btSerial.available()) {
+      DBG_OUTPUT_PORT.write(btSerial.read());
+      cont = true;
+    }
+  }
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println();
+  delay(AT_COMMAND_DELAY_TIME);
+}
+
 void setup() {
 
   DBG_OUTPUT_PORT.begin(DBG_BAUD_RATE);
   DBG_OUTPUT_PORT.setDebugOutput(debug_mode);
+  while (!DBG_OUTPUT_PORT) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
 
   if (debug_mode)
     DBG_OUTPUT_PORT.println("started debug mode");
@@ -723,6 +746,38 @@ void setup() {
 
   // Bluetooth
   btSerial.begin(BT_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
+  if (bluetooth_device_config) {
+    delay(INITIAL_BT_DELAY);
+    StaticJsonBuffer<200> btjsonBuffer;
+    JsonObject& baudRates = btjsonBuffer.createObject();
+    baudRates["1200"] = "BAUD1";
+    baudRates["2400"] = "BAUD2";
+    baudRates["4800"] = "BAUD3";
+    baudRates["9600"] = "BAUD4";
+    baudRates["19200"] = "BAUD5";
+    baudRates["38400"] = "BAUD6";
+    baudRates["57600"] = "BAUD7";
+    baudRates["115200"] = "BAUD8";
+    baudRates["230400"] = "BAUD9";
+    baudRates["460800"] = "BAUDA";
+    baudRates["921600"] = "BAUDB";
+    baudRates["1382400"] = "BAUDC";
+    if (baudRates.containsKey(NEW_BT_BAUD_RATE)) {
+      String theBaudRate = baudRates[NEW_BT_BAUD_RATE];
+      runATCommand("AT+" + theBaudRate);
+      if (debug_mode)
+        DBG_OUTPUT_PORT.println("#change bt device baud rate to " + String(NEW_BT_BAUD_RATE));
+    } else {
+      if (debug_mode)
+        DBG_OUTPUT_PORT.println("#bt baud rate " + String(NEW_BT_BAUD_RATE) + " not available");
+    }
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("change bt device name to " + String(NEW_BT_NAME));
+    runATCommand("AT+NAME" + String(NEW_BT_NAME));
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("#change bt device security code to " + String(NEW_BT_SECURITY_KEY));
+    runATCommand("AT+PIN" + String(NEW_BT_SECURITY_KEY));
+  }
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#The bluetooth device started, now you can pair it.");
 
@@ -755,7 +810,7 @@ void loop() {
     }
   }
 
-  // Keep reading from HC-05 and send to Arduino Serial Monitor
+  // Keep reading from bluetooth module and send to Arduino Serial Monitor
   String command;
   bool foundcommand = false;
   while (btSerial.available()) {

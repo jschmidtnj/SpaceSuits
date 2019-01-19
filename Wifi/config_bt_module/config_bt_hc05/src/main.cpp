@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include "SoftwareSerial.h"
 
+// this works for hc-05
+
 #define DBG_OUTPUT_PORT Serial
 #define RX_PIN 8 // rx pin on bluetooth module connected to this pin on Arduino
 #define TX_PIN 9 // tx pin on bluetooth module connected to this pin on Arduino
