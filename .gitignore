@@ -60,7 +60,3 @@ System.*/
 
 # binaries
 bin/
-
-# config files / folders
-config.json
-config/
