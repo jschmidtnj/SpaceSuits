@@ -3,6 +3,7 @@ const siteConfig = require('./site-config');
 module.exports = {
   siteMetadata: {
     ...siteConfig,
+    cordova: false,
   },
   plugins: [
     'gatsby-plugin-purgecss',

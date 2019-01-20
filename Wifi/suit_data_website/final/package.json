@@ -12,14 +12,14 @@
     "build": "npm run build:dir && npm run build:favicons && gatsby build && mv public/index.html public/index.htm",
     "test": "ava **/*.test.js --verbose",
     "start": "node server.js",
-    "build-native": "npm run build && concurrently --kill-others \"npm run start\" \"nativefier \"http://localhost:8080\"\" && nativefier \"http://localhost:8080\""
+    "build-native": "npm run build && concurrently --kill-others \"npm run start\" \"nativefier \"http://localhost:8080\"\" && nativefier \"http://localhost:8080\"",
+    "build-cordova": "gatsby build && cp -r public/ mobile-app/www/"
   },
   "dependencies": {
     "@reach/dialog": "^0.1.2",
     "@reach/router": "^1.2.1",
     "@reach/visually-hidden": "^0.1.1",
     "axios": "^0.18.0",
-    "babel-plugin-styled-components": "^1.9.3",
     "gatsby": "^2.0.64",
     "gatsby-image": "^2.0.22",
     "gatsby-plugin-offline": "^2.0.19",
