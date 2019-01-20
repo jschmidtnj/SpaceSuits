@@ -330,7 +330,7 @@ void PrintStations() {
     mac.substring(1, 16).toCharArray(macChar, 25);
     u8x8.drawString(0, i + 1, macChar);
   }
-  for (int i = 0; i < 8 - stationList.num; i++) {
+  for (int i = 0; i < 7 - stationList.num; i++) {
     u8x8.drawString(0, i + 1 + stationList.num, "                ");
   }
   if (debug_mode)
@@ -736,6 +736,13 @@ void setup() {
       return;
     });
   }
+  server.on("/getdata", HTTP_GET, [](AsyncWebServerRequest *request){
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("#data get request");
+    String data = "";
+    jsonData.printTo(data);
+    request->send(200, "application/json", data);
+  });
   //handle not found
   server.onNotFound(handleNotFound);
   if (debug_mode)

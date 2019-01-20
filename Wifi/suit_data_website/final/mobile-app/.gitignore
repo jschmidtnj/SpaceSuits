@@ -1,0 +1,6 @@
+# this stuff was created by the cordova cli and will reinstall when built.
+www/
+res/
+platforms/
+plugins/
+*.keystore

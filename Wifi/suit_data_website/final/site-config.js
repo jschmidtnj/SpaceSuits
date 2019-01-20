@@ -14,4 +14,5 @@ module.exports = {
     fbAppId: '966242223397117',
   },
   dataInterval: 5000, //ms
+  cordova: true, // true = build for cordova, false = otherwise
 };

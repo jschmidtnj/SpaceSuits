@@ -6,5 +6,9 @@
     "files.associations": {
         "functional": "cpp",
         "array": "cpp"
+    },
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/joshua/.platformio/penv/bin:/home/joshua/.platformio/penv:/home/joshua/anaconda3/bin:/home/joshua/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+        "PLATFORMIO_CALLER": "vscode"
     }
 }
