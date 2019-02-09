@@ -13,7 +13,7 @@
     "test": "ava **/*.test.js --verbose",
     "start": "node server.js",
     "build-native": "npm run build && concurrently --kill-others \"npm run start\" \"nativefier \"http://localhost:8080\"\" && nativefier \"http://localhost:8080\"",
-    "build-cordova": "gatsby build && cp -r public/ mobile-app/www/"
+    "build-cordova": "rm -rf mobile-app/www && rm -rf public && gatsby build && cp -a public/. mobile-app/www/"
   },
   "dependencies": {
     "@reach/dialog": "^0.1.2",
@@ -35,13 +35,17 @@
     "gatsby-transformer-json": "^2.1.6",
     "gatsby-transformer-remark": "^2.1.15",
     "gatsby-transformer-sharp": "^2.1.9",
+    "hash-source": "^1.0.1",
+    "history": "^4.7.2",
     "intersection-observer": "^0.5.1",
     "nativefier": "^7.6.9",
     "prop-types": "^15.6.2",
+    "reach-router-hash-history": "0.0.3",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-helmet": "^5.2.0",
     "react-pose": "^4.0.4",
+    "react-router-dom": "^4.3.1",
     "styled-components": "^4.1.2"
   },
   "devDependencies": {

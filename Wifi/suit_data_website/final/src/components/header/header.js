@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'gatsby';
+import { navigate } from 'gatsby';
 import posed from 'react-pose';
 import { Container } from './header.css';
 import Title from 'components/title';
@@ -25,9 +25,9 @@ const AnimatedContainer = posed.div({
 const Header = ({ title }) => (
   <AnimatedContainer>
     <Container>
-      <Link to="/">
+      <a onClick={() => navigate('/')} role="button" tabIndex="0" href="#">
         <Title as="h1">{title}</Title>
-      </Link>
+      </a>
 
       <Nav />
     </Container>

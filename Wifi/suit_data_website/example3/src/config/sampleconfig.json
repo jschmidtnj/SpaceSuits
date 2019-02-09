@@ -1,0 +1,5 @@
+{
+    "datatimeout": 1000,
+    "redirecttimeout": 1000,
+    "alerttimeout": 1000
+}

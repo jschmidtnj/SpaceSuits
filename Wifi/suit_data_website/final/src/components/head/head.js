@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { StaticQuery, graphql } from 'gatsby';
-import { Location } from '@reach/router';
 import schemaGenerator from 'helpers/schemaGenerator';
+import { Location } from '@reach/router';
 
 const Head = ({
   siteTitle,
@@ -162,6 +162,16 @@ const Head = ({
         })
       )}
     </script>
+    <meta content="telephone=no" name="format-detection" />
+    <meta
+      content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"
+      name="viewport"
+    />
+    <meta content="no" name="msapplication-tap-highlight" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data:"
+    />
   </Helmet>
 );
 
