@@ -48,18 +48,17 @@ static const String devices[] = {"glove1", "glove2", "imu"};
 // JSON data
 DynamicJsonBuffer jsonBuffer;
 JsonObject& glove1 = jsonBuffer.createObject();
-JsonObject& glove2 = jsonBuffer.createObject();
 JsonObject& imu = jsonBuffer.createObject();
 JsonObject& jsonData = jsonBuffer.createObject();
 
 static const unsigned long WIFI_REFRESH_INTERVAL = 10000; // ms
 static unsigned long wifiLastRefreshTime = 0;
-static const unsigned long BLUETOOTH_REFRESH_INTERVAL = 2000; //ms // 100 ms works well
+static const unsigned long BLUETOOTH_REFRESH_INTERVAL = 500; //ms // 100 ms works well
 static unsigned long bluetoothLastRefreshTime = 0;
 
 static const unsigned long BLINK_INTERVAL = 1000; //ms
 static unsigned long lastBlink = 0;
-bool blinkState = false; // false = off
+static bool blinkState = false; // false = off
 
 // the OLED used
 U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
@@ -408,21 +407,6 @@ bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
       jsonData[kv.key] = data;
     }
   }
-  /*
-  if (id == "glove1") {
-    // using C++11 syntax (preferred):
-    for (auto kv : data) {
-      glove1[kv.key] = data[kv.key];
-      // DBG_OUTPUT_PORT.println(kv.key);
-      // DBG_OUTPUT_PORT.println(kv.value.as<char*>());
-    }
-  } else if (id == "glove2") {
-    for (auto kv : data)
-      glove2[kv.key] = data[kv.key];
-  } else if (id == "imu") {
-    for (auto kv : data)
-      imu[kv.key] = data[kv.key];
-  }*/
   // send data through bluetooth immediately
   if (!bt_mode)
     sendDataBT();
@@ -510,11 +494,21 @@ void handleCommand(String command) {
         if (debug_mode)
           DBG_OUTPUT_PORT.println("did not find ip address");
       }
-    } else {
+    } else if (data["id"] == "all") {
       sendToAllHttp(command);
+      if (websocket || debug_mode)
+        sendToAllWs(command);
+    } else if (data["id"] == "status") {
+      // return status request message
+      if (bluetooth_on) {
+        sendDataBT();
+        if (debug_mode)
+          DBG_OUTPUT_PORT.println("sent status response");
+      } else {
+        if (debug_mode)
+          DBG_OUTPUT_PORT.println("did not send status response because bluetooth disabled");
+      }
     }
-    if (websocket || debug_mode)
-      sendToAllWs(command);
   } else {
     if (debug_mode)
       DBG_OUTPUT_PORT.println("received invalid json command");
@@ -644,7 +638,6 @@ void setup() {
     DBG_OUTPUT_PORT.println("started debug mode");
 
   jsonData["glove1"] = glove1;
-  jsonData["glove2"] = glove2;
   jsonData["imu"] = imu;
 
   if (debug_mode)
