@@ -13,7 +13,8 @@
     "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
     "build": "node build/build.js",
     "format": "prettier --config ./.prettierrc --write src/**/*.js && npm run lint -- --fix",
-    "serve": "node server.js"
+    "serve": "node server.js",
+    "build-cordova": "rm -rf mobile-app/www && rm -rf dist && npm run build && cp -a dist/. mobile-app/www/"
   },
   "dependencies": {
     "axios": "^0.18.0",

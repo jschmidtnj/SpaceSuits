@@ -15,6 +15,8 @@
 
 #define DBG_OUTPUT_PORT Serial
 #define debug_mode true
+#define bluetooth_on false
+#define website_on false
 #define bt_mode true // false = send data after every requst, true = send data in intervals
 #define create_local_host true // creates DNS for host and can be used to redirect all to host
 #define DBG_BAUD_RATE 115200
@@ -46,18 +48,17 @@ static const String devices[] = {"glove1", "glove2", "imu"};
 // JSON data
 DynamicJsonBuffer jsonBuffer;
 JsonObject& glove1 = jsonBuffer.createObject();
-JsonObject& glove2 = jsonBuffer.createObject();
 JsonObject& imu = jsonBuffer.createObject();
 JsonObject& jsonData = jsonBuffer.createObject();
 
 static const unsigned long WIFI_REFRESH_INTERVAL = 10000; // ms
 static unsigned long wifiLastRefreshTime = 0;
-static const unsigned long BLUETOOTH_REFRESH_INTERVAL = 2000; //ms // 100 ms works well
+static const unsigned long BLUETOOTH_REFRESH_INTERVAL = 500; //ms // 100 ms works well
 static unsigned long bluetoothLastRefreshTime = 0;
 
 static const unsigned long BLINK_INTERVAL = 1000; //ms
 static unsigned long lastBlink = 0;
-bool blinkState = false; // false = off
+static bool blinkState = false; // false = off
 
 // the OLED used
 U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
@@ -406,21 +407,6 @@ bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
       jsonData[kv.key] = data;
     }
   }
-  /*
-  if (id == "glove1") {
-    // using C++11 syntax (preferred):
-    for (auto kv : data) {
-      glove1[kv.key] = data[kv.key];
-      // DBG_OUTPUT_PORT.println(kv.key);
-      // DBG_OUTPUT_PORT.println(kv.value.as<char*>());
-    }
-  } else if (id == "glove2") {
-    for (auto kv : data)
-      glove2[kv.key] = data[kv.key];
-  } else if (id == "imu") {
-    for (auto kv : data)
-      imu[kv.key] = data[kv.key];
-  }*/
   // send data through bluetooth immediately
   if (!bt_mode)
     sendDataBT();
@@ -508,11 +494,21 @@ void handleCommand(String command) {
         if (debug_mode)
           DBG_OUTPUT_PORT.println("did not find ip address");
       }
-    } else {
+    } else if (data["id"] == "all") {
       sendToAllHttp(command);
+      if (websocket || debug_mode)
+        sendToAllWs(command);
+    } else if (data["id"] == "status") {
+      // return status request message
+      if (bluetooth_on) {
+        sendDataBT();
+        if (debug_mode)
+          DBG_OUTPUT_PORT.println("sent status response");
+      } else {
+        if (debug_mode)
+          DBG_OUTPUT_PORT.println("did not send status response because bluetooth disabled");
+      }
     }
-    if (websocket || debug_mode)
-      sendToAllWs(command);
   } else {
     if (debug_mode)
       DBG_OUTPUT_PORT.println("received invalid json command");
@@ -642,21 +638,26 @@ void setup() {
     DBG_OUTPUT_PORT.println("started debug mode");
 
   jsonData["glove1"] = glove1;
-  jsonData["glove2"] = glove2;
   jsonData["imu"] = imu;
 
   if (debug_mode)
     DBG_OUTPUT_PORT.println("initialized global variables");
 
-  if (! SD.begin(pin_CS_SDcard)){
+  if (website_on) {
+    if (! SD.begin(pin_CS_SDcard)){
+      if (debug_mode)
+        DBG_OUTPUT_PORT.println("#SD initiatization failed. Retrying.");
+      while(!SD.begin(pin_CS_SDcard)){
+        delay(250); 
+      } 
+    } else {
+      if (debug_mode)
+        DBG_OUTPUT_PORT.println("#SD Initialized.");
+    }
+  } else {
     if (debug_mode)
-      DBG_OUTPUT_PORT.println("#SD initiatization failed. Retrying.");
-    while(!SD.begin(pin_CS_SDcard)){
-      delay(250); 
-    } 
+      DBG_OUTPUT_PORT.println("#SD not initialized.");
   }
-  if (debug_mode)
-    DBG_OUTPUT_PORT.println("#SD Initialized.");
 
   u8x8.begin();
   u8x8.setFont(u8x8_font_chroma48medium8_r);
@@ -683,7 +684,7 @@ void setup() {
     DBG_OUTPUT_PORT.println(IP);
   }
 
-  if (create_local_host) {
+  if (website_on && create_local_host) {
     //dnsServer.start(DNS_PORT, "*", IP);
     dnsServer.setTTL(ttl);
     dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
@@ -752,41 +753,46 @@ void setup() {
     DBG_OUTPUT_PORT.println("#HTTP server started");
 
   // Bluetooth
-  btSerial.begin(BT_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
-  if (bluetooth_device_config) {
-    delay(INITIAL_BT_DELAY);
-    StaticJsonBuffer<200> btjsonBuffer;
-    JsonObject& baudRates = btjsonBuffer.createObject();
-    baudRates["1200"] = "BAUD1";
-    baudRates["2400"] = "BAUD2";
-    baudRates["4800"] = "BAUD3";
-    baudRates["9600"] = "BAUD4";
-    baudRates["19200"] = "BAUD5";
-    baudRates["38400"] = "BAUD6";
-    baudRates["57600"] = "BAUD7";
-    baudRates["115200"] = "BAUD8";
-    baudRates["230400"] = "BAUD9";
-    baudRates["460800"] = "BAUDA";
-    baudRates["921600"] = "BAUDB";
-    baudRates["1382400"] = "BAUDC";
-    if (baudRates.containsKey(NEW_BT_BAUD_RATE)) {
-      String theBaudRate = baudRates[NEW_BT_BAUD_RATE];
-      runATCommand("AT+" + theBaudRate);
+  if (bluetooth_on) {
+    btSerial.begin(BT_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
+    if (bluetooth_device_config) {
+      delay(INITIAL_BT_DELAY);
+      StaticJsonBuffer<200> btjsonBuffer;
+      JsonObject& baudRates = btjsonBuffer.createObject();
+      baudRates["1200"] = "BAUD1";
+      baudRates["2400"] = "BAUD2";
+      baudRates["4800"] = "BAUD3";
+      baudRates["9600"] = "BAUD4";
+      baudRates["19200"] = "BAUD5";
+      baudRates["38400"] = "BAUD6";
+      baudRates["57600"] = "BAUD7";
+      baudRates["115200"] = "BAUD8";
+      baudRates["230400"] = "BAUD9";
+      baudRates["460800"] = "BAUDA";
+      baudRates["921600"] = "BAUDB";
+      baudRates["1382400"] = "BAUDC";
+      if (baudRates.containsKey(NEW_BT_BAUD_RATE)) {
+        String theBaudRate = baudRates[NEW_BT_BAUD_RATE];
+        runATCommand("AT+" + theBaudRate);
+        if (debug_mode)
+          DBG_OUTPUT_PORT.println("#change bt device baud rate to " + String(NEW_BT_BAUD_RATE));
+      } else {
+        if (debug_mode)
+          DBG_OUTPUT_PORT.println("#bt baud rate " + String(NEW_BT_BAUD_RATE) + " not available");
+      }
       if (debug_mode)
-        DBG_OUTPUT_PORT.println("#change bt device baud rate to " + String(NEW_BT_BAUD_RATE));
-    } else {
+        DBG_OUTPUT_PORT.println("change bt device name to " + String(NEW_BT_NAME));
+      runATCommand("AT+NAME" + String(NEW_BT_NAME));
       if (debug_mode)
-        DBG_OUTPUT_PORT.println("#bt baud rate " + String(NEW_BT_BAUD_RATE) + " not available");
+        DBG_OUTPUT_PORT.println("#change bt device security code to " + String(NEW_BT_SECURITY_KEY));
+      runATCommand("AT+PIN" + String(NEW_BT_SECURITY_KEY));
     }
     if (debug_mode)
-      DBG_OUTPUT_PORT.println("change bt device name to " + String(NEW_BT_NAME));
-    runATCommand("AT+NAME" + String(NEW_BT_NAME));
+      DBG_OUTPUT_PORT.println("#The bluetooth device started, now you can pair it.");
+  } else {
     if (debug_mode)
-      DBG_OUTPUT_PORT.println("#change bt device security code to " + String(NEW_BT_SECURITY_KEY));
-    runATCommand("AT+PIN" + String(NEW_BT_SECURITY_KEY));
+      DBG_OUTPUT_PORT.println("#The bluetooth device was not enabled.");
   }
-  if (debug_mode)
-    DBG_OUTPUT_PORT.println("#The bluetooth device started, now you can pair it.");
 
   // set built-in led to output
   pinMode(BUILTIN_LED, OUTPUT);
@@ -801,7 +807,7 @@ void setup() {
 
 void loop() {
 
-  if (create_local_host)
+  if (website_on && create_local_host)
     dnsServer.processNextRequest();
 	
 	if(millis() - wifiLastRefreshTime >= WIFI_REFRESH_INTERVAL) {
@@ -809,38 +815,40 @@ void loop() {
     PrintStations();
 	}
 
-  // send data after interval
-  if (bt_mode) {
-    if(millis() - bluetoothLastRefreshTime >= BLUETOOTH_REFRESH_INTERVAL) {
-      bluetoothLastRefreshTime += BLUETOOTH_REFRESH_INTERVAL;
-      sendDataBT();
+  if (bluetooth_on) {
+    // send data after interval
+    if (bt_mode) {
+      if(millis() - bluetoothLastRefreshTime >= BLUETOOTH_REFRESH_INTERVAL) {
+        bluetoothLastRefreshTime += BLUETOOTH_REFRESH_INTERVAL;
+        sendDataBT();
+      }
     }
-  }
 
-  // Keep reading from bluetooth module and send to Arduino Serial Monitor
-  String command;
-  bool foundcommand = false;
-  while (btSerial.available()) {
-    delay(10); // delay to make it work well
-    char c = btSerial.read(); //Conduct a serial read
-    command += c; //build the string.
-    if (!foundcommand)
-      foundcommand = true;
-  }
-  if (foundcommand) {
-    char *commandchar = new char[command.length() + 1];
-    strcpy(commandchar, command.c_str());
-    removeChar(commandchar, '\n');
-    removeChar(commandchar, '\r');
-    //removeChar(commandchar, ' ');
-    String commandstr = commandchar;
-    delete commandchar;
-    handleCommand(commandstr);
-  }
+    // Keep reading from bluetooth module and send to Arduino Serial Monitor
+    String command;
+    bool foundcommand = false;
+    while (btSerial.available()) {
+      delay(10); // delay to make it work well
+      char c = btSerial.read(); //Conduct a serial read
+      command += c; //build the string.
+      if (!foundcommand)
+        foundcommand = true;
+    }
+    if (foundcommand) {
+      char *commandchar = new char[command.length() + 1];
+      strcpy(commandchar, command.c_str());
+      removeChar(commandchar, '\n');
+      removeChar(commandchar, '\r');
+      //removeChar(commandchar, ' ');
+      String commandstr = commandchar;
+      delete commandchar;
+      handleCommand(commandstr);
+    }
 
-  // Keep reading from Arduino Serial Monitor and send to HC-05
-  if (DBG_OUTPUT_PORT.available())
-    btSerial.write(DBG_OUTPUT_PORT.read());
+    // Keep reading from Arduino Serial Monitor and send to HC-05
+    if (DBG_OUTPUT_PORT.available())
+      btSerial.write(DBG_OUTPUT_PORT.read());
+  }
   
   if(millis() - lastBlink >= BLINK_INTERVAL) {
 		lastBlink += BLINK_INTERVAL;
