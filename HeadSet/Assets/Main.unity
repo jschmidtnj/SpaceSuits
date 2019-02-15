@@ -924,6 +924,7 @@ GameObject:
   m_Component:
   - component: {fileID: 517248390}
   - component: {fileID: 517248391}
+  - component: {fileID: 517248392}
   m_Layer: 0
   m_Name: O2PrimaryBar
   m_TagString: Untagged
@@ -938,7 +939,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 517248389}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 105, y: 32, z: 0}
+  m_LocalPosition: {x: 103.8, y: 32, z: 0}
   m_LocalScale: {x: 30, y: 8, z: 0}
   m_Children: []
   m_Father: {fileID: 640403393}
@@ -990,6 +991,17 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &517248392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 517248389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6435281dd0120e4ba245ef111b55f21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -1106,7 +1118,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 536556917}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 105, y: 15, z: 0}
+  m_LocalPosition: {x: 104.4, y: 15, z: 0}
   m_LocalScale: {x: 30, y: 8, z: 0}
   m_Children: []
   m_Father: {fileID: 640403393}
@@ -1181,7 +1193,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 608964467}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 105, y: -2, z: 0}
+  m_LocalPosition: {x: 103.8, y: -2, z: 0}
   m_LocalScale: {x: 30, y: 8, z: 0}
   m_Children: []
   m_Father: {fileID: 640403393}
@@ -1627,6 +1639,7 @@ GameObject:
   - component: {fileID: 714204900}
   - component: {fileID: 714204899}
   - component: {fileID: 714204898}
+  - component: {fileID: 714204902}
   m_Layer: 0
   m_Name: BluetoothInput
   m_TagString: Untagged
@@ -1722,6 +1735,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &714204902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 714204896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8d1171de22e36458ef1b48c5a6ad13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 971207715}
 --- !u!1 &812632720
 GameObject:
   m_ObjectHideFlags: 0
@@ -2879,7 +2904,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -114, y: 0}
+  m_AnchoredPosition: {x: -106.4, y: 0}
   m_SizeDelta: {x: 50, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1789510977
