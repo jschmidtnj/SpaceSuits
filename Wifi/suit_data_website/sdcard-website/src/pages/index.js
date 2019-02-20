@@ -28,7 +28,11 @@ const Index = ({ data }) => (
     {/*<Gallery items={data.homeJson.gallery} />
     <div style={{ height: '50vh' }} />*/}
     {/*<IOExample />*/}
-    <Data interval={data.site.siteMetadata.dataInterval} />
+    <Data
+      interval={data.site.siteMetadata.dataInterval}
+      getSuitDataUrl={data.site.siteMetadata.getSuitDataUrl}
+      getTaskDataUrl={data.site.siteMetadata.getTaskDataUrl}
+    />
   </Layout>
 );
 
@@ -63,6 +67,8 @@ export const query = graphql`
     site {
       siteMetadata {
         dataInterval
+        getSuitDataUrl
+        getTaskDataUrl
       }
     }
   }

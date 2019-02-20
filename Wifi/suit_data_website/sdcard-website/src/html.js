@@ -1,14 +1,14 @@
-import React from "react"
-import PropTypes from "prop-types"
+import React from 'react';
+import PropTypes from 'prop-types';
 const config = require('../site-config');
 
 export default class HTML extends React.Component {
   render() {
     // console.log(config);
     const cordovaOn = config.cordova;
-    let cordovaScript = <div></div>;
+    let cordovaScript = <div />;
     if (cordovaOn) {
-      cordovaScript = <script type="text/javascript" src="cordova.js"></script>;
+      cordovaScript = <script type="text/javascript" src="cordova.js" />;
     }
     return (
       <html {...this.props.htmlAttributes}>
@@ -32,7 +32,7 @@ export default class HTML extends React.Component {
           {cordovaScript}
         </body>
       </html>
-    )
+    );
   }
 }
 
@@ -43,4 +43,4 @@ HTML.propTypes = {
   preBodyComponents: PropTypes.array,
   body: PropTypes.string,
   postBodyComponents: PropTypes.array,
-}
+};
