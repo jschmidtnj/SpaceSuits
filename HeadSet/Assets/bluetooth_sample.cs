@@ -58,7 +58,7 @@ public class bluetooth
 }
 
 public class bluetooth_sample : MonoBehaviour {
-    public UnityEngine.UI.Text text;
+    public String BluetoothReading;
    
     Semaphore semaphore = new Semaphore(1, 1);
     Queue<string> inputQueue = new Queue<string>();
@@ -91,7 +91,7 @@ public class bluetooth_sample : MonoBehaviour {
                 }
                 string ret = inputQueue.Dequeue();
                 Debug.Log(ret);
-                text.text = ret;
+                Globals.BluetoothData = JsonUtility.FromJson<CustomJSON>(ret);
                 semaphore.Release();
                 yield return new WaitForSeconds(3.0f);
             }
