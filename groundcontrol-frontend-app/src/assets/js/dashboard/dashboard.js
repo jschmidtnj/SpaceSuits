@@ -175,7 +175,7 @@ $(document).ready(function () {
                 var majortasknum = tasknumsplit[0];
                 var subtasknum = tasknumsplit[1];
                 delete tasksplit[0];
-                var taskvalue = tasksplit.join(' ');
+                var taskvalue = tasksplit.join(' ').trim();
                 var timestamp = Date.now().toString();
                 var subtaskdata = {
                     "data": taskvalue,
