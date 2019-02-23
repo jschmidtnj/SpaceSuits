@@ -15,9 +15,9 @@
 
 #define DBG_OUTPUT_PORT Serial
 #define debug_mode true
-#define bluetooth_on false
+#define bluetooth_on true
 #define website_on false
-#define bt_mode true // false = send data after every requst, true = send data in intervals
+#define bt_mode false // false = send data after every requst, true = send data in intervals
 #define create_local_host true // creates DNS for host and can be used to redirect all to host
 #define DBG_BAUD_RATE 115200
 #define ttl 300 // ttl for dns
@@ -50,6 +50,12 @@ DynamicJsonBuffer jsonBuffer;
 JsonObject& glove1 = jsonBuffer.createObject();
 JsonObject& imu = jsonBuffer.createObject();
 JsonObject& jsonData = jsonBuffer.createObject();
+
+// data for hololens and tasks
+JsonObject& hololensData = jsonBuffer.createObject();
+JsonArray& tasksArray = jsonBuffer.createArray();
+JsonObject& inertialState = jsonBuffer.createObject();
+JsonObject& suitTelemetry = jsonBuffer.createObject();
 
 static const unsigned long WIFI_REFRESH_INTERVAL = 10000; // ms
 static unsigned long wifiLastRefreshTime = 0;
@@ -357,38 +363,6 @@ bool handleTest(AsyncWebServerRequest *request, uint8_t *datas) {
   return 1;
 }
 
-void sendDataBT() {
-  String data = "";
-  jsonData.printTo(data);
-  btSerial.println(data);
-}
-
-void handleQuery(AsyncWebServerRequest *request) {
-  int paramsNr = request->params();
-  DBG_OUTPUT_PORT.print(paramsNr);
-  DBG_OUTPUT_PORT.println(" queries");
-  String dataStr;
-  for(int i=0;i < paramsNr;i++){
-    AsyncWebParameter* p = request->getParam(i);
-    String name = p->name();
-    if (debug_mode) {
-      DBG_OUTPUT_PORT.print("Param name: ");
-      DBG_OUTPUT_PORT.println(name);
-    }
-    String val = p->value();
-    if (debug_mode) {
-      DBG_OUTPUT_PORT.print("Param value: ");
-      DBG_OUTPUT_PORT.println(val);
-    }
-    if (name == "data")
-      dataStr = val;
-    if (debug_mode)
-      DBG_OUTPUT_PORT.println("------");
-  }
-  //const char* querychar = dataStr.c_str();
-  // do not delete querychar (results in error)
-}
-
 bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
   if (debug_mode)
     DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char*)datas);
@@ -418,109 +392,6 @@ bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
 void sendToAllWs(String message) {
   const char *dataChar = message.c_str();
   ws.printfAll(dataChar);
-}
-
-void sendToSpecificIp(String message, String ip) {
-  HTTPClient http;
-  String urlfull = "http://" + ip + ":80/command";
-  http.addHeader("operator", "text/plain");
-  http.begin(urlfull); //Specify the URL
-  // put request
-  int httpCode = http.PUT(message);
-  if (httpCode > 0) { //Check for the returning code
-    String payload = http.getString();
-    if (debug_mode) {
-      DBG_OUTPUT_PORT.println(httpCode);
-      DBG_OUTPUT_PORT.println(payload);
-    }
-  } else {
-    if (debug_mode) {
-      DBG_OUTPUT_PORT.println("Error on HTTP put request");
-    }
-  }
-  http.end(); //Free the resources
-}
-
-void testIPGet(String ip) {
-  HTTPClient http;
-  String urlfull = "http://" + ip + "/test";
-  DBG_OUTPUT_PORT.println(urlfull);
-  http.addHeader("operator", "text/plain");
-  http.begin(urlfull); //Specify the URL
-  // put request
-  int httpCode = http.GET();
-  if (httpCode > 0) { //Check for the returning code
-    String payload = http.getString();
-    if (debug_mode) {
-      DBG_OUTPUT_PORT.println(httpCode);
-      DBG_OUTPUT_PORT.println(payload);
-    }
-  } else {
-    if (debug_mode) {
-      DBG_OUTPUT_PORT.println("Error on HTTP get request");
-      DBG_OUTPUT_PORT.println("Resetting...");
-    }
-    //resetFunc(); //call reset
-  }
-  http.end(); //Free the resources
-}
-
-void sendToAllHttp(String message) {
-  for (auto kv : jsonData) {
-    JsonObject& tempObj = jsonData[kv.key];
-    if (tempObj.containsKey("ip"))
-      sendToSpecificIp(message, tempObj["ip"]);
-  }
-}
-
-void handleCommand(String command) {
-  if (debug_mode)
-    DBG_OUTPUT_PORT.println("received command: " + command);
-  JsonObject& data = jsonBuffer.parseObject(command);
-  if (data.success()) {
-    if (data.containsKey("id") && data["id"] != "all") {
-      const char* ip = "";
-      for (auto kv : jsonData) {
-        JsonObject& tempObj = jsonData[kv.key];
-        if (tempObj.containsKey("id") && tempObj["id"] == data["id"] && tempObj.containsKey("ip")) {
-          ip = tempObj["ip"];
-          break;
-        }
-      }
-      if (ip[0] != '\0') {
-        sendToSpecificIp(command, ip);
-        //testIPGet(ip);
-      } else {
-        if (debug_mode)
-          DBG_OUTPUT_PORT.println("did not find ip address");
-      }
-    } else if (data["id"] == "all") {
-      sendToAllHttp(command);
-      if (websocket || debug_mode)
-        sendToAllWs(command);
-    } else if (data["id"] == "status") {
-      // return status request message
-      if (bluetooth_on) {
-        sendDataBT();
-        if (debug_mode)
-          DBG_OUTPUT_PORT.println("sent status response");
-      } else {
-        if (debug_mode)
-          DBG_OUTPUT_PORT.println("did not send status response because bluetooth disabled");
-      }
-    }
-  } else {
-    if (debug_mode)
-      DBG_OUTPUT_PORT.println("received invalid json command");
-  }
-}
-
-void removeChar(char *s, int c){
-  int j, n = strlen(s); 
-  for (int i=j=0; i<n; i++) 
-      if (s[i] != c) 
-        s[j++] = s[i];
-  s[j] = '\0';
 }
 
 void handleWs(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
@@ -612,6 +483,235 @@ void handleWs(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTy
   }
 }
 
+void sendToSpecificIp(String message, String ip) {
+  HTTPClient http;
+  String urlfull = "http://" + ip + ":80/command";
+  http.addHeader("operator", "text/plain");
+  http.begin(urlfull); //Specify the URL
+  // put request
+  int httpCode = http.PUT(message);
+  if (httpCode > 0) { //Check for the returning code
+    String payload = http.getString();
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.println(httpCode);
+      DBG_OUTPUT_PORT.println(payload);
+    }
+  } else {
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.println("Error on HTTP put request");
+    }
+  }
+  http.end(); //Free the resources
+}
+
+void testIPGet(String ip) {
+  HTTPClient http;
+  String urlfull = "http://" + ip + "/test";
+  DBG_OUTPUT_PORT.println(urlfull);
+  http.addHeader("operator", "text/plain");
+  http.begin(urlfull); //Specify the URL
+  // put request
+  int httpCode = http.GET();
+  if (httpCode > 0) { //Check for the returning code
+    String payload = http.getString();
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.println(httpCode);
+      DBG_OUTPUT_PORT.println(payload);
+    }
+  } else {
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.println("Error on HTTP get request");
+      DBG_OUTPUT_PORT.println("Resetting...");
+    }
+    //resetFunc(); //call reset
+  }
+  http.end(); //Free the resources
+}
+
+void sendToAllHttp(String message) {
+  for (auto kv : jsonData) {
+    JsonObject& tempObj = jsonData[kv.key];
+    if (tempObj.containsKey("ip"))
+      sendToSpecificIp(message, tempObj["ip"]);
+  }
+}
+
+void sendDataBT() {
+  String data = "";
+  jsonData.printTo(data);
+  btSerial.println(data);
+}
+
+void refreshTaskArray(JsonObject& tasksObject) {
+  // clear task array
+  for (int i = 0; i < tasksArray.measureLength(); i++) {
+    tasksArray.remove(i);
+  }
+  // then add new tasks
+  for (auto majorkeyvalues : tasksObject) {
+    for (auto subkeyvalues: majorkeyvalues.value.as<JsonObject>()) {
+      String jsonStr = "";
+      subkeyvalues.value.as<JsonObject>().printTo(jsonStr);
+      JsonObject& newObj = jsonBuffer.parse(jsonStr);
+      newObj["majorkey"] = majorkeyvalues.key;
+      newObj["subkey"] = subkeyvalues.key;
+      tasksArray.add<JsonObject>(newObj);
+    }
+  }
+  String val = "";
+  tasksArray.printTo(val);
+}
+
+void sendDataHololensBT() {
+  String data = "";
+  hololensData.printTo(data);
+  String dataLen = String(data.length());
+  if (dataLen.length() > 4) {
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("json object is too long for 4 digits len");
+    return;
+  } else {
+    for (int i = 0; i < 4 - dataLen.length(); i++) {
+      dataLen = "0" + dataLen;
+    }
+  }
+  btSerial.println(dataLen);
+  btSerial.println(data);
+}
+
+void handleQuery(AsyncWebServerRequest *request) {
+  int paramsNr = request->params();
+  DBG_OUTPUT_PORT.print(paramsNr);
+  DBG_OUTPUT_PORT.println(" queries");
+  String dataStr;
+  for(int i=0;i < paramsNr;i++){
+    AsyncWebParameter* p = request->getParam(i);
+    String name = p->name();
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.print("Param name: ");
+      DBG_OUTPUT_PORT.println(name);
+    }
+    String val = p->value();
+    if (debug_mode) {
+      DBG_OUTPUT_PORT.print("Param value: ");
+      DBG_OUTPUT_PORT.println(val);
+    }
+    if (name == "data")
+      dataStr = val;
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("------");
+  }
+  //const char* querychar = dataStr.c_str();
+  // do not delete querychar (results in error)
+}
+
+void handleCommand(String command) {
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("received command: " + command);
+  JsonObject& data = jsonBuffer.parseObject(command);
+  if (data.success()) {
+    if (data.containsKey("id")) {
+      if (data["id"] == "settasks") {
+        if (data.containsKey("tasks")) {
+          JsonObject& taskObj = jsonBuffer.parseObject(data["tasks"]);
+          if (!taskObj.success())
+            if (debug_mode)
+              DBG_OUTPUT_PORT.println("did not valid json in task data");
+          else {
+            refreshTaskArray(taskObj);
+            if (debug_mode)
+              DBG_OUTPUT_PORT.println("updated tasks from hololens data");
+          }
+        } else {
+          if (debug_mode)
+            DBG_OUTPUT_PORT.println("did not receive task data");
+        }
+      } else if (data["id"] == "getdata") {
+        if (bluetooth_on) {
+          sendDataHololensBT();
+          if (debug_mode)
+            DBG_OUTPUT_PORT.println("sent response to getdata request");
+        } else {
+          if (debug_mode)
+            DBG_OUTPUT_PORT.println("did not send getdata response because bluetooth disabled");
+        }
+      } else if (data["id"] == "status") {
+        // return status request message
+        if (bluetooth_on) {
+          sendDataBT();
+          if (debug_mode)
+            DBG_OUTPUT_PORT.println("sent status response");
+        } else {
+          if (debug_mode)
+            DBG_OUTPUT_PORT.println("did not send status response because bluetooth disabled");
+        } 
+      } else if (data["id"] == "all") {
+        sendToAllHttp(command);
+        if (websocket || debug_mode)
+          sendToAllWs(command);
+      } else if (data["id"] != "all") {
+        const char* ip = "";
+        for (auto kv : jsonData) {
+          JsonObject& tempObj = jsonData[kv.key];
+          if (tempObj.containsKey("id") && tempObj["id"] == data["id"] && tempObj.containsKey("ip")) {
+            ip = tempObj["ip"];
+            break;
+          }
+        }
+        if (ip[0] != '\0') {
+          sendToSpecificIp(command, ip);
+          //testIPGet(ip);
+        } else {
+          if (debug_mode)
+            DBG_OUTPUT_PORT.println("did not find ip address");
+        }
+      } else {
+        if (debug_mode)
+          DBG_OUTPUT_PORT.println("did not receive valid request");
+      }
+    } else {
+      if (debug_mode)
+          DBG_OUTPUT_PORT.println("did not receive valid id");
+    }
+  } else {
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("received invalid json command");
+  }
+}
+
+String setTaskData(AsyncWebServerRequest *request, uint8_t *datas) {
+  if (debug_mode)
+    DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char*)datas);
+  JsonObject& data = jsonBuffer.parseObject((const char*)datas);
+  JsonObject& resp = jsonBuffer.createObject();
+  String respStr = "";
+  if (!data.success()) {
+    String errormsg = "invalid json in put task";
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println(errormsg);
+    resp["message"] = errormsg;
+  } else {
+    // maybe do some validation here
+    String dataStr = "";
+    data.printTo(dataStr);
+    JsonObject& tasksObject = jsonBuffer.parseObject(dataStr);
+    String successmsg = "set task data";
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println(successmsg);
+    resp["message"] = successmsg;
+  }
+  resp.printTo(respStr);
+  return respStr;
+}
+
+void removeChar(char *s, int c){
+  int j, n = strlen(s); 
+  for (int i=j=0; i<n; i++) 
+      if (s[i] != c) 
+        s[j++] = s[i];
+  s[j] = '\0';
+}
+
 void runATCommand(String command) {
   btSerial.print(command);
   bool cont = false;
@@ -639,6 +739,12 @@ void setup() {
 
   jsonData["glove1"] = glove1;
   jsonData["imu"] = imu;
+  hololensData["tasks"] = tasksArray;
+  hololensData["inertialState"] = inertialState;
+  hololensData["suitTelemetry"] = suitTelemetry;
+  // default values
+  hololensData["warning"] = 0;
+  hololensData["glove"] = 0;
 
   if (debug_mode)
     DBG_OUTPUT_PORT.println("initialized global variables");
@@ -739,9 +845,22 @@ void setup() {
       return;
     });
   }
+  server.on("/gettaskdata", HTTP_GET, [](AsyncWebServerRequest *request){
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("#tasks get request");
+    String data = "";
+    tasksArray.printTo(data);
+    request->send(200, "application/json", data);
+  });
+  server.on("/settaskdata", HTTP_PUT, [](AsyncWebServerRequest *request){
+    }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("#set task request");
+    request->send(200, "application/json", setTaskData(request, data));
+  });
   server.on("/getsuitdata", HTTP_GET, [](AsyncWebServerRequest *request){
     if (debug_mode)
-      DBG_OUTPUT_PORT.println("#data get request");
+      DBG_OUTPUT_PORT.println("#suti data get request");
     String data = "";
     jsonData.printTo(data);
     request->send(200, "application/json", data);
@@ -805,6 +924,10 @@ void setup() {
   PrintStations();
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#printed initial stations.");
+
+  String json = "{\"1\": {\"0\": {\"data\": \"asdf\", \"time\": \"sdfasdf\"}}}";
+  JsonObject& tasksObject = jsonBuffer.parseObject(json);
+  refreshTaskArray(tasksObject);
 }
 
 void loop() {
@@ -831,8 +954,8 @@ void loop() {
     bool foundcommand = false;
     while (btSerial.available()) {
       delay(10); // delay to make it work well
-      char c = btSerial.read(); //Conduct a serial read
-      command += c; //build the string.
+      char c = btSerial.read(); // Conduct a serial read
+      command += c; // build the string.
       if (!foundcommand)
         foundcommand = true;
     }
