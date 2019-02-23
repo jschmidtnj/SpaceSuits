@@ -4,20 +4,19 @@ using UnityEngine;
 
 public class SuitStatusListener : MonoBehaviour {
     public string BluetoothReading;
-    public GameObject[] menuPanels;
+ 
     // Use this for initialization
     void Start () {
-        menuPanels = GameObject.FindGameObjectsWithTag("MenuPanel");
         StartCoroutine(updates());
 	}
 	
     IEnumerator updates() {
+        // SuitStatus
         if (BluetoothReading.Contains("warning:1"))
         {
-            foreach(GameObject panel in menuPanels)
+            foreach(GameObject panel in Globals.menuPanels)
             {
                 panel.gameObject.SetActive(false);
-          
             }
             this.gameObject.SetActive(true);
         }

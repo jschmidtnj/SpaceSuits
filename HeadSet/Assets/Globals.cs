@@ -2,29 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public class taskJSON
+{
+    public string id;
+    public string message;
+    public string time;
+}
+
+public class inertialData
+{
+    public float x;
+    public float y;
+    public float z;
+}
+
+public class suitTelem
+{
+    public int pressure;
+    public int O21;
+    public int O22;
+    public int battery;
+    public int heartrate;
+}
+
 public class CustomJSON
 {
-    int warning;
-    string[] tasks;
-    public class inertialData
-    {
-        float x;
-        float y;
-        float z;
-    }
-    inertialData iData;
-    int glove;
-    public class suitTelem
-    {
-        int pressure;
-        int O21;
-        int O22;
-        int battery;
-        int heartrate;
-    }
-    suitTelem sTelem;
+    public int warning;
+    public taskJSON[] tasks;
+    public inertialData iData;
+    public int glove;
+    public suitTelem sTelem;
 }
 
 public static class Globals {
     public static CustomJSON BluetoothData;
+    public static GameObject[] menuPanels;
 }
