@@ -25,6 +25,7 @@
 
           <!-- Main table element -->
           <b-table
+            ref="table"
             show-empty
             stacked="md"
             :items="items"
@@ -53,7 +54,7 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-form @submit="onTaskSubmit" @reset="onTaskReset">
+        <b-form @submit="onTaskSubmit">
           <b-form-group
             id="taskinputgroup"
             label="Enter task:"
@@ -142,6 +143,10 @@ export default Vue.extend({
             }
             this.items = newitems
             this.totalRows = this.items.length
+          } else {
+            /* eslint-disable */
+            console.log('same stuff')
+            /* eslint-enable */
           }
         })
         .catch(err => {
@@ -198,6 +203,7 @@ export default Vue.extend({
         if (this.items[i].id === tasknum) {
           this.items[i] = newitemtable
           founditem = true
+          this.$refs.table.refresh()
           break
         }
       }
@@ -205,10 +211,12 @@ export default Vue.extend({
       /* eslint-disable */
       console.log('starting request')
       console.log(JSON.stringify(this.taskdata))
+      /* eslint-enable */
       axios
         .put(config.settaskdataurl, JSON.stringify(this.taskdata))
         .then(resp => {
           // console.log(resp)
+          this.form.taskdata = ''
         })
         .catch(err => {
           this.$store.commit('notifications/addNotification', {
@@ -217,10 +225,6 @@ export default Vue.extend({
           })
           // console.log(err)
         })
-    },
-    onTaskReset(evt) {
-      evt.preventDefault()
-      this.form.taskdata = ''
     }
   }
 })
