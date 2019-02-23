@@ -739,7 +739,7 @@ void setup() {
       return;
     });
   }
-  server.on("/getdata", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/getsuitdata", HTTP_GET, [](AsyncWebServerRequest *request){
     if (debug_mode)
       DBG_OUTPUT_PORT.println("#data get request");
     String data = "";

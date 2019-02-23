@@ -583,7 +583,7 @@ PlayerSettings:
   incrementalIl2cppBuild: {}
   allowUnsafeCode: 0
   additionalIl2CppArgs: 
-  scriptingRuntimeVersion: 0
+  scriptingRuntimeVersion: 1
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
@@ -596,7 +596,7 @@ PlayerSettings:
   metroCertificateNotAfter: 00031a5fd6c1d501
   metroApplicationDescription: Template_3D
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: HeadSet
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
