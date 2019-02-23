@@ -6,5 +6,6 @@ export default {
   suitdataurl: 'http://192.168.1.1/getsuitdata',
   errorcode: 0,
   warningcode: 100,
-  successcode: 200
+  successcode: 200,
+  validtaskregex: '^([0-9]\\.[0-9])[ ].*$'
 }
