@@ -36,7 +36,7 @@
 const char* NEW_BT_BAUD_RATE = "9600";
 const char *ssid = "SPACESUITWIFI";
 const char *password = "N@sASu!t";
-const char *host = "spacesuit.local";
+const char *host = "spacesuit.com";
 IPAddress Ip(192, 168, 1, 1); // ip address for website
 const int pin_CS_SDcard = 15;
 AsyncWebServer server(80);
@@ -276,7 +276,7 @@ void handleNotFound(AsyncWebServerRequest *request){
     if (path.endsWith(device)) return;
   }
   if (path.endsWith("hello")) return;
-  if (loadFromSdCard(request)){
+  if (website_on && loadFromSdCard(request)){
     return;
   }
   String message = "\nNo Handler\r\n";
@@ -684,7 +684,7 @@ void setup() {
     DBG_OUTPUT_PORT.println(IP);
   }
 
-  if (website_on && create_local_host) {
+  if (create_local_host) {
     //dnsServer.start(DNS_PORT, "*", IP);
     dnsServer.setTTL(ttl);
     dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
@@ -693,7 +693,8 @@ void setup() {
 
   // Server requests
   // list directories
-  server.on("/list", HTTP_GET, printDirectory);
+  if (website_on)
+    server.on("/list", HTTP_GET, printDirectory);
   // create put requests
   for (String device: devices) {
     String path = "/" + device;
@@ -707,12 +708,12 @@ void setup() {
     });
   }
   // add web sockets
-  if (websocket || debug_mode) {
+  if (website_on && (websocket || debug_mode)) {
     ws.onEvent(handleWs);
     server.addHandler(&ws);
   }
   // extra features for debugging
-  if (debug_mode) {
+  if (website_on && debug_mode) {
     server.on("/edit", HTTP_DELETE, handleDelete);
     server.on("/edit", HTTP_PUT, handleCreate);
     server.on("/edit", HTTP_POST, returnOK, handleSDUpload);
@@ -724,6 +725,7 @@ void setup() {
       request->send(200, "text/plain", "Hello World Get");
     });
   }
+
   // test2
   if (debug_mode) {
     server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
@@ -807,7 +809,7 @@ void setup() {
 
 void loop() {
 
-  if (website_on && create_local_host)
+  if (create_local_host)
     dnsServer.processNextRequest();
 	
 	if(millis() - wifiLastRefreshTime >= WIFI_REFRESH_INTERVAL) {
