@@ -574,8 +574,11 @@
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UICollection.cs" />
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UsabilityScaler.cs" />
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UsabilityUtilities.cs" />
+    <Compile Include="Assets\PopulateDropdown.cs" />
+    <Compile Include="Assets\PopulatePanelData.cs" />
     <Compile Include="Assets\rotationDisplay.cs" />
     <Compile Include="Assets\SuitStatusListener.cs" />
+    <Compile Include="Assets\TasksWarningListener.cs" />
     <None Include="Assets\Vuforia\Shaders\ColoredLines.shader" />
     <None Include="Assets\HoloToolkit\Utilities\Scripts\GLTF\Shaders\GLTFConstant.cginc" />
     <None Include="Assets\Vuforia\Shaders\CameraDiffuse.shader" />

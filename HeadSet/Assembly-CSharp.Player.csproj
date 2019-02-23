@@ -1394,8 +1394,11 @@
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UICollection.cs" />
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UsabilityScaler.cs" />
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UsabilityUtilities.cs" />
+    <Compile Include="Assets\PopulateDropdown.cs" />
+    <Compile Include="Assets\PopulatePanelData.cs" />
     <Compile Include="Assets\rotationDisplay.cs" />
     <Compile Include="Assets\SuitStatusListener.cs" />
+    <Compile Include="Assets\TasksWarningListener.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
