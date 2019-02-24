@@ -6,14 +6,7 @@
       </b-navbar-brand>
       <b-navbar-toggle target="nav_collapse" />
       <b-collapse id="nav_collapse" is-nav>
-        <b-navbar-nav>
-          <b-nav-item href="/tasks">
-            Tasks
-          </b-nav-item>
-          <b-nav-item href="/about">
-            About
-          </b-nav-item>
-        </b-navbar-nav>
+        <b-navbar-nav />
       </b-collapse>
     </b-navbar>
   </div>

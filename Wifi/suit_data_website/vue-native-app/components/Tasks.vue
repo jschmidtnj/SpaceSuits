@@ -1,5 +1,5 @@
 <template>
-  <b-container class="bv-example-row">
+  <b-container class="task-data">
     <b-row>
       <b-col>
         <b-container fluid>
@@ -8,9 +8,11 @@
             <b-col md="6" class="my-1">
               <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
                 <b-input-group>
-                  <b-form-input v-model="filter" placeholder="Type to Search"/>
+                  <b-form-input v-model="filter" placeholder="Type to Search" />
                   <b-input-group-append>
-                    <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+                    <b-button :disabled="!filter" @click="filter = ''">
+                      Clear
+                    </b-button>
                   </b-input-group-append>
                 </b-input-group>
               </b-form-group>
@@ -18,7 +20,7 @@
 
             <b-col md="6" class="my-1">
               <b-form-group label-cols-sm="3" label="Per page" class="mb-0">
-                <b-form-select v-model="perPage" :options="pageOptions"/>
+                <b-form-select v-model="perPage" :options="pageOptions" />
               </b-form-group>
             </b-col>
           </b-row>
@@ -37,7 +39,7 @@
             :sort-desc.sync="sortDesc"
             :sort-direction="sortDirection"
             @filtered="onFiltered"
-          ></b-table>
+          />
 
           <b-row>
             <b-col md="6" class="my-1">
@@ -52,8 +54,10 @@
         </b-container>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row class="text-center">
       <b-col>
+        <br>
+        <br>
         <b-form @submit="onTaskSubmit">
           <b-form-group
             id="taskinputgroup"
@@ -69,7 +73,14 @@
               placeholder="task"
             />
           </b-form-group>
-          <b-button type="submit" variant="primary">Submit</b-button>
+
+          <b-row class="justify-content-center">
+            <b-col col sm="5">
+              <b-button block type="submit" variant="primary">
+                Submit
+              </b-button>
+            </b-col>
+          </b-row>
         </b-form>
       </b-col>
     </b-row>
@@ -83,7 +94,7 @@ import _ from 'lodash'
 import config from '../assets/config'
 
 export default Vue.extend({
-  name: 'tasktable',
+  name: 'Tasks',
   data() {
     return {
       form: {
@@ -217,6 +228,10 @@ export default Vue.extend({
         .then(resp => {
           // console.log(resp)
           this.form.taskdata = ''
+          this.$store.commit('notifications/addNotification', {
+            code: config.successcode,
+            message: 'successfully added task'
+          })
         })
         .catch(err => {
           this.$store.commit('notifications/addNotification', {

@@ -49,13 +49,14 @@ static const String devices[] = {"glove1", "glove2", "imu"};
 DynamicJsonBuffer jsonBuffer;
 JsonObject& glove1 = jsonBuffer.createObject();
 JsonObject& imu = jsonBuffer.createObject();
-JsonObject& jsonData = jsonBuffer.createObject();
+JsonObject& jsonDataNodes = jsonBuffer.createObject();
 
 // data for hololens and tasks
 JsonObject& hololensData = jsonBuffer.createObject();
 JsonArray& tasksArray = jsonBuffer.createArray();
 JsonObject& inertialState = jsonBuffer.createObject();
 JsonObject& suitTelemetry = jsonBuffer.createObject();
+JsonObject& suitData = jsonBuffer.createObject();
 
 static const unsigned long WIFI_REFRESH_INTERVAL = 10000; // ms
 static unsigned long wifiLastRefreshTime = 0;
@@ -376,9 +377,9 @@ bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas) {
   if (debug_mode) {
     DBG_OUTPUT_PORT.println("data from " + id);
   }
-  for (auto kv: jsonData) {
+  for (auto kv: jsonDataNodes) {
     if (id == kv.key) {
-      jsonData[kv.key] = data;
+      jsonDataNodes[kv.key] = data;
     }
   }
   // send data through bluetooth immediately
@@ -529,8 +530,8 @@ void testIPGet(String ip) {
 }
 
 void sendToAllHttp(String message) {
-  for (auto kv : jsonData) {
-    JsonObject& tempObj = jsonData[kv.key];
+  for (auto kv : jsonDataNodes) {
+    JsonObject& tempObj = jsonDataNodes[kv.key];
     if (tempObj.containsKey("ip"))
       sendToSpecificIp(message, tempObj["ip"]);
   }
@@ -538,7 +539,7 @@ void sendToAllHttp(String message) {
 
 void sendDataBT() {
   String data = "";
-  jsonData.printTo(data);
+  jsonDataNodes.printTo(data);
   btSerial.println(data);
 }
 
@@ -651,8 +652,8 @@ void handleCommand(String command) {
           sendToAllWs(command);
       } else if (data["id"] != "all") {
         const char* ip = "";
-        for (auto kv : jsonData) {
-          JsonObject& tempObj = jsonData[kv.key];
+        for (auto kv : jsonDataNodes) {
+          JsonObject& tempObj = jsonDataNodes[kv.key];
           if (tempObj.containsKey("id") && tempObj["id"] == data["id"] && tempObj.containsKey("ip")) {
             ip = tempObj["ip"];
             break;
@@ -737,14 +738,26 @@ void setup() {
   if (debug_mode)
     DBG_OUTPUT_PORT.println("started debug mode");
 
-  jsonData["glove1"] = glove1;
-  jsonData["imu"] = imu;
+  jsonDataNodes["glove1"] = glove1;
+  jsonDataNodes["imu"] = imu;
   hololensData["tasks"] = tasksArray;
   hololensData["inertialState"] = inertialState;
   hololensData["suitTelemetry"] = suitTelemetry;
+  suitData["inertialdata"] = suitTelemetry;
   // default values
   hololensData["warning"] = 0;
   hololensData["glove"] = 0;
+  suitData["primaryo2"] = 100;
+  suitData["secondaryo2"] = 100;
+  suitData["battery"] = 100;
+  suitData["heartrate"] = 70;
+  suitData["moisture"] = 20;
+  suitTelemetry["accelx"] = 0;
+  suitTelemetry["accely"] = 0;
+  suitTelemetry["accelz"] = 0;
+  suitTelemetry["roll"] = 0;
+  suitTelemetry["pitch"] = 0;
+  suitTelemetry["yaw"] = 0;
 
   if (debug_mode)
     DBG_OUTPUT_PORT.println("initialized global variables");
@@ -860,9 +873,16 @@ void setup() {
   });
   server.on("/getsuitdata", HTTP_GET, [](AsyncWebServerRequest *request){
     if (debug_mode)
-      DBG_OUTPUT_PORT.println("#suti data get request");
+      DBG_OUTPUT_PORT.println("#suit data get request");
     String data = "";
-    jsonData.printTo(data);
+    suitData.printTo(data);
+    request->send(200, "application/json", data);
+  });
+  server.on("/getstatus", HTTP_GET, [](AsyncWebServerRequest *request){
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("#sensor data get request");
+    String data = "";
+    jsonDataNodes.printTo(data);
     request->send(200, "application/json", data);
   });
   //handle not found

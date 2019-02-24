@@ -1,6 +1,7 @@
 <template>
   <div>
     <b-alert
+      class="text-center alert-fixed"
       :show="dismissCountDown"
       dismissible
       :variant="alertvariant"
@@ -70,3 +71,14 @@ export default Vue.extend({
   }
 })
 </script>
+
+<style>
+.alert-fixed {
+  position: absolute !important;
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 3%;
+  width: 70%;
+  z-index: 9999;
+}
+</style>

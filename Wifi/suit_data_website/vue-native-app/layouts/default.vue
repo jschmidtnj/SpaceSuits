@@ -3,6 +3,7 @@
     <notifications />
     <navbar />
     <nuxt />
+    <footer-component />
   </div>
 </template>
 
@@ -10,11 +11,13 @@
 import Vue from 'vue'
 import Navbar from '../components/Navbar.vue'
 import Notifications from '../components/Notifications.vue'
+import FooterComponent from '../components/FooterComponent.vue'
 
 export default Vue.extend({
   components: {
     Navbar,
-    Notifications
+    Notifications,
+    FooterComponent
   }
 })
 </script>
@@ -23,6 +26,8 @@ export default Vue.extend({
 <style lang="scss">
 @import '../assets/styles/main';
 html {
+  height: 100%;
+  box-sizing: border-box;
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
@@ -31,42 +36,19 @@ html {
   -webkit-text-size-adjust: 100%;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
 }
 
 *,
 *:before,
 *:after {
-  box-sizing: border-box;
+  box-sizing: inherit;
   margin: 0;
 }
 
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
-
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
-
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
+body {
+  position: relative;
+  margin: 0;
+  padding-bottom: 6rem;
+  min-height: 112%;
 }
 </style>

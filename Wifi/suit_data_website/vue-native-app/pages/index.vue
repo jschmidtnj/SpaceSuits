@@ -1,69 +1,37 @@
 <template>
   <section class="container">
     <div>
-      <logo />
-      <h1 class="title">
-        vue-native-app
-      </h1>
-      <h2 class="subtitle">
-        space suit diagnostics page
-      </h2>
-      <div class="links">
-        <a href="https://nuxtjs.org/" target="_blank" class="button--green">Documentation</a>
-        <a href="https://github.com/nuxt/nuxt.js" target="_blank" class="button--grey">GitHub</a>
-      </div>
+      <br>
+      <br>
+      <h5 class="text-center">
+        Suit Metrics
+      </h5>
+      <br>
+      <suit-data />
+      <br>
+      <br>
+      <h5 class="text-center">
+        Tasks
+      </h5>
+      <br>
+      <tasks />
     </div>
   </section>
 </template>
 
-<script>
-import Logo from '~/components/Logo.vue'
+<script lang="ts">
+import Vue from 'vue'
+import Tasks from '../components/Tasks.vue'
+import SuitData from '../components/SuitData.vue'
 
-export default {
-  name: 'Home',
+export default Vue.extend({
+  name: 'Dashboard',
   components: {
-    Logo
+    Tasks,
+    SuitData
   },
-  created() {
-    setInterval(() => {
-      this.$store.commit('notifications/addNotification', {
-        code: 200,
-        message: 'test213'
-      })
-    }, 5000)
+  data() {
+    return {}
   }
-}
+})
 </script>
-
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
