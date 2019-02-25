@@ -17,7 +17,7 @@ public class TaskWarningListener : MonoBehaviour
         // Tasks
         if (BluetoothReading.Contains("warning:3"))
         {
-            foreach (GameObject panel in Globals.menuPanels)
+            foreach (GameObject panel in Globals.Instance.menuPanels)
             {
                 panel.gameObject.SetActive(false);
             }

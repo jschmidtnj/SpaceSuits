@@ -17,7 +17,7 @@ public class PopulateDropdown : MonoBehaviour {
 	
 	IEnumerator updateTasks()
     {
-        foreach (taskJSON task in Globals.BluetoothData.tasks) {
+        foreach (taskJSON task in Globals.Instance.BluetoothData.tasks) {
             dropOptions.Add(task.message);
         }
         mainDropdown.AddOptions(dropOptions);

@@ -14,7 +14,7 @@ public class SuitStatusListener : MonoBehaviour {
         // SuitStatus
         if (BluetoothReading.Contains("warning:1"))
         {
-            foreach(GameObject panel in Globals.menuPanels)
+            foreach(GameObject panel in Globals.Instance.menuPanels)
             {
                 panel.gameObject.SetActive(false);
             }

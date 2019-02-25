@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PopulatePanelData{
+public class PopulatePanelData : MonoBehaviour {
     // Use this for initialization
     void Start () {
-        Globals.menuPanels = GameObject.FindGameObjectsWithTag("MenuPanel");
+        Globals.Instance.menuPanels = GameObject.FindGameObjectsWithTag("MenuPanel");
     }
 }

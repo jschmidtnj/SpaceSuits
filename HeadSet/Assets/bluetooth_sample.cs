@@ -91,7 +91,7 @@ public class bluetooth_sample : MonoBehaviour {
                 }
                 string ret = inputQueue.Dequeue();
                 Debug.Log(ret);
-                Globals.BluetoothData = JsonUtility.FromJson<CustomJSON>(ret);
+                Globals.Instance.BluetoothData = JsonUtility.FromJson<CustomJSON>(ret);
                 semaphore.Release();
                 yield return new WaitForSeconds(3.0f);
             }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class taskJSON
+public class taskJSON 
 {
     public string id;
     public string message;
@@ -25,7 +25,7 @@ public class suitTelem
     public int heartrate;
 }
 
-public class CustomJSON
+public class CustomJSON 
 {
     public int warning;
     public taskJSON[] tasks;
@@ -34,7 +34,19 @@ public class CustomJSON
     public suitTelem sTelem;
 }
 
-public static class Globals {
-    public static CustomJSON BluetoothData;
-    public static GameObject[] menuPanels;
+public class Globals : MonoBehaviour
+{
+    public CustomJSON BluetoothData;
+    public GameObject[] menuPanels;
+
+    public static Globals Instance
+    {
+        get;
+        private set;
+    }
+
+    void Awake()
+    {
+        Instance = this;
+    }
 }
