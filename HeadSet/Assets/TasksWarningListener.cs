@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TaskWarningListener : MonoBehaviour
-{
-    public string BluetoothReading;
+public class TasksWarningListener : MonoBehaviour {
 
+    public string BluetoothReading;
     // Use this for initialization
     void Start()
     {
