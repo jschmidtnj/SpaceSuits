@@ -880,7 +880,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\bluetooth_sample.cs" />
+    <Compile Include="Assets\bluetooth.cs" />
     <Compile Include="Assets\Globals.cs" />
     <Compile Include="Assets\HoloToolkit\Boundary\Scripts\BoundaryManager.cs" />
     <Compile Include="Assets\HoloToolkit\Boundary\Scripts\Edge.cs" />
