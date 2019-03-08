@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SuitData": {
+      "commandName": "Project",
+      "workingDirectory": "$(SolutionDir)"
+    }
+  }
+}
