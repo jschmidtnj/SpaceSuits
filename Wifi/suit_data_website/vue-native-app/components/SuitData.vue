@@ -14,23 +14,7 @@
                 type="text"
                 name="primaryo2"
                 class="text-center"
-                :value="suitdata.primaryo2"
-                disabled
-              />psi
-            </b-form-group>
-          </b-col>
-          <b-col col sm="3">
-            <b-form-group>
-              <label class="control-label" for="secondaryo2">
-                O
-                <sub>2</sub> (secondary)
-              </label>
-              <b-form-input
-                id="secondaryo2"
-                type="text"
-                name="secondaryo2"
-                class="text-center"
-                :value="suitdata.secondaryo2"
+                :value="suitdata.suitTelemetry.p_o2"
                 disabled
               />psi
             </b-form-group>
@@ -43,7 +27,7 @@
                 type="text"
                 name="battery"
                 class="text-center"
-                :value="suitdata.battery"
+                :value="suitdata.suitTelemetry.cap_battery"
                 disabled
               />%
             </b-form-group>
@@ -56,22 +40,9 @@
                 type="text"
                 name="heartrate"
                 class="text-center"
-                :value="suitdata.heartrate"
+                :value="suitdata.suitTelemetry.heart_bpm"
                 disabled
               />bpm
-            </b-form-group>
-          </b-col>
-          <b-col col sm="3">
-            <b-form-group>
-              <label class="control-label" for="moisture">Moisture</label>
-              <b-form-input
-                id="moisture"
-                type="text"
-                name="moisture"
-                class="text-center"
-                :value="suitdata.moisture"
-                disabled
-              />%
             </b-form-group>
           </b-col>
         </b-row>
@@ -89,7 +60,7 @@
                 type="text"
                 name="accelx"
                 class="text-center"
-                :value="suitdata.inertialdata.accelx"
+                :value="suitdata.inertialState.accelx"
                 disabled
               />m/s
               <sup>2</sup>
@@ -103,7 +74,7 @@
                 type="text"
                 name="accely"
                 class="text-center"
-                :value="suitdata.inertialdata.accely"
+                :value="suitdata.inertialState.accely"
                 disabled
               />m/s
               <sup>2</sup>
@@ -117,7 +88,7 @@
                 type="text"
                 name="accelz"
                 class="text-center"
-                :value="suitdata.inertialdata.accelz"
+                :value="suitdata.inertialState.accelz"
                 disabled
               />m/s
               <sup>2</sup>
@@ -131,7 +102,7 @@
                 type="text"
                 name="roll"
                 class="text-center"
-                :value="suitdata.inertialdata.roll"
+                :value="suitdata.inertialState.roll"
                 disabled
               />&deg;
             </b-form-group>
@@ -144,7 +115,7 @@
                 type="text"
                 name="pitch"
                 class="text-center"
-                :value="suitdata.inertialdata.pitch"
+                :value="suitdata.inertialState.pitch"
                 disabled
               />&deg;
             </b-form-group>
@@ -157,7 +128,7 @@
                 type="text"
                 name="yaw"
                 class="text-center"
-                :value="suitdata.inertialdata.yaw"
+                :value="suitdata.inertialState.yaw"
                 disabled
               />&deg;
             </b-form-group>
@@ -178,18 +149,32 @@ export default Vue.extend({
   data() {
     return {
       suitdata: {
-        primaryo2: 100,
-        secondaryo2: 100,
-        battery: 100,
-        heartrate: 70,
-        moisture: 20,
-        inertialdata: {
+        warning: 1,
+        glove: 1,
+        inertialState: {
           accelx: 0,
           accely: 0,
           accelz: 0,
           roll: 0,
           pitch: 0,
           yaw: 0
+        },
+        suitTelemetry: {
+          createDate: "0",
+          heart_bpm: 0,
+          p_sub: 0.0,
+          t_sub: 0,
+          v_fan: 0,
+          p_o2: 0,
+          rate_02: 0.0,
+          cap_battery: 0,
+          p_h2o_g: 0,
+          p_h2o_1: 0,
+          p_sop: 0,
+          rate_sop: 0.0,
+          t_battery: "0",
+          t_oxygen: "0",
+          t_water: "0"
         }
       }
     }

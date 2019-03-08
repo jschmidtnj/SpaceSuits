@@ -57,6 +57,9 @@ JsonArray& tasksArray = jsonBuffer.createArray();
 JsonObject& inertialState = jsonBuffer.createObject();
 JsonObject& suitTelemetry = jsonBuffer.createObject();
 JsonObject& suitData = jsonBuffer.createObject();
+static unsigned int warning = 0;
+static unsigned int glove1data = 1;
+static String tasksObjectStr = "";
 
 static const unsigned long WIFI_REFRESH_INTERVAL = 10000; // ms
 static unsigned long wifiLastRefreshTime = 0;
@@ -617,8 +620,9 @@ void handleCommand(String command) {
           JsonObject& taskObj = jsonBuffer.parseObject(data["tasks"]);
           if (!taskObj.success())
             if (debug_mode)
-              DBG_OUTPUT_PORT.println("did not valid json in task data");
+              DBG_OUTPUT_PORT.println("did not get valid json in task data");
           else {
+            tasksObjectStr = data["tasks"];
             refreshTaskArray(taskObj);
             if (debug_mode)
               DBG_OUTPUT_PORT.println("updated tasks from hololens data");
@@ -626,6 +630,21 @@ void handleCommand(String command) {
         } else {
           if (debug_mode)
             DBG_OUTPUT_PORT.println("did not receive task data");
+        }
+      } else if (data["id"] == "suitTelem") {
+        if (data.containsKey("data")) {
+          JsonArray& telemetryArray = jsonBuffer.parseArray(data["data"]);
+          if (!telemetryArray.success())
+            if (debug_mode)
+              DBG_OUTPUT_PORT.println("did not get valid json array in suit telemetry");
+          else {
+            suitTelemetry = telemetryArray[0];
+            if (debug_mode)
+              DBG_OUTPUT_PORT.println("updated tasks from hololens data");
+          }
+        } else {
+          if (debug_mode)
+            DBG_OUTPUT_PORT.println("did not receive telemetry data");
         }
       } else if (data["id"] == "getdata") {
         if (bluetooth_on) {
@@ -695,6 +714,7 @@ String setTaskData(AsyncWebServerRequest *request, uint8_t *datas) {
     // maybe do some validation here
     String dataStr = "";
     data.printTo(dataStr);
+    tasksObjectStr = dataStr;
     JsonObject& tasksObject = jsonBuffer.parseObject(dataStr);
     String successmsg = "set task data";
     if (debug_mode)
@@ -738,26 +758,45 @@ void setup() {
   if (debug_mode)
     DBG_OUTPUT_PORT.println("started debug mode");
 
+  // jsondata nodes comes straight from the nodes
   jsonDataNodes["glove1"] = glove1;
   jsonDataNodes["imu"] = imu;
+  // hololens data is for the hololens
   hololensData["tasks"] = tasksArray;
   hololensData["inertialState"] = inertialState;
   hololensData["suitTelemetry"] = suitTelemetry;
-  suitData["inertialdata"] = suitTelemetry;
+  hololensData["warning"] = warning;
+  hololensData["glove"] = glove1data;
+  hololensData["tasksstr"] = tasksObjectStr;
+  // suit data is for the websites
+  suitData["inertialState"] = inertialState;
+  suitData["suitTelemetry"] = suitTelemetry;
+  suitData["warning"] = warning;
+  suitData["glove"] = glove1data;
   // default values
-  hololensData["warning"] = 0;
-  hololensData["glove"] = 0;
-  suitData["primaryo2"] = 100;
-  suitData["secondaryo2"] = 100;
-  suitData["battery"] = 100;
-  suitData["heartrate"] = 70;
-  suitData["moisture"] = 20;
-  suitTelemetry["accelx"] = 0;
-  suitTelemetry["accely"] = 0;
-  suitTelemetry["accelz"] = 0;
-  suitTelemetry["roll"] = 0;
-  suitTelemetry["pitch"] = 0;
-  suitTelemetry["yaw"] = 0;
+  // inertial
+  inertialState["accelx"] = 0;
+  inertialState["accely"] = 0;
+  inertialState["accelz"] = 0;
+  inertialState["roll"] = 0;
+  inertialState["pitch"] = 0;
+  inertialState["yaw"] = 0;
+  // telemetry
+  suitTelemetry["createDate"] = "0";
+  suitTelemetry["heart_bpm"] = 0;
+  suitTelemetry["p_sub"] = 0.0;
+  suitTelemetry["t_sub"] = 0;
+  suitTelemetry["v_fan"] = 0;
+  suitTelemetry["p_o2"] = 0;
+  suitTelemetry["rate_02"] = 0.0;
+  suitTelemetry["cap_battery"] = 0;
+  suitTelemetry["p_h2o_g"] = 0;
+  suitTelemetry["p_h2o_1"] = 0;
+  suitTelemetry["p_sop"] = 0;
+  suitTelemetry["rate_sop"] = 0;
+  suitTelemetry["t_battery"] = "0";
+  suitTelemetry["t_oxygen"] = "0";
+  suitTelemetry["t_water"] = "0";
 
   if (debug_mode)
     DBG_OUTPUT_PORT.println("initialized global variables");
