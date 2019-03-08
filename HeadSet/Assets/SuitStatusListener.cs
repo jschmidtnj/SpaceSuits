@@ -3,23 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SuitStatusListener : MonoBehaviour {
-    public string BluetoothReading;
  
     // Use this for initialization
-    void Start () {
+    void Awake () {
         StartCoroutine(updates());
 	}
-	
-    IEnumerator updates() {
+
+    IEnumerator updates()
+    {
         // SuitStatus
-        if (BluetoothReading.Contains("warning:1"))
+        while (true)
         {
-            foreach(GameObject panel in Globals.Instance.menuPanels)
+            if (Globals.Instance.BluetoothData != null && Globals.Instance.BluetoothData.warning == 1)
             {
-                panel.gameObject.SetActive(false);
+                foreach (GameObject panel in Globals.Instance.menuPanels)
+                {
+                    panel.gameObject.SetActive(false);
+                }
+                this.gameObject.SetActive(true);
             }
-            this.gameObject.SetActive(true);
+            // Glove int check
+            if (Globals.Instance.BluetoothData != null)
+            {
+                int gloveInt = Globals.Instance.BluetoothData.glove;
+                switch (gloveInt)
+                {
+                    case 1:
+                        foreach (GameObject panel in Globals.Instance.menuPanels)
+                        {
+                            panel.gameObject.SetActive(false);
+                        }
+                        this.gameObject.SetActive(true);
+                        break;
+                }
+            }
+            yield return new WaitForSeconds(.5f);
         }
-        yield return new WaitForSeconds(2.0f);
     }
 }

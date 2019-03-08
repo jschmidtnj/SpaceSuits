@@ -2,26 +2,44 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TasksWarningListener : MonoBehaviour {
+public class TasksWarningListener : MonoBehaviour
+{
 
-    public string BluetoothReading;
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         StartCoroutine(updates());
     }
 
     IEnumerator updates()
     {
-        // Tasks
-        if (BluetoothReading.Contains("warning:3"))
+        while (true)
         {
-            foreach (GameObject panel in Globals.Instance.menuPanels)
+            // Not checking glove int here bc it might change later
+            if (Globals.Instance.BluetoothData != null && Globals.Instance.BluetoothData.warning == 3)
             {
-                panel.gameObject.SetActive(false);
+                foreach (GameObject panel in Globals.Instance.menuPanels)
+                {
+                    panel.gameObject.SetActive(false);
+                }
+                this.gameObject.SetActive(true);
             }
-            this.gameObject.SetActive(true);
+            // Glove int check
+            if (Globals.Instance.BluetoothData != null)
+            {
+                int gloveInt = Globals.Instance.BluetoothData.glove;
+                switch (gloveInt)
+                {
+                    case 3:
+                        foreach (GameObject panel in Globals.Instance.menuPanels)
+                        {
+                            panel.gameObject.SetActive(false);
+                        }
+                        this.gameObject.SetActive(true);
+                        break;
+                }
+            }
+            yield return new WaitForSeconds(.5f);
         }
-        yield return new WaitForSeconds(2.0f);
     }
 }

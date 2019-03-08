@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PopulatePanelData : MonoBehaviour {
     // Use this for initialization
-    void Start () {
+    void Awake () {
         Globals.Instance.menuPanels = GameObject.FindGameObjectsWithTag("MenuPanel");
     }
 }

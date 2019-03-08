@@ -98,7 +98,7 @@ public class bluetooth : MonoBehaviour {
     Semaphore semaphore = new Semaphore(1, 1);
     Queue<string> inputQueue = new Queue<string>();
     // Use this for initialization
-    void Start () {
+    void Awake () {
         
         Thread T1 = new Thread(delegate ()
         {
@@ -116,7 +116,6 @@ public class bluetooth : MonoBehaviour {
         {
             while (true)
             {
-               
                 semaphore.WaitOne();
                 if (inputQueue.Count == 0)
                 {

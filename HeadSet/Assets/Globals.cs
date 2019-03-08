@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class taskJSON 
 {
-    public string id;
-    public string message;
+    public int majorkey;
+    public int subkey;
+    public string data;
     public string time;
 }
 
