@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 
 public class Telemetary_Stream : MonoBehaviour {
+    public int warning_flag = 0;
     static Color Green = new Color(0f, 0.6980392f, .08930377f, 1f);
     static Color Red = new Color(0.6980392f, 0f, 0.02009222f, 255f);
     static Color Orange = new Color(0.6980392f, 0.4546653f, 0f, 255f);
@@ -82,6 +83,7 @@ public class Telemetary_Stream : MonoBehaviour {
         else
         {
             text.color = Red;
+            warning_flag = 1;
         }
     }
 
@@ -99,6 +101,7 @@ public class Telemetary_Stream : MonoBehaviour {
         else
         {
             text.color = Red;
+            warning_flag = 1;
         }
     }
     // use suit telem input to make changes to the scene
@@ -150,6 +153,7 @@ public class Telemetary_Stream : MonoBehaviour {
                 }
                 else
                 {
+                    warning_flag = 1;
                     sub_pressure.color = Red;
                 }
             }
@@ -170,6 +174,7 @@ public class Telemetary_Stream : MonoBehaviour {
                 }
                 else
                 {
+                    warning_flag = 1; 
                     o2.color = Red;
                 }
             }
@@ -185,6 +190,7 @@ public class Telemetary_Stream : MonoBehaviour {
                 else
                 {
                     o2.color = Red;
+                    warning_flag = 1;
                 }
             }
             if (previous.cap_battery != input.cap_battery)
@@ -206,6 +212,7 @@ public class Telemetary_Stream : MonoBehaviour {
                 else
                 {
                     gas.color = Red;
+                    warning_flag = 1;
                 }
             }
             if (previous.p_h2o_l != input.p_h2o_l)
@@ -220,6 +227,7 @@ public class Telemetary_Stream : MonoBehaviour {
                 else
                 {
                     h20.color = Red;
+                    warning_flag = 1; 
                 }
             }
             if (previous.p_sop != input.p_sop)
@@ -234,6 +242,7 @@ public class Telemetary_Stream : MonoBehaviour {
                 else
                 {
                     o2.color = Red;
+                    warning_flag = 1;
                 }
             }
             if (previous.rate_sop != input.rate_sop)
@@ -252,9 +261,10 @@ public class Telemetary_Stream : MonoBehaviour {
                 else
                 {
                     o2.color = Red;
+                    warning_flag = 1;
                 }
             }
-            yield return new WaitForSeconds(3.0f);
+            yield return new WaitForSeconds(5.0f);
         }
     }
 }
