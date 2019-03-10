@@ -183,7 +183,7 @@ public class Telemetary_Stream : MonoBehaviour {
                 Text o2 = GameObject.Find("O2Rate").GetComponent<Text>();
                 o2.text = input.rate_02.ToString();
                 previous.rate_02 = input.rate_02;
-                if (previous.rate_02 >= .5 && previous.p_o2 <= 1)
+                if (previous.rate_02 >= .5 && previous.rate_02 <= 1)
                 {
                     o2.color = Green;
                 }
@@ -254,7 +254,7 @@ public class Telemetary_Stream : MonoBehaviour {
                     o2.text = o2.text.Substring(0, 7);
                 }
                 previous.rate_sop = input.rate_sop;
-                if (previous.rate_sop >= .5 && previous.p_sop <= 1)
+                if (previous.rate_sop >= .5 && previous.rate_sop <= 1.0)
                 {
                     o2.color = Green;
                 }
