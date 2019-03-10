@@ -1,2 +1,3 @@
 # remove compiled app from directory
 App/
+UWPBuild

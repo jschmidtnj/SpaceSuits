@@ -17,6 +17,7 @@ public class inertialData
     public float z;
 }
 
+/*
 public class suitTelem
 {
     public int pressure;
@@ -24,7 +25,7 @@ public class suitTelem
     public int O22;
     public int battery;
     public int heartrate;
-}
+}*/
 
 public class CustomJSON 
 {
@@ -32,7 +33,7 @@ public class CustomJSON
     public taskJSON[] tasks;
     public inertialData iData;
     public int glove;
-    public suitTelem sTelem;
+    //public suitTelem sTelem;
 }
 
 public class Globals : MonoBehaviour
