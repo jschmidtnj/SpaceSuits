@@ -162,6 +162,15 @@ public class Telemetary_Stream : MonoBehaviour {
                 Text temperature = GameObject.Find("SubTemperature").GetComponent<Text>();
                 temperature.text = input.t_sub.ToString();
                 previous.t_sub = input.t_sub;
+                if (previous.t_sub >= 60 && previous.t_sub <= 90)
+                {
+                    temperature.color = Green;
+                }
+                else
+                {
+                    temperature.color = Red;
+                    warning_flag = 1;
+                }
             }
             if (previous.p_o2 != input.p_o2)
             {
