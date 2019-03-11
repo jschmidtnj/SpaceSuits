@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class taskJSON 
 {
     public int majorkey;
@@ -9,12 +10,15 @@ public class taskJSON
     public string data;
     public string time;
 }
-
+[System.Serializable]
 public class inertialData
 {
-    public float x;
-    public float y;
-    public float z;
+    public float accelx;
+    public float accely;
+    public float accelz;
+    public float roll;
+    public float yaw;
+    public float pitch;
 }
 
 /*
@@ -30,15 +34,15 @@ public class suitTelem
 public class CustomJSON 
 {
     public int warning;
-    public taskJSON[] tasks;
-    public inertialData iData;
     public int glove;
+    public inertialData inertialState;
+    public taskJSON[] tasks;
     //public suitTelem sTelem;
 }
 
 public class Globals : MonoBehaviour
 {
-    public CustomJSON BluetoothData;
+    public CustomJSON BluetoothData = null;
     public GameObject[] menuPanels;
 
     public static Globals Instance

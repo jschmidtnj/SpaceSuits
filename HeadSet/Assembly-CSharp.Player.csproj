@@ -1396,6 +1396,7 @@
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UsabilityScaler.cs" />
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UsabilityUtilities.cs" />
     <Compile Include="Assets\PopulatePanelData.cs" />
+    <Compile Include="Assets\PopulateTasks.cs" />
     <Compile Include="Assets\SuitStatusListener.cs" />
     <Compile Include="Assets\TasksWarningListener.cs" />
     <Compile Include="Assets\Telemetary_Stream.cs" />

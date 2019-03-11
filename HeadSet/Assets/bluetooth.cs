@@ -124,8 +124,13 @@ public class bluetooth : MonoBehaviour {
                     break;
                 }
                 string ret = inputQueue.Dequeue();
-                Debug.Log(ret);
+                //Debug.Log(ret);
+                if (Globals.Instance.BluetoothData == null)
+                {
+                    Globals.Instance.BluetoothData = new CustomJSON();
+                }
                 Globals.Instance.BluetoothData = JsonUtility.FromJson<CustomJSON>(ret);
+            
                 semaphore.Release();
                 yield return new WaitForSeconds(3.0f);
             }

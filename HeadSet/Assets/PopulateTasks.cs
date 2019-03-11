@@ -1,0 +1,83 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PopulateTasks : MonoBehaviour {
+
+    Text mainTask;
+    Text subTasksTemp;
+    Dictionary<int, Dictionary<int,string>> dictionary = new Dictionary<int, Dictionary<int,string>>();
+   
+    public int currentPanel = 1;
+    int previousPanel = -1;
+    int y_value = 40;
+
+    // Use this for initialization
+    void Start () {
+        mainTask = GameObject.Find("MainTask").GetComponent<Text>();
+        subTasksTemp = GameObject.Find("SubTaskTemplate").GetComponent<Text>();
+
+        subTasksTemp.enabled = false;
+        StartCoroutine(readJsonData());
+        StartCoroutine(loadTasks());
+	}
+
+    IEnumerator loadTasks()
+    {
+        while (true)
+        {
+            if (dictionary.ContainsKey(currentPanel))
+            {
+                if (previousPanel != currentPanel)
+                {
+                    GameObject[] taskList = GameObject.FindGameObjectsWithTag("subtasks");
+                    foreach (GameObject obj in taskList)
+                    {
+                        Destroy(obj);
+                    }
+                    previousPanel = currentPanel;
+                }
+                Dictionary<int, string> subtasks = dictionary[currentPanel];
+                mainTask.text = subtasks[0];
+                Debug.Log(subtasks[0]);
+                int temp_y = y_value;
+                for (int i = 1; i < subtasks.Count; ++i)
+                {
+                    
+                    Text newText = Instantiate(subTasksTemp);
+                    newText.transform.position = new Vector3(15, 10, temp_y);
+                    newText.enabled = true;
+                    newText.tag = "subtasks";
+                    newText.text = subtasks[i];
+                    temp_y -= 10;
+                }
+               
+            }
+            yield return new WaitForSeconds(1.0f);
+        }
+    }
+    IEnumerator readJsonData()
+    {
+        while (true) {
+            if (Globals.Instance.BluetoothData != null && Globals.Instance.BluetoothData.tasks!=null)
+            {
+                taskJSON[] JSONList = Globals.Instance.BluetoothData.tasks;
+                Debug.Log(JSONList.Length);
+                foreach (taskJSON task in JSONList)
+                {
+                    if (!dictionary.ContainsKey(task.majorkey))
+                    {
+                        dictionary[task.majorkey] = new Dictionary<int, string>();
+                    }
+                    Dictionary<int, string> subtask = dictionary[task.majorkey];
+                    if (!subtask.ContainsKey(task.subkey) || subtask[task.subkey] != task.data)
+                    {
+                        subtask[task.subkey] = task.data;
+                    }  
+                }
+            }
+            yield return new WaitForSeconds(1.0f);
+        }
+    }
+}
