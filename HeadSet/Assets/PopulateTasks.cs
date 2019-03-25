@@ -59,7 +59,18 @@ public class PopulateTasks : MonoBehaviour {
                         temp_y -= 10;
                     }
                 }
-               
+                // Should handle deletions 
+                GameObject[] taskList = GameObject.FindGameObjectsWithTag("subtasks");
+                if (taskList.Length > subtasks.Count)
+                {
+                    
+                    int start = subtasks.Count + 1;
+                    while (start <= taskList.Length)
+                    {
+                        Destroy(taskList[start]);
+                        ++start;
+                    }
+                }
             }
             yield return new WaitForSeconds(1.0f);
         }
