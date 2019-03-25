@@ -44,13 +44,20 @@ public class PopulateTasks : MonoBehaviour {
                 int temp_y = y_value;
                 for (int i = 1; i < subtasks.Count; ++i)
                 {
-                    
-                    Text newText = Instantiate(subTasksTemp);
-                    newText.transform.position = new Vector3(15, 10, temp_y);
-                    newText.enabled = true;
-                    newText.tag = "subtasks";
-                    newText.text = subtasks[i];
-                    temp_y -= 10;
+                    if (GameObject.Find("subTasks" + i) == null)
+                    {
+                        Text newText = Instantiate(subTasksTemp);
+                        newText.transform.SetParent(this.transform);
+
+                        newText.transform.localScale = new Vector3(1, 1, 1);
+                        //newText.transform.position = new Vector3(15, temp_y, 0);
+                        newText.transform.position = new Vector3(subTasksTemp.transform.position.x,subTasksTemp.transform.position.y, subTasksTemp.transform.position.z);
+                        newText.enabled = true;
+                        newText.name = "subTasks" + i;
+                        newText.tag = "subtasks";
+                        newText.text = i + "." + subtasks[i];
+                        temp_y -= 10;
+                    }
                 }
                
             }
