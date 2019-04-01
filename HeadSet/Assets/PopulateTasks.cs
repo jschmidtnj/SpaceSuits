@@ -31,8 +31,8 @@ public class PopulateTasks : MonoBehaviour {
             {
                 if (previousPanel != currentPanel)
                 {
-                    GameObject[] taskList = GameObject.FindGameObjectsWithTag("subtasks");
-                    foreach (GameObject obj in taskList)
+                    GameObject[] temptaskList = GameObject.FindGameObjectsWithTag("subtasks");
+                    foreach (GameObject obj in temptaskList)
                     {
                         Destroy(obj);
                     }
