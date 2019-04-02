@@ -8,11 +8,9 @@
             <b-col md="6" class="my-1">
               <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
                 <b-input-group>
-                  <b-form-input v-model="filter" placeholder="Type to Search" />
+                  <b-form-input v-model="filter" placeholder="Type to Search"/>
                   <b-input-group-append>
-                    <b-button :disabled="!filter" @click="filter = ''">
-                      Clear
-                    </b-button>
+                    <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
                   </b-input-group-append>
                 </b-input-group>
               </b-form-group>
@@ -20,7 +18,7 @@
 
             <b-col md="6" class="my-1">
               <b-form-group label-cols-sm="3" label="Per page" class="mb-0">
-                <b-form-select v-model="perPage" :options="pageOptions" />
+                <b-form-select v-model="perPage" :options="pageOptions"/>
               </b-form-group>
             </b-col>
           </b-row>
@@ -39,7 +37,15 @@
             :sort-desc.sync="sortDesc"
             :sort-direction="sortDirection"
             @filtered="onFiltered"
-          />
+          >
+            <template slot="id" slot-scope="row">{{ row.value.id }}</template>
+
+            <template slot="data" class="text-center" slot-scope="row">{{ row.value.data }}</template>
+
+            <template slot="actions" slot-scope="row">
+              <b-button size="sm" @click="evt => taskDelete(evt, row.value.id)">Delete</b-button>
+            </template>
+          </b-table>
 
           <b-row>
             <b-col md="6" class="my-1">
@@ -76,9 +82,7 @@
 
           <b-row class="justify-content-center">
             <b-col col sm="5">
-              <b-button block type="submit" variant="primary">
-                Submit
-              </b-button>
+              <b-button block type="submit" variant="primary">Submit</b-button>
             </b-col>
           </b-row>
         </b-form>
@@ -107,13 +111,14 @@ export default Vue.extend({
           label: 'Id Number',
           sortable: true
         },
-        { key: 'data', label: 'Task', sortable: true, class: 'text-center' },
+        { key: 'data', label: 'Task', sortable: true },
         {
           key: 'time',
           label: 'Submission Time',
           sortable: true,
           class: 'text-center'
-        }
+        },
+        { key: 'actions', label: 'Actions', sortable: false }
       ],
       currentPage: 1,
       perPage: 5,
@@ -126,7 +131,7 @@ export default Vue.extend({
       taskdata: {}
     }
   },
-  created() {
+  mounted() {
     const getTasks = () => {
       axios
         .get(config.gettaskdataurl)
@@ -144,7 +149,7 @@ export default Vue.extend({
                 // console.log("date: " + singletasktime);
                 const singletaskdatavalue = singletaskdata.data
                 // console.log(majorkey + " -> " + subkey + " -> " + singletaskdatavalue);
-                const tasknum = majorkey + '.' + subkey
+                const tasknum = `${majorkey}.${subkey}`
                 newitems.push({
                   id: tasknum,
                   data: singletaskdatavalue,
@@ -176,6 +181,37 @@ export default Vue.extend({
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
       this.currentPage = 1
+    },
+    taskDelete(evt, taskKey) {
+      evt.preventDefault()
+      //console.log("delete the task");
+      const taskKeySplit = taskKey.split('.')
+      const majorTaskKey = taskKeySplit[0]
+      const subTaskKey = taskKeySplit[1]
+      delete this.taskdata[majorTaskKey][subTaskKey]
+      if (Object.keys(this.taskdata[majorTaskKey]).length === 0) {
+        delete this.taskdata[majorTaskKey]
+      }
+      this.updateTasks()
+    },
+    updateTasks() {
+      axios
+        .put(config.settaskdataurl, JSON.stringify(this.taskdata))
+        .then(resp => {
+          // console.log(resp)
+          this.form.taskdata = ''
+          this.$store.commit('notifications/addNotification', {
+            code: config.successcode,
+            message: 'successfully added task'
+          })
+        })
+        .catch(err => {
+          this.$store.commit('notifications/addNotification', {
+            code: config.errorcode,
+            message: err.toString()
+          })
+          // console.log(err)
+        })
     },
     onTaskSubmit(evt) {
       evt.preventDefault()
@@ -223,23 +259,7 @@ export default Vue.extend({
       console.log('starting request')
       console.log(JSON.stringify(this.taskdata))
       /* eslint-enable */
-      axios
-        .put(config.settaskdataurl, JSON.stringify(this.taskdata))
-        .then(resp => {
-          // console.log(resp)
-          this.form.taskdata = ''
-          this.$store.commit('notifications/addNotification', {
-            code: config.successcode,
-            message: 'successfully added task'
-          })
-        })
-        .catch(err => {
-          this.$store.commit('notifications/addNotification', {
-            code: config.errorcode,
-            message: err.toString()
-          })
-          // console.log(err)
-        })
+      this.updateTasks()
     }
   }
 })

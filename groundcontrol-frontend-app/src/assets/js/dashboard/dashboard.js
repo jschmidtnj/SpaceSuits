@@ -237,7 +237,6 @@ $(document).ready(function () {
                 createTaskTable();
             }
         });
-
     }
 
     function getSuitData() {
@@ -246,48 +245,40 @@ $(document).ready(function () {
         suitdataref.on("value", function (suitdata) {
             var suitdataval = suitdata.val();
             //console.log(suitdataval);
-            var primaryo2 = suitdataval.primaryo2;
+            var primaryo2 = suitdataval.suitTelemetry.primaryo2;
             $("#primaryo2").prop('disabled', false);
             $("#primaryo2").val(primaryo2);
             $("#primaryo2").prop('disabled', true);
-            var secondaryo2 = suitdataval.secondaryo2;
-            $("secondaryo2").prop('disabled', false);
-            $("#secondaryo2").val(secondaryo2);
-            $("#secondaryo2").prop('disabled', true);
-            var battery = suitdataval.battery;
+            var battery = suitdataval.suitTelemetry.cap_battery;
             $("#battery").prop('disabled', false);
             $("#battery").val(battery);
             $("#battery").prop('disabled', true);
-            var heartrate = suitdataval.heartrate;
+            var heartrate = suitdataval.suitTelemetry.heart_bpm;
             $("#heartrate").prop('disabled', false);
             $("#heartrate").val(heartrate);
             $("#heartrate").prop('disabled', true);
-            var moisture = suitdataval.moisture;
-            $("#moisture").prop('disabled', true);
-            $("#moisture").val(moisture);
-            $("#moisture").prop('disabled', true);
 
-            var accelx = suitdataval.accelx;
+            var accelx = suitdataval.inertialState.accelx;
             $("#accelx").prop('disabled', false);
             $("#accelx").val(accelx);
             $("#accelx").prop('disabled', true);
-            var accely = suitdataval.accely;
+            var accely = suitdataval.inertialState.accely;
             $("#accely").prop('disabled', false);
             $("#accely").val(accely);
             $("#accely").prop('disabled', true);
-            var accelz = suitdataval.accelz;
+            var accelz = suitdataval.inertialState.accelz;
             $("#accelz").prop('disabled', false);
             $("#accelz").val(accelz);
             $("#accelz").prop('disabled', true);
-            var roll = suitdataval.roll;
+            var roll = suitdataval.inertialState.roll;
             $("#roll").prop('disabled', false);
             $("#roll").val(roll);
             $("#roll").prop('disabled', true);
-            var pitch = suitdataval.pitch;
+            var pitch = suitdataval.inertialState.pitch;
             $("#pitch").prop('disabled', false);
             $("#pitch").val(pitch);
             $("#pitch").prop('disabled', true);
-            var yaw = suitdataval.yaw;
+            var yaw = suitdataval.inertialState.yaw;
             $("#yaw").prop('disabled', false);
             $("#yaw").val(yaw);
             $("#yaw").prop('disabled', true);

@@ -179,7 +179,7 @@ export default Vue.extend({
       }
     }
   },
-  created() {
+  mounted() {
     const getData = () => {
       axios
         .get(config.getsuitdataurl)
