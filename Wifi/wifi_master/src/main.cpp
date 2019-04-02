@@ -763,7 +763,7 @@ void handleCommand(String command)
       {
         if (data.containsKey("tasks"))
         {
-          JsonObject &taskObj = jsonBuffer.parseObject(data["tasks"]);
+          JsonObject &taskObj = jsonBuffer.parseObject((const char*) data["tasks"]);
           if (!taskObj.success())
             if (debug_mode)
               DBG_OUTPUT_PORT.println("did not get valid json in task data");
@@ -785,7 +785,7 @@ void handleCommand(String command)
       {
         if (data.containsKey("data"))
         {
-          JsonArray &telemetryArray = jsonBuffer.parseArray(data["data"]);
+          JsonArray &telemetryArray = jsonBuffer.parseArray((const char*) data["data"]);
           if (!telemetryArray.success())
             if (debug_mode)
               DBG_OUTPUT_PORT.println("did not get valid json array in suit telemetry");
