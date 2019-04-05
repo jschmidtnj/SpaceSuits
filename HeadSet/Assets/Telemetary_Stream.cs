@@ -129,6 +129,10 @@ public class Telemetary_Stream : MonoBehaviour {
                 battery.text = input.t_battery.ToString();
                 previous.t_battery = input.t_battery;
                 changeColorTime(3, 2, battery);
+
+                GameObject batteryBar = GameObject.Find("BatterySlider");
+                BatterySlider bscript = batteryBar.GetComponent<BatterySlider>();
+                bscript.ChangeBatteryBar(int.Parse(input.t_battery), (int)input.cap_battery);
             }
             if (previous.t_water != input.t_water)
             {

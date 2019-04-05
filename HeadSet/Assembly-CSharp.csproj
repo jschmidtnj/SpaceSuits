@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\BatterySlider.cs" />
     <Compile Include="Assets\bluetooth.cs" />
     <Compile Include="Assets\CloneDropdowns.cs" />
     <Compile Include="Assets\Globals.cs" />
