@@ -148,6 +148,7 @@ export default Vue.extend({
   name: 'SuitData',
   data() {
     return {
+      interval: null,
       suitdata: {
         warning: 1,
         glove: 1,
@@ -160,7 +161,7 @@ export default Vue.extend({
           yaw: 0
         },
         suitTelemetry: {
-          createDate: "0",
+          createDate: '0',
           heart_bpm: 0,
           p_sub: 0.0,
           t_sub: 0,
@@ -172,19 +173,27 @@ export default Vue.extend({
           p_h2o_1: 0,
           p_sop: 0,
           rate_sop: 0.0,
-          t_battery: "0",
-          t_oxygen: "0",
-          t_water: "0"
+          t_battery: '0',
+          t_oxygen: '0',
+          t_water: '0'
         }
       }
     }
   },
-  created() {
+  /* eslint-disable */
+  beforeDestroy() {
+    clearInterval(this.interval)
+  },
+  mounted() {
     const getData = () => {
       axios
-        .get(config.getsuitdataurl)
+        .get(config.getsuitdataurl, {
+          // @ts-ignore
+          crossDomain: true
+        })
         .then(res => {
           this.suitdata = res.data
+          console.log(JSON.stringify(this.suitdata))
         })
         .catch(err => {
           this.$store.commit('notifications/addNotification', {
@@ -195,7 +204,7 @@ export default Vue.extend({
         })
     }
     getData()
-    setInterval(getData, config.datapoll)
+    this.interval = setInterval(getData, config.datapoll)
   }
 })
 </script>

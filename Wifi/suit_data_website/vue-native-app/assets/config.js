@@ -1,6 +1,6 @@
 export default {
-  taskpoll: 1000, // ms
-  datapoll: 1000, // ms
+  taskpoll: 5000, // ms
+  datapoll: 5000, // ms
   gettaskdataurl: 'http://192.168.1.1/gettaskdata',
   settaskdataurl: 'http://192.168.1.1/settaskdata',
   getsuitdataurl: 'http://192.168.1.1/getsuitdata',
