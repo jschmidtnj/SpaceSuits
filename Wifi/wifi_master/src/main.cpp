@@ -17,6 +17,7 @@
 #define debug_mode true
 #define bluetooth_on true
 #define website_on false
+#define bt_requests true
 #define bt_mode false          // false = send data after every requst, true = send data in intervals
 #define create_local_host true // creates DNS for host and can be used to redirect all to host
 #define DBG_BAUD_RATE 115200
@@ -426,9 +427,10 @@ void PrintStations()
 
 bool handleTest(AsyncWebServerRequest *request, uint8_t *datas)
 {
-
   if (debug_mode)
-    DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char *)datas);
+  {
+    // DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char *)datas);
+  }
 
   JsonObject &_test = jsonBuffer.parseObject((const char *)datas);
   if (!_test.success())
@@ -450,8 +452,11 @@ bool handleTest(AsyncWebServerRequest *request, uint8_t *datas)
 void handleQuery(AsyncWebServerRequest *request)
 {
   int paramsNr = request->params();
-  DBG_OUTPUT_PORT.print(paramsNr);
-  DBG_OUTPUT_PORT.println(" queries");
+  if (debug_mode)
+  {
+    DBG_OUTPUT_PORT.print(paramsNr);
+    DBG_OUTPUT_PORT.println(" queries");
+  }
   String dataStr;
   for (int i = 0; i < paramsNr; i++)
   {
@@ -487,7 +492,9 @@ void sendDataBT()
 bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas)
 {
   if (debug_mode)
-    DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char *)datas);
+  {
+    // DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char *)datas);
+  }
   if (debug_mode)
     handleQuery(request);
   JsonObject &data = jsonBuffer.parseObject((const char *)datas);
@@ -508,8 +515,21 @@ bool handleDataPut(AsyncWebServerRequest *request, uint8_t *datas)
       jsonDataNodes[kv.key] = data;
     }
   }
+  if (id == devices[2])
+  {
+    inertialState["accelx"] = data["data"]["accelx"];
+    inertialState["accely"] = data["data"]["accely"];
+    inertialState["accelz"] = data["data"]["accelz"];
+    inertialState["roll"] = data["data"]["roll"];
+    inertialState["pitch"] = data["data"]["pitch"];
+    inertialState["yaw"] = data["data"]["yaw"];
+  }
+  else if (id == devices[0])
+  {
+    hololensData["glove"] = data["data"];
+  }
   // send data through bluetooth immediately
-  if (!bt_mode)
+  if (!bt_mode && !bt_requests)
     sendDataBT();
   // uncomment this to print data instead of sendDataBT()
   // btSerial.println((const char*)datas);
@@ -726,6 +746,10 @@ void refreshTaskArray(JsonObject &tasksObject)
   }
   String val = "";
   tasksArray.printTo(val);
+  DBG_OUTPUT_PORT.println(val);
+  String data = "";
+  hololensData.printTo(data);
+  DBG_OUTPUT_PORT.println(data);
 }
 
 void sendDataHololensBT()
@@ -748,6 +772,7 @@ void sendDataHololensBT()
   }
   btSerial.println(dataLen);
   btSerial.println(data);
+  hololensData["glove"] = 0; // reset glove data
 }
 
 void handleCommand(String command)
@@ -763,7 +788,7 @@ void handleCommand(String command)
       {
         if (data.containsKey("tasks"))
         {
-          JsonObject &taskObj = jsonBuffer.parseObject((const char*) data["tasks"]);
+          JsonObject &taskObj = jsonBuffer.parseObject((const char *)data["tasks"]);
           if (!taskObj.success())
             if (debug_mode)
               DBG_OUTPUT_PORT.println("did not get valid json in task data");
@@ -785,7 +810,7 @@ void handleCommand(String command)
       {
         if (data.containsKey("data"))
         {
-          JsonArray &telemetryArray = jsonBuffer.parseArray((const char*) data["data"]);
+          JsonArray &telemetryArray = jsonBuffer.parseArray((const char *)data["data"]);
           if (!telemetryArray.success())
             if (debug_mode)
               DBG_OUTPUT_PORT.println("did not get valid json array in suit telemetry");
@@ -885,7 +910,9 @@ void handleCommand(String command)
 String setTaskData(AsyncWebServerRequest *request, uint8_t *datas)
 {
   if (debug_mode)
-    DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char *)datas);
+  {
+    // DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char *)datas);
+  }
   JsonObject &data = jsonBuffer.parseObject((const char *)datas);
   JsonObject &resp = jsonBuffer.createObject();
   String respStr = "";
@@ -901,12 +928,25 @@ String setTaskData(AsyncWebServerRequest *request, uint8_t *datas)
     // maybe do some validation here
     String dataStr = "";
     data.printTo(dataStr);
-    tasksObjectStr = dataStr;
-    JsonObject &tasksObject = jsonBuffer.parseObject(dataStr);
-    String successmsg = "set task data";
-    if (debug_mode)
-      DBG_OUTPUT_PORT.println(successmsg);
-    resp["message"] = successmsg;
+    char tasksChar[500];
+    dataStr.toCharArray(tasksChar, 500);
+    JsonObject &tasksObject = jsonBuffer.parseObject(tasksChar);
+    if (!tasksObject.success())
+    {
+      String errormsg = "invalid json in put task data";
+      if (debug_mode)
+        DBG_OUTPUT_PORT.println(errormsg);
+      resp["message"] = errormsg;
+    }
+    else
+    {
+      tasksObjectStr = dataStr;
+      refreshTaskArray(tasksObject);
+      String successmsg = "set task data";
+      if (debug_mode)
+        DBG_OUTPUT_PORT.println(successmsg);
+      resp["message"] = successmsg;
+    }
   }
   resp.printTo(respStr);
   return respStr;
@@ -951,6 +991,10 @@ void setup()
   if (debug_mode)
     DBG_OUTPUT_PORT.println("started debug mode");
 
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token");
+
   // jsondata nodes comes straight from the nodes
   jsonDataNodes["glove1"] = glove1;
   jsonDataNodes["imu"] = imu;
@@ -959,7 +1003,7 @@ void setup()
   hololensData["inertialState"] = inertialState;
   hololensData["suitTelemetry"] = suitTelemetry;
   hololensData["warning"] = warning;
-  hololensData["glove"] = glove1data;
+  hololensData["glove"] = 0;
   hololensData["tasksstr"] = tasksObjectStr;
   // suit data is for the websites
   suitData["inertialState"] = inertialState;
@@ -1062,9 +1106,19 @@ void setup()
     const char *pathChar = path.c_str();
     server.on(pathChar, HTTP_PUT, [](AsyncWebServerRequest *request) {}, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
       if (!handleDataPut(request, data))
-          request->send(200, "text/plain", "false");
-        else
-          request->send(200, "text/plain", "true"); });
+      {
+        request->send(500, "text/plain", "false");
+      }
+      else
+      {
+        if (debug_mode)
+        {
+          String hololensStr;
+          hololensData.printTo(hololensStr);
+          DBG_OUTPUT_PORT.println(hololensStr);
+        }
+        request->send(200, "text/plain", "true");
+        } });
   }
   // add web sockets
   if (website_on && (websocket || debug_mode))
@@ -1106,9 +1160,9 @@ void setup()
   server.on("/gettaskdata", HTTP_GET, [](AsyncWebServerRequest *request) {
     if (debug_mode)
       DBG_OUTPUT_PORT.println("#tasks get request");
-    String data = "";
-    tasksArray.printTo(data);
-    request->send(200, "application/json", data);
+    // String data = "";
+    // tasksArray.printTo(data);
+    request->send(200, "application/json", tasksObjectStr);
   });
   server.on("/settaskdata", HTTP_PUT, [](AsyncWebServerRequest *request) {}, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
     if (debug_mode)
@@ -1126,6 +1180,13 @@ void setup()
       DBG_OUTPUT_PORT.println("#sensor data get request");
     String data = "";
     jsonDataNodes.printTo(data);
+    request->send(200, "application/json", data);
+  });
+  server.on("/gethololens", HTTP_GET, [](AsyncWebServerRequest *request) {
+    if (debug_mode)
+      DBG_OUTPUT_PORT.println("#hololens data get request");
+    String data = "";
+    hololensData.printTo(data);
     request->send(200, "application/json", data);
   });
   //handle not found
@@ -1195,8 +1256,8 @@ void setup()
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#printed initial stations.");
 
-  String json = "{\"1\": {\"0\": {\"data\": \"asdf\", \"time\": \"sdfasdf\"}}}";
-  JsonObject &tasksObject = jsonBuffer.parseObject(json);
+  tasksObjectStr = "{\"1\": {\"0\": {\"data\": \"do something\", \"time\": \"123\"}, \"1\": {\"data\": \"do something else\", \"time\": \"234\"}}, \"2\": {\"0\": {\"data\": \"do something 2\", \"time\": \"123\"}, \"1\": {\"data\": \"do something else 3\", \"time\": \"234\"}}}";
+  JsonObject &tasksObject = jsonBuffer.parseObject(tasksObjectStr);
   refreshTaskArray(tasksObject);
 }
 
@@ -1215,7 +1276,7 @@ void loop()
   if (bluetooth_on)
   {
     // send data after interval
-    if (bt_mode)
+    if (bt_mode && !bt_requests)
     {
       if (millis() - bluetoothLastRefreshTime >= BLUETOOTH_REFRESH_INTERVAL)
       {
@@ -1229,7 +1290,7 @@ void loop()
     bool foundcommand = false;
     while (btSerial.available())
     {
-      delay(10);                // delay to make it work well
+      delay(20);                // delay to make it work well
       char c = btSerial.read(); // Conduct a serial read
       command += c;             // build the string.
       if (!foundcommand)
