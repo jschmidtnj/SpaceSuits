@@ -74,7 +74,7 @@ public class PopulateTasks : MonoBehaviour {
                     }
                 }
             }
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(.50f);
         }
     }
     IEnumerator readJsonData()

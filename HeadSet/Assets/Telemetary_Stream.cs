@@ -61,7 +61,7 @@ public class Telemetary_Stream : MonoBehaviour {
                     Debug.Log(obj);
                 }
             }
-            yield return new WaitForSeconds(10.0f);
+            yield return new WaitForSeconds(5.0f);
         }
     }
 
@@ -271,7 +271,7 @@ public class Telemetary_Stream : MonoBehaviour {
                     warning_flag = 1;
                 }
             }
-            yield return new WaitForSeconds(5.0f);
+            yield return new WaitForSeconds(1.0f);
         }
     }
 }

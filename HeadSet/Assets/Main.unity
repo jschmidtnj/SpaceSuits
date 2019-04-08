@@ -1332,6 +1332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d8d1171de22e36458ef1b48c5a6ad13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bluetooth_name: HC-06
   BluetoothReading: warning:1
 --- !u!114 &534669908
 MonoBehaviour:

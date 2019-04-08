@@ -13,7 +13,7 @@ using UnityEngine;
 using System.Collections;
 
 public class bluetooth_module
-{
+{ 
     public string readBytes(Stream stream, int numBytes)
     {
         string ret = "";
@@ -94,6 +94,8 @@ public class bluetooth_module
 }
 
 public class bluetooth : MonoBehaviour {
+    public string bluetooth_name;
+
     public String BluetoothReading;
    
     Semaphore semaphore = new Semaphore(1, 1);
@@ -104,7 +106,7 @@ public class bluetooth : MonoBehaviour {
         Thread T1 = new Thread(delegate ()
         {
             bluetooth_module temp = new bluetooth_module();
-            temp.connectBlueTooth("SPACESUITBT", semaphore, inputQueue);
+            temp.connectBlueTooth(bluetooth_name, semaphore, inputQueue);
         });
         T1.Start();
         StartCoroutine(change());
@@ -121,7 +123,7 @@ public class bluetooth : MonoBehaviour {
                 if (inputQueue.Count == 0)
                 {
                     semaphore.Release();
-                    yield return new WaitForSeconds(3.0f);
+                    yield return new WaitForSeconds(.50f);
                     break;
                 }
                 string ret = inputQueue.Dequeue();
