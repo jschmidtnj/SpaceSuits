@@ -97,6 +97,7 @@ export default Vue.extend({
   name: 'Tasks',
   data() {
     return {
+      interval: null,
       form: {
         taskdata: ''
       },
@@ -126,11 +127,19 @@ export default Vue.extend({
       taskdata: {}
     }
   },
-  created() {
+  beforeDestroy() {
+    clearInterval(this.interval)
+  },
+  /* eslint-disable */
+  mounted() {
     const getTasks = () => {
       axios
-        .get(config.gettaskdataurl)
+        .get(config.gettaskdataurl, {
+          // @ts-ignore
+          crossDomain: true
+        })
         .then(resp => {
+          console.log(JSON.stringify(this.taskdata))
           if (!_.isEqual(this.taskdata, resp.data)) {
             this.taskdata = resp.data
             const newitems = []
@@ -145,6 +154,7 @@ export default Vue.extend({
                 const singletaskdatavalue = singletaskdata.data
                 // console.log(majorkey + " -> " + subkey + " -> " + singletaskdatavalue);
                 const tasknum = majorkey + '.' + subkey
+                // @ts-ignore
                 newitems.push({
                   id: tasknum,
                   data: singletaskdatavalue,
@@ -169,7 +179,7 @@ export default Vue.extend({
         })
     }
     getTasks()
-    setInterval(getTasks, config.taskpoll)
+    this.interval = setInterval(getTasks, config.taskpoll)
   },
   methods: {
     onFiltered(filteredItems) {
@@ -224,7 +234,15 @@ export default Vue.extend({
       console.log(JSON.stringify(this.taskdata))
       /* eslint-enable */
       axios
-        .put(config.settaskdataurl, JSON.stringify(this.taskdata))
+        .put(config.settaskdataurl, JSON.stringify(this.taskdata), {
+          // @ts-ignore
+          crossDomain: true,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': '*',
+            'Access-Control-Allow-Credentials': 'true'
+          }
+        })
         .then(resp => {
           // console.log(resp)
           this.form.taskdata = ''
