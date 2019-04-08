@@ -88,6 +88,7 @@ public class bluetooth_module
             semaphore.WaitOne();
             inputQueue.Enqueue(input);
             semaphore.Release();
+            Thread.Sleep(1000);
         }
     }
 }
@@ -103,7 +104,7 @@ public class bluetooth : MonoBehaviour {
         Thread T1 = new Thread(delegate ()
         {
             bluetooth_module temp = new bluetooth_module();
-            temp.connectBlueTooth("HC-06", semaphore, inputQueue);
+            temp.connectBlueTooth("SPACESUITBT", semaphore, inputQueue);
         });
         T1.Start();
         StartCoroutine(change());
@@ -124,7 +125,7 @@ public class bluetooth : MonoBehaviour {
                     break;
                 }
                 string ret = inputQueue.Dequeue();
-                //Debug.Log(ret);
+                Debug.Log(ret);
                 if (Globals.Instance.BluetoothData == null)
                 {
                     Globals.Instance.BluetoothData = new CustomJSON();
@@ -132,7 +133,7 @@ public class bluetooth : MonoBehaviour {
                 Globals.Instance.BluetoothData = JsonUtility.FromJson<CustomJSON>(ret);
             
                 semaphore.Release();
-                yield return new WaitForSeconds(3.0f);
+                yield return new WaitForSeconds(1.0f);
             }
         }
     }

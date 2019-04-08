@@ -44,6 +44,9 @@ public class Globals : MonoBehaviour
 {
     public CustomJSON BluetoothData = null;
     public GameObject[] menuPanels;
+    public int currentPanel = 1;
+    public int currentTask = 1;
+    public int warningFlag = 0;
 
     public static Globals Instance
     {

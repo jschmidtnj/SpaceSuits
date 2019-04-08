@@ -27,6 +27,8 @@ public class PopulateTasks : MonoBehaviour {
     {
         while (true)
         {
+            currentPanel = Globals.Instance.currentTask;
+            currentPanel %= dictionary.Count;
             if (dictionary.ContainsKey(currentPanel))
             {
                 if (previousPanel != currentPanel)
@@ -81,7 +83,6 @@ public class PopulateTasks : MonoBehaviour {
             if (Globals.Instance.BluetoothData != null && Globals.Instance.BluetoothData.tasks!=null)
             {
                 taskJSON[] JSONList = Globals.Instance.BluetoothData.tasks;
-                Debug.Log(JSONList.Length);
                 foreach (taskJSON task in JSONList)
                 {
                     if (!dictionary.ContainsKey(task.majorkey))

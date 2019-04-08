@@ -6,8 +6,6 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 
-
-
 public class Telemetary_Stream : MonoBehaviour {
     public int warning_flag = 0;
     static Color Green = new Color(0f, 0.6980392f, .08930377f, 1f);

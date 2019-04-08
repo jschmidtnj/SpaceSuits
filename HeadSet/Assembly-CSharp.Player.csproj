@@ -267,7 +267,7 @@
       <HintPath>Assets/Plugins/InTheHand.Devices.Bluetooth.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.StandardEvents">
-      <HintPath>C:/Users/email/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.13/UnityEngine.StandardEvents.dll</HintPath>
+      <HintPath>C:/Users/vince/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.13/UnityEngine.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.7.1-api\mscorlib.dll</HintPath>
@@ -881,7 +881,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\bluetooth.cs" />
-    <Compile Include="Assets\CloneDropdowns.cs" />
     <Compile Include="Assets\Globals.cs" />
     <Compile Include="Assets\HoloToolkit\Boundary\Scripts\BoundaryManager.cs" />
     <Compile Include="Assets\HoloToolkit\Boundary\Scripts\Edge.cs" />
@@ -1395,10 +1394,9 @@
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UICollection.cs" />
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UsabilityScaler.cs" />
     <Compile Include="Assets\HoloToolkit\UX\Scripts\UsabilityUtilities.cs" />
+    <Compile Include="Assets\PanelAndWarning.cs" />
     <Compile Include="Assets\PopulatePanelData.cs" />
     <Compile Include="Assets\PopulateTasks.cs" />
-    <Compile Include="Assets\SuitStatusListener.cs" />
-    <Compile Include="Assets\TasksWarningListener.cs" />
     <Compile Include="Assets\Telemetary_Stream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
