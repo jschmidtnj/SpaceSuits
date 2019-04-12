@@ -57,7 +57,7 @@ public class PopulateTasks : MonoBehaviour {
                         newText.enabled = true;
                         newText.name = "subTasks" + i;
                         newText.tag = "subtasks";
-                        newText.text = i + "." + subtasks[i];
+                        newText.text = subtasks[i];
                         temp_y -= 10;
                     }
                 }
