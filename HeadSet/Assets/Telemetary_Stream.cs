@@ -40,6 +40,15 @@ public class Telemetary_Stream : MonoBehaviour {
         StartCoroutine(Start_Interp());
     }
 
+    int timeToMins(string time)
+    {
+        int mins = 0;
+        string[] battNums = time.Split(':');
+        mins += int.Parse(battNums[0]) * 60;
+        mins += int.Parse(battNums[1]);
+        return mins;
+    }
+
     IEnumerator Get_Request(string uri)
     {
         while (true)
@@ -122,6 +131,10 @@ public class Telemetary_Stream : MonoBehaviour {
                 oxygen.text = input.t_oxygen.ToString();
                 previous.t_oxygen = input.t_oxygen;
                 changeColorTime(3, 2, oxygen);
+
+                GameObject oxygenBar = GameObject.Find("OxygenSlider");
+                BatterySlider bscript = oxygenBar.GetComponent<BatterySlider>();
+                bscript.ChangeBatteryBar(timeToMins(oxygen.text), 600);
             }
             if (previous.t_battery != input.t_battery)
             {
@@ -132,7 +145,7 @@ public class Telemetary_Stream : MonoBehaviour {
 
                 GameObject batteryBar = GameObject.Find("BatterySlider");
                 BatterySlider bscript = batteryBar.GetComponent<BatterySlider>();
-                bscript.ChangeBatteryBar(int.Parse(input.t_battery), (int)input.cap_battery);
+                bscript.ChangeBatteryBar(timeToMins(battery.text), 600);
             }
             if (previous.t_water != input.t_water)
             {
@@ -140,6 +153,10 @@ public class Telemetary_Stream : MonoBehaviour {
                 water.text = input.t_water.ToString();
                 previous.t_water = input.t_water;
                 changeColorTime(3, 2, water);
+
+                GameObject waterBar = GameObject.Find("WaterSlider");
+                BatterySlider bscript = waterBar.GetComponent<BatterySlider>();
+                bscript.ChangeBatteryBar(timeToMins(water.text), 600);
             }
             if (previous.p_sub != input.p_sub)
             {
