@@ -28,7 +28,7 @@ export default Vue.extend({
   name: 'Notifications',
   data() {
     return {
-      dismissSecs: 10,
+      dismissSecs: 2,
       dismissCountDown: 0,
       alertvariant: 'warning',
       message: ''
@@ -74,7 +74,7 @@ export default Vue.extend({
 
 <style>
 .alert-fixed {
-  position: absolute !important;
+  position: fixed !important;
   margin-left: 15%;
   margin-right: 15%;
   margin-top: 3%;

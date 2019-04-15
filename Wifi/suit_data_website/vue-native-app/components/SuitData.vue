@@ -1,5 +1,6 @@
 <template>
   <b-container class="suit-data text-center">
+    <!--
     <form id="suitMetricsForm">
       <b-container>
         <b-row class="justify-content-center">
@@ -49,6 +50,7 @@
       </b-container>
     </form>
     <hr>
+    -->
     <form id="suitPositioningForm">
       <b-container>
         <b-row class="justify-content-center">

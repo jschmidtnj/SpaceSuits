@@ -8,23 +8,19 @@
             <b-col md="6" class="my-1">
               <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
                 <b-input-group>
-                  <b-form-input v-model="filter" placeholder="Type to Search" />
+                  <b-form-input v-model="filter" placeholder="Type to Search"/>
                   <b-input-group-append>
-                    <b-button :disabled="!filter" @click="filter = ''">
-                      Clear
-                    </b-button>
+                    <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
                   </b-input-group-append>
                 </b-input-group>
               </b-form-group>
             </b-col>
-
             <b-col md="6" class="my-1">
               <b-form-group label-cols-sm="3" label="Per page" class="mb-0">
-                <b-form-select v-model="perPage" :options="pageOptions" />
+                <b-form-select v-model="perPage" :options="pageOptions"/>
               </b-form-group>
             </b-col>
           </b-row>
-
           <!-- Main table element -->
           <b-table
             ref="table"
@@ -38,10 +34,14 @@
             :sort-by.sync="sortBy"
             :sort-desc.sync="sortDesc"
             :sort-direction="sortDirection"
+            empty-text="There are no tasks to show"
             @filtered="onFiltered"
-          />
-
-          <b-row>
+          >
+            <template slot="delete" slot-scope="row">
+              <b-button variant="primary" size="sm" @click="evt => deleteTask(evt, row.item)">Delete</b-button>
+            </template>
+          </b-table>
+          <b-row v-if="items.length > 0">
             <b-col md="6" class="my-1">
               <b-pagination
                 v-model="currentPage"
@@ -73,12 +73,9 @@
               placeholder="task"
             />
           </b-form-group>
-
           <b-row class="justify-content-center">
             <b-col col sm="5">
-              <b-button block type="submit" variant="primary">
-                Submit
-              </b-button>
+              <b-button block type="submit" variant="primary">Submit</b-button>
             </b-col>
           </b-row>
         </b-form>
@@ -90,7 +87,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
-import _ from 'lodash'
+import equal from 'deep-equal'
 import config from '../assets/config'
 
 export default Vue.extend({
@@ -114,13 +111,18 @@ export default Vue.extend({
           label: 'Submission Time',
           sortable: true,
           class: 'text-center'
+        },
+        {
+          key: 'delete',
+          label: 'Delete',
+          sortable: false
         }
       ],
       currentPage: 1,
-      perPage: 5,
+      perPage: 10,
       totalRows: 0,
       pageOptions: [5, 10, 15],
-      sortBy: null,
+      sortBy: 'id',
       sortDesc: false,
       sortDirection: 'asc',
       filter: null,
@@ -140,9 +142,10 @@ export default Vue.extend({
         })
         .then(resp => {
           console.log(JSON.stringify(this.taskdata))
-          if (!_.isEqual(this.taskdata, resp.data)) {
+          if (!equal(this.taskdata, resp.data)) {
+            console.log('not equal!')
             this.taskdata = resp.data
-            const newitems = []
+            const newitems: any = []
             for (const majorkey in this.taskdata) {
               for (const subkey in this.taskdata[majorkey]) {
                 const singletaskdata = this.taskdata[majorkey][subkey]
@@ -187,6 +190,24 @@ export default Vue.extend({
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
+    deleteTask(evt, item) {
+      evt.preventDefault()
+      const tasknumsplit = item.id.split('.')
+      const majortasknum = tasknumsplit[0]
+      const subtasknum = tasknumsplit[1]
+      delete this.taskdata[majortasknum][subtasknum]
+      if (Object.keys(this.taskdata[majortasknum]).length === 0)
+        delete this.taskdata[majortasknum]
+      let taskindex = 0
+      for (let i = 0; i < this.items.length; i++) {
+        if (this.items[i].id === item.id) {
+          taskindex = i
+          break
+        }
+      }
+      this.items.splice(taskindex, 1)
+      this.updateNetwork()
+    },
     onTaskSubmit(evt) {
       evt.preventDefault()
       const formdata = this.form.taskdata
@@ -224,17 +245,23 @@ export default Vue.extend({
         if (this.items[i].id === tasknum) {
           this.items[i] = newitemtable
           founditem = true
-          this.$refs.table.refresh()
           break
         }
       }
-      if (!founditem) this.items.push(newitemtable)
+      if (!founditem) {
+        this.items.push(newitemtable)
+      }
+      this.totalRows = this.items.length
+      this.$refs.table.refresh()
+      this.updateNetwork()
+    },
+    updateNetwork() {
       /* eslint-disable */
       console.log('starting request')
       console.log(JSON.stringify(this.taskdata))
       /* eslint-enable */
       axios
-        .put(config.settaskdataurl, JSON.stringify(this.taskdata), {
+        .put(config.settaskdataurl, this.taskdata, {
           // @ts-ignore
           crossDomain: true,
           headers: {
@@ -248,7 +275,7 @@ export default Vue.extend({
           this.form.taskdata = ''
           this.$store.commit('notifications/addNotification', {
             code: config.successcode,
-            message: 'successfully added task'
+            message: 'successfully modified task'
           })
         })
         .catch(err => {
