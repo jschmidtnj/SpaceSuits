@@ -28,6 +28,8 @@ public class PopulateTasks : MonoBehaviour {
         while (true)
         {
             currentPanel = Globals.Instance.currentTask;
+            if (dictionary.Count == 0)
+                continue;
             currentPanel %= dictionary.Count;
             if (dictionary.ContainsKey(currentPanel))
             {

@@ -41,11 +41,13 @@ public class PanelAndWarning : MonoBehaviour {
                                 panel.gameObject.SetActive(false);
                             }
                             Globals.Instance.menuPanels[currentPanel].SetActive(true);
+                            Globals.Instance.BluetoothData.glove = 0;
                             break;
                         case 2:
                             if (currentPanel == 2)
                             {
                                 Globals.Instance.currentTask += 1;
+                                Globals.Instance.BluetoothData.glove = 0;
                             }
                             break;
                         case 4:
