@@ -33,7 +33,7 @@ public class PanelAndWarning : MonoBehaviour {
                     {
                         case 1:
                             currentPanel += 1;
-                            currentPanel %= 3;
+                            currentPanel %= 4;
                             Globals.Instance.currentPanel = currentPanel;
                             Debug.Log("Current Panel " + currentPanel);
                             foreach (GameObject panel in Globals.Instance.menuPanels)
