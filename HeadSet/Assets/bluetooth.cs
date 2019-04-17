@@ -162,14 +162,14 @@ public class bluetooth : MonoBehaviour {
                 {
                     Globals.Instance.BluetoothData = new CustomJSON();
                     Globals.Instance.BluetoothData.glove = 0;
+                    Globals.Instance.currentTask = 0;
                 }
                 if (Globals.Instance.swap == 1)
                 {
                     messageSemaphore.WaitOne();
                     messageQueue.Dequeue();
                     messageQueue.Enqueue("{\"id\": \"resetglove1\"}\n");
-                    
-                    Debug.Log("Glove Number " + Globals.Instance.BluetoothData.glove);
+                
                     Globals.Instance.BluetoothData.glove = 0;
                     messageSemaphore.Release();
                     Globals.Instance.swap = 0;

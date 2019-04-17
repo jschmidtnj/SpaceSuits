@@ -9,7 +9,7 @@ public class PopulateTasks : MonoBehaviour {
     Text subTasksTemp;
     Dictionary<int, Dictionary<int,string>> dictionary = new Dictionary<int, Dictionary<int,string>>();
    
-    int currentPanel;
+    int currentPanel = 0;
     int previousPanel = -1;
     float y_value;
 
@@ -17,10 +17,10 @@ public class PopulateTasks : MonoBehaviour {
     void Start () {
         mainTask = GameObject.Find("MainTask").GetComponent<Text>();
         subTasksTemp = GameObject.Find("SubTaskTemplate").GetComponent<Text>();
-        
         subTasksTemp.enabled = false;
         StartCoroutine(readJsonData());
         StartCoroutine(loadTasks());
+      
 	}
 
     IEnumerator loadTasks()
@@ -30,6 +30,8 @@ public class PopulateTasks : MonoBehaviour {
         {
             currentPanel = Globals.Instance.currentTask;
             currentPanel %= dictionary.Count;
+            Debug.Log("Task Major Key " + currentPanel);
+            Debug.Log("Dictionary Count " + dictionary.Count);
             if (dictionary.ContainsKey(currentPanel + 1))
             {
                 if (previousPanel != currentPanel)
@@ -62,7 +64,7 @@ public class PopulateTasks : MonoBehaviour {
                         newText.name = "subTasks" + i;
                         newText.tag = "subtasks";
                         newText.text = subtasks[i];
-                        temp_y -= 50;
+                        temp_y -= 60;
                         Debug.Log("Offset " + temp_y);
                     }
                     else

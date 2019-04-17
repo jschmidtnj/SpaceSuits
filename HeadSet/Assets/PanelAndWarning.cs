@@ -31,7 +31,6 @@ public class PanelAndWarning : MonoBehaviour {
                     currentPanel += 1;
                     currentPanel %= 3;
                     Globals.Instance.currentPanel = currentPanel;
-                    Debug.Log("Current Panel " + currentPanel);
                     foreach (GameObject panel in Globals.Instance.menuPanels)
                     {
                         panel.gameObject.SetActive(false);
@@ -44,7 +43,7 @@ public class PanelAndWarning : MonoBehaviour {
 
                     if (currentPanel == 2)
                     {
-                        Globals.Instance.currentTask += 1;
+                        Globals.Instance.currentTask++;
                     }
                     Globals.Instance.swap = 1;
                     Globals.Instance.BluetoothData.glove = 0;
