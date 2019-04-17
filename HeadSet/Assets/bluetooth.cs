@@ -38,11 +38,12 @@ public class bluetooth_module
     {
         foreach (var i in str)
         {
+
             stream.WriteByte((byte)i);
         }
     }
 
-    public void connectBlueTooth(string Name, Semaphore semaphore, Queue<string> inputQueue)
+    public void connectBlueTooth(string Name, Semaphore semaphore, Queue<string> inputQueue, Queue<string> messageQueue, Semaphore messageSemaphore)
     {
         var devices = DeviceInformation.FindAll(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
         Console.WriteLine(devices);
@@ -78,64 +79,136 @@ public class bluetooth_module
 
         while (true)
         {
-            writeBytes("{\"id\":\"getdata\"}", stream);
-            //stream.Write(Encoding.ASCII.GetBytes("{id:getdata}"),0,0);
-            //Console.WriteLine("Wrote getData");
-            string length = readBytes(stream, 4);
-            stream.Flush();
-            string input = readBytes(stream, Int16.Parse(length));
-            stream.Flush();
-            semaphore.WaitOne();
-            inputQueue.Enqueue(input);
-            semaphore.Release();
-            Thread.Sleep(1000);
+            
+            messageSemaphore.WaitOne();
+            Boolean resetGlove = false;
+            if (messageQueue.Count == 0 )
+            {
+               
+                stream.Flush();
+                messageSemaphore.Release();
+            }
+            else if (messageQueue.Peek() == "nonsense")
+            {
+                resetGlove = true;
+                messageSemaphore.Release();
+            }
+            else
+            {
+                string message = messageQueue.Dequeue();
+                stream.Flush();
+                writeBytes(message, stream);
+                stream.Flush();
+                messageSemaphore.Release();
+                resetGlove = true;
+            }
+            if (!resetGlove)
+            {
+                writeBytes("{\"id\":\"getdata\"}\n", stream);
+                stream.Flush();
+                //stream.Write(Encoding.ASCII.GetBytes("{id:getdata}"),0,0);
+                //Console.WriteLine("Wrote getData");
+
+                string length = readBytes(stream, 4);
+                stream.Flush();
+                
+                string input = readBytes(stream, Int16.Parse(length));
+                
+                stream.Flush();
+                semaphore.WaitOne();
+                inputQueue.Enqueue(input);
+                semaphore.Release();
+            }
+            
+            Thread.Sleep(500);
         }
     }
 }
 
 public class bluetooth : MonoBehaviour {
     public string bluetooth_name;
-
-    public String BluetoothReading;
    
+    public String BluetoothReading;
+    Thread T1;
     Semaphore semaphore = new Semaphore(1, 1);
+    Semaphore messageSemaphore = new Semaphore(1, 1);
     Queue<string> inputQueue = new Queue<string>();
+    Queue<string> messageQueue = new Queue<string>();
     // Use this for initialization
     void Awake () {
         
-        Thread T1 = new Thread(delegate ()
+        T1 = new Thread(delegate ()
         {
             bluetooth_module temp = new bluetooth_module();
-            temp.connectBlueTooth(bluetooth_name, semaphore, inputQueue);
+            temp.connectBlueTooth(bluetooth_name, semaphore, inputQueue, messageQueue, messageSemaphore);
         });
         T1.Start();
         StartCoroutine(change());
 
     }
-    
+
+    void OnApplicationQuit()
+    {
+        T1.Abort();
+    }
+
     IEnumerator change()
     {
         while (true)
         {
             while (true)
             {
+                if (Globals.Instance.BluetoothData == null)
+                {
+                    Globals.Instance.BluetoothData = new CustomJSON();
+                    Globals.Instance.BluetoothData.glove = 0;
+                }
+                if (Globals.Instance.swap == 1)
+                {
+                    messageSemaphore.WaitOne();
+                    messageQueue.Dequeue();
+                    messageQueue.Enqueue("{\"id\": \"resetglove1\"}\n");
+                    
+                    Debug.Log("Glove Number " + Globals.Instance.BluetoothData.glove);
+                    Globals.Instance.BluetoothData.glove = 0;
+                    messageSemaphore.Release();
+                    Globals.Instance.swap = 0;
+
+                }
+
                 semaphore.WaitOne();
-                if (inputQueue.Count == 0)
+                if (inputQueue.Count == 0 || Globals.Instance.swap == 1)
                 {
                     semaphore.Release();
                     yield return new WaitForSeconds(.50f);
                     break;
                 }
                 string ret = inputQueue.Dequeue();
-                Debug.Log(ret);
-                if (Globals.Instance.BluetoothData == null)
+
+               
+                Debug.Log("got ret " + ret);
+                try
                 {
-                    Globals.Instance.BluetoothData = new CustomJSON();
+                    Globals.Instance.BluetoothData = JsonUtility.FromJson<CustomJSON>(ret);
                 }
-                Globals.Instance.BluetoothData = JsonUtility.FromJson<CustomJSON>(ret);
-            
+                catch (Exception)
+                {
+                    Debug.Log("Error in JSON " + ret);
+                }
+
+                if (Globals.Instance.BluetoothData.glove != 0)
+                {
+                    Debug.Log("Clear Queue");                    
+                    inputQueue.Clear();
+                    messageSemaphore.WaitOne();
+                    messageQueue.Enqueue("nonsense");
+                    messageSemaphore.Release();
+                    yield return new WaitForSeconds(1f);
+                }
+
+                //Debug.Log(ret);
                 semaphore.Release();
-                yield return new WaitForSeconds(1.0f);
+                yield return new WaitForSeconds(.25f);
             }
         }
     }

@@ -9,15 +9,15 @@ public class PopulateTasks : MonoBehaviour {
     Text subTasksTemp;
     Dictionary<int, Dictionary<int,string>> dictionary = new Dictionary<int, Dictionary<int,string>>();
    
-    public int currentPanel = 1;
+    int currentPanel;
     int previousPanel = -1;
-    int y_value = 40;
+    float y_value;
 
     // Use this for initialization
     void Start () {
         mainTask = GameObject.Find("MainTask").GetComponent<Text>();
         subTasksTemp = GameObject.Find("SubTaskTemplate").GetComponent<Text>();
-
+        
         subTasksTemp.enabled = false;
         StartCoroutine(readJsonData());
         StartCoroutine(loadTasks());
@@ -25,49 +25,58 @@ public class PopulateTasks : MonoBehaviour {
 
     IEnumerator loadTasks()
     {
+        float temp_y = 0f;
         while (true)
         {
             currentPanel = Globals.Instance.currentTask;
-            if (dictionary.Count == 0)
-                continue;
             currentPanel %= dictionary.Count;
-            if (dictionary.ContainsKey(currentPanel))
+            if (dictionary.ContainsKey(currentPanel + 1))
             {
                 if (previousPanel != currentPanel)
                 {
+                    y_value = subTasksTemp.transform.position.y;
+                    temp_y = y_value;
                     GameObject[] temptaskList = GameObject.FindGameObjectsWithTag("subtasks");
                     foreach (GameObject obj in temptaskList)
                     {
                         Destroy(obj);
                     }
                     previousPanel = currentPanel;
+                    Debug.Log("Switch Task Panels" + (currentPanel +1));
                 }
-                Dictionary<int, string> subtasks = dictionary[currentPanel];
-                mainTask.text = subtasks[0];
-                Debug.Log(subtasks[0]);
-                int temp_y = y_value;
+                Dictionary<int, string> subtasks = dictionary[currentPanel + 1];
+                mainTask.text = subtasks[0];           
                 for (int i = 1; i < subtasks.Count; ++i)
                 {
-                    if (GameObject.Find("subTasks" + i) == null)
+                
+                    GameObject temp = GameObject.Find("subTasks" + i);
+                    if (temp == null)
                     {
                         Text newText = Instantiate(subTasksTemp);
                         newText.transform.SetParent(this.transform);
 
                         newText.transform.localScale = new Vector3(1, 1, 1);
                         //newText.transform.position = new Vector3(15, temp_y, 0);
-                        newText.transform.position = new Vector3(subTasksTemp.transform.position.x,subTasksTemp.transform.position.y, subTasksTemp.transform.position.z);
+                        newText.transform.position = new Vector3(subTasksTemp.transform.position.x,temp_y, subTasksTemp.transform.position.z);
                         newText.enabled = true;
                         newText.name = "subTasks" + i;
                         newText.tag = "subtasks";
                         newText.text = subtasks[i];
-                        temp_y -= 10;
+                        temp_y -= 50;
+                        Debug.Log("Offset " + temp_y);
                     }
+                    else
+                    {
+                        if (temp.GetComponent<Text>().text != subtasks[i])
+                        {
+                            temp.GetComponent<Text>().text = subtasks[i];
+                        }
+                    } 
                 }
                 // Should handle deletions 
                 GameObject[] taskList = GameObject.FindGameObjectsWithTag("subtasks");
                 if (taskList.Length > subtasks.Count)
                 {
-                    
                     int start = subtasks.Count + 1;
                     while (start <= taskList.Length)
                     {
@@ -76,9 +85,10 @@ public class PopulateTasks : MonoBehaviour {
                     }
                 }
             }
-            yield return new WaitForSeconds(.50f);
+            yield return new WaitForEndOfFrame();
         }
     }
+
     IEnumerator readJsonData()
     {
         while (true) {
@@ -98,7 +108,7 @@ public class PopulateTasks : MonoBehaviour {
                     }  
                 }
             }
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForEndOfFrame();
         }
     }
 }

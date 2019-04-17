@@ -34,7 +34,7 @@ public class Telemetary_Stream : MonoBehaviour {
     suitTelem input = new suitTelem();
     // Use this for initialization
     void Start () {
-        StartCoroutine(Get_Request("http://18.234.179.222:3000/api/suit/recent"));
+        StartCoroutine(Get_Request("http://54.86.90.79:3000/api/suit/recent"));
         StartCoroutine(Start_Interp());
     }
 
