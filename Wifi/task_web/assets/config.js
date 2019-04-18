@@ -1,8 +1,8 @@
 export default {
   taskpoll: 500, // ms
   datapoll: 500, // ms
-  gettaskdataurl: 'https://nasasuits.appspot.com/gettaskdataobject',
-  settaskdataurl: 'https://nasasuits.appspot.com/settaskdataobject',
+  gettaskdataurl: '/gettaskdataobject',
+  settaskdataurl: '/settaskdataobject',
   errorcode: 0,
   warningcode: 100,
   successcode: 200,

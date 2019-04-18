@@ -4,9 +4,22 @@ import minimist from 'minimist'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import exitHook from 'exit-hook'
+import servestatic from 'serve-static'
 import config from './config'
 
+/* eslint-disable */
+
 const app = express()
+
+const setHeaders = (res, path) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+}
+
+app.use(
+  servestatic('dist', {
+    setHeaders: setHeaders
+  })
+)
 
 app.use(bodyParser.json())
 
@@ -55,9 +68,12 @@ const createtaskdata = taskdataobj => {
   return newtaskdata
 }
 
-mongoose.connect(config.mongouri, {
-  useNewUrlParser: true
-})
+mongoose.connect(
+  config.mongouri,
+  {
+    useNewUrlParser: true
+  }
+)
 
 const db = mongoose.connection
 db.on('error', err => {
@@ -115,7 +131,7 @@ app.put('/settaskdataobject', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`listening on port ${port} for requests 🚀`)
+  console.log(`listening on port ${port} 🚀`)
 })
 
 exitHook(() => {
