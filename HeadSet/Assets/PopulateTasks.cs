@@ -8,7 +8,7 @@ public class PopulateTasks : MonoBehaviour {
     Text mainTask;
     Text subTasksTemp;
     Dictionary<int, Dictionary<int,string>> dictionary = new Dictionary<int, Dictionary<int,string>>();
-   
+    bool startFlag = false;
     int currentPanel = 0;
     int previousPanel = -1;
     float y_value;
@@ -26,6 +26,10 @@ public class PopulateTasks : MonoBehaviour {
     IEnumerator loadTasks()
     {
         float temp_y = 0f;
+        while (!startFlag)
+        {
+            yield return new WaitForSeconds(1.0f);
+        }
         while (true)
         {
             currentPanel = Globals.Instance.currentTask;
@@ -64,7 +68,7 @@ public class PopulateTasks : MonoBehaviour {
                         newText.name = "subTasks" + i;
                         newText.tag = "subtasks";
                         newText.text = subtasks[i];
-                        temp_y -= 60;
+                        temp_y -= 10;
                         Debug.Log("Offset " + temp_y);
                     }
                     else
@@ -80,7 +84,7 @@ public class PopulateTasks : MonoBehaviour {
                 if (taskList.Length > subtasks.Count)
                 {
                     int start = subtasks.Count + 1;
-                    while (start <= taskList.Length)
+                    while (start < taskList.Length)
                     {
                         Destroy(taskList[start]);
                         ++start;
@@ -96,7 +100,8 @@ public class PopulateTasks : MonoBehaviour {
         while (true) {
             if (Globals.Instance.BluetoothData != null && Globals.Instance.BluetoothData.tasks!=null)
             {
-                taskJSON[] JSONList = Globals.Instance.BluetoothData.tasks;
+                startFlag = true;
+                taskJSON[] JSONList = Globals.Instance.server_data;
                 foreach (taskJSON task in JSONList)
                 {
                     if (!dictionary.ContainsKey(task.majorkey))

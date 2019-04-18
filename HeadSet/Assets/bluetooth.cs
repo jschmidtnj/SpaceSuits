@@ -13,7 +13,7 @@ using UnityEngine;
 using System.Collections;
 
 public class bluetooth_module
-{ 
+{
     public string readBytes(Stream stream, int numBytes)
     {
         string ret = "";
@@ -79,12 +79,12 @@ public class bluetooth_module
 
         while (true)
         {
-            
+
             messageSemaphore.WaitOne();
             Boolean resetGlove = false;
-            if (messageQueue.Count == 0 )
+            if (messageQueue.Count == 0)
             {
-               
+
                 stream.Flush();
                 messageSemaphore.Release();
             }
@@ -111,23 +111,24 @@ public class bluetooth_module
 
                 string length = readBytes(stream, 4);
                 stream.Flush();
-                
+
                 string input = readBytes(stream, Int16.Parse(length));
-                
+
                 stream.Flush();
                 semaphore.WaitOne();
                 inputQueue.Enqueue(input);
                 semaphore.Release();
             }
-            
+
             Thread.Sleep(500);
         }
     }
 }
 
-public class bluetooth : MonoBehaviour {
+public class bluetooth : MonoBehaviour
+{
     public string bluetooth_name;
-   
+
     public String BluetoothReading;
     Thread T1;
     Semaphore semaphore = new Semaphore(1, 1);
@@ -135,8 +136,9 @@ public class bluetooth : MonoBehaviour {
     Queue<string> inputQueue = new Queue<string>();
     Queue<string> messageQueue = new Queue<string>();
     // Use this for initialization
-    void Awake () {
-        
+    void Awake()
+    {
+
         T1 = new Thread(delegate ()
         {
             bluetooth_module temp = new bluetooth_module();
@@ -163,13 +165,14 @@ public class bluetooth : MonoBehaviour {
                     Globals.Instance.BluetoothData = new CustomJSON();
                     Globals.Instance.BluetoothData.glove = 0;
                     Globals.Instance.currentTask = 0;
+                    Globals.Instance.swap = 0;
                 }
                 if (Globals.Instance.swap == 1)
                 {
                     messageSemaphore.WaitOne();
                     messageQueue.Dequeue();
                     messageQueue.Enqueue("{\"id\": \"resetglove1\"}\n");
-                
+
                     Globals.Instance.BluetoothData.glove = 0;
                     messageSemaphore.Release();
                     Globals.Instance.swap = 0;
@@ -185,7 +188,7 @@ public class bluetooth : MonoBehaviour {
                 }
                 string ret = inputQueue.Dequeue();
 
-               
+
                 Debug.Log("got ret " + ret);
                 try
                 {
@@ -195,15 +198,18 @@ public class bluetooth : MonoBehaviour {
                 {
                     Debug.Log("Error in JSON " + ret);
                 }
-
+                
                 if (Globals.Instance.BluetoothData.glove != 0)
                 {
-                    Debug.Log("Clear Queue");                    
+                    Debug.Log("Clear Queue");
                     inputQueue.Clear();
                     messageSemaphore.WaitOne();
                     messageQueue.Enqueue("nonsense");
                     messageSemaphore.Release();
+                    semaphore.Release();
                     yield return new WaitForSeconds(1f);
+                 
+                    break;
                 }
 
                 //Debug.Log(ret);

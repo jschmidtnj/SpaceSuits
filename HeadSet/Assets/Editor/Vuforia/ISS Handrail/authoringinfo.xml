@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARInfo>
+<TargetSet version="14.0" toolVersion="7.0.0">
+<ModelTarget name="ISS Handrail" targetId="06d96e3b966f447bb499729f8ec3c02b" version="11.0" toolVersion="3.0.0" bbox="-0.312731 -0.058773 0.011449 0.322269 0.020528 0.062249" previewImage="06d96e3b966f447bb499729f8ec3c02b_preview.jpg"/>
+
+</TargetSet>
+
+<Assembly name="ISS Handrails_assembly" assemblyId="dabd30afdae94927935e1501c7a1193d">
+<Part name="ISS Handrail" translation="0 0 0" rotation="AD: 0 0 1 0"/>
+<EntryPoint name="viewpoint_0000" translation="0.0930035 -0.0840431 0.371263" rotation="AD: -0.9870585218877657 -0.20674042446413846 1.255379436604382 168.471" image="ISS Handrail_viewpoint_0000.png">
+
+</EntryPoint>
+<EntryPoint name="viewpoint_0001" translation="0.0916324 -0.0752069 0.345163" rotation="AD: -0.9706872436325005 -0.28038979178051143 1.702596769583864 170.768" image="ISS Handrail_viewpoint_0001.png">
+
+</EntryPoint>
+<EntryPoint name="viewpoint_0002" translation="0.176069 0.0574184 0.370248" rotation="AD: -0.07290513347337649 2.1300171075231846 -1.1317132101857694 173.491" image="ISS Handrail_viewpoint_0002.png">
+
+</EntryPoint>
+<EntryPoint name="viewpoint_0004" translation="0.194985 -0.00213585 0.330025" rotation="AD: -0.9999933124772411 -0.12124547127555928 0.06441971805442741 56.4094" image="ISS Handrail_viewpoint_0004.png">
+
+</EntryPoint>
+<EntryPoint name="viewpoint_0005" translation="-0.0189961 -0.136316 0.400796" rotation="AD: 0.9956275948903905 0.1603829543157578 -0.7389612802690604 199.612" image="ISS Handrail_viewpoint_0005.png">
+
+</EntryPoint>
+<EntryPoint name="viewpoint_0006" translation="0.236775 0.0138456 0.182462" rotation="AD: 0.02310804652958309 -1.2477597236273583 1.6712158070533047 180.948" image="ISS Handrail_viewpoint_0006.png">
+
+</EntryPoint>
+
+</Assembly>
+
+</QCARInfo>

@@ -1170,6 +1170,7 @@ GameObject:
   - component: {fileID: 534669906}
   - component: {fileID: 534669908}
   - component: {fileID: 534669909}
+  - component: {fileID: 534669910}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -1206,7 +1207,7 @@ Camera:
     height: 1
   near clip plane: 0.85
   far clip plane: 1000
-  field of view: 95.390945
+  field of view: 17
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1252,9 +1253,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuPanels: []
+  server_data: []
   currentPanel: 1
-  currentTask: 1
+  currentTask: 0
   warningFlag: 0
+  swap: 0
 --- !u!114 &534669907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1288,6 +1291,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62931b7fa4c936d46a3f156be3cd16cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &534669910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 534669902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d9b346b6d317354394e91ed2d13d966, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &535332719

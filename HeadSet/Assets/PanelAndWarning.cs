@@ -40,7 +40,6 @@ public class PanelAndWarning : MonoBehaviour {
                     Globals.Instance.swap = 1;
                 }
                 else if (gloveInt == 2 && Globals.Instance.swap == 0) {
-
                     if (currentPanel == 2)
                     {
                         Globals.Instance.currentTask++;
@@ -48,14 +47,19 @@ public class PanelAndWarning : MonoBehaviour {
                     Globals.Instance.swap = 1;
                     Globals.Instance.BluetoothData.glove = 0;
                 }
-                else if (gloveInt == 4 && Globals.Instance.swap == 0) { 
+                else if (gloveInt == 4 && Globals.Instance.swap == 0) {
                     Globals.Instance.warningFlag = 1;
                     Globals.Instance.swap = 1;
                     Globals.Instance.BluetoothData.glove = 0;
                 }
-                
+                else if (gloveInt == 5 || gloveInt == 3)
+                {
+                    Globals.Instance.swap = 1;
+                    Globals.Instance.BluetoothData.glove = 0;
+                }
+             
             }
-            yield return new WaitForSeconds(.25f);
+            yield return new WaitForEndOfFrame();
         }
         
     }

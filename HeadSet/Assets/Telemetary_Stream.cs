@@ -34,7 +34,8 @@ public class Telemetary_Stream : MonoBehaviour {
     suitTelem input = new suitTelem();
     // Use this for initialization
     void Start () {
-        StartCoroutine(Get_Request("http://54.86.90.79:3000/api/suit/recent"));
+        //StartCoroutine(Get_Request("http://54.86.90.79:3000/api/suit/recent"));
+        StartCoroutine(Get_Request("https://gemini-program.herokuapp.com/api/suit/recent"));
         StartCoroutine(Start_Interp());
     }
 
@@ -108,6 +109,8 @@ public class Telemetary_Stream : MonoBehaviour {
         suitTelem previous = new suitTelem();
         while (true)
         {
+            //Error handling 
+            
             if (previous.heart_bpm != input.heart_bpm)
             {
                 Text heart = GameObject.Find("HeartRate").GetComponent<Text>();

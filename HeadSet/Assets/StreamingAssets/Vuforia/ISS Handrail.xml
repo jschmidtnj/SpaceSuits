@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+<Tracking>
+<ModelTarget name="ISS Handrail"/>
+
+</Tracking>
+
+<Assembly name="ISS Handrails_assembly" assemblyId="dabd30afdae94927935e1501c7a1193d">
+<Part name="ISS Handrail" translation="0 0 0" rotation="AD: 0 0 1 0"/>
+<EntryPoint name="viewpoint_0000" translation="0.0930035 -0.0840431 0.371263" rotation="AD: -0.9870585218877657 -0.20674042446413846 1.255379436604382 168.471">
+
+</EntryPoint>
+<EntryPoint name="viewpoint_0001" translation="0.0916324 -0.0752069 0.345163" rotation="AD: -0.9706872436325005 -0.28038979178051143 1.702596769583864 170.768">
+
+</EntryPoint>
+<EntryPoint name="viewpoint_0002" translation="0.176069 0.0574184 0.370248" rotation="AD: -0.07290513347337649 2.1300171075231846 -1.1317132101857694 173.491">
+
+</EntryPoint>
+<EntryPoint name="viewpoint_0004" translation="0.194985 -0.00213585 0.330025" rotation="AD: -0.9999933124772411 -0.12124547127555928 0.06441971805442741 56.4094">
+
+</EntryPoint>
+<EntryPoint name="viewpoint_0005" translation="-0.0189961 -0.136316 0.400796" rotation="AD: 0.9956275948903905 0.1603829543157578 -0.7389612802690604 199.612">
+
+</EntryPoint>
+<EntryPoint name="viewpoint_0006" translation="0.236775 0.0138456 0.182462" rotation="AD: 0.02310804652958309 -1.2477597236273583 1.6712158070533047 180.948">
+
+</EntryPoint>
+
+</Assembly>
+
+</QCARConfig>

@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class taskJSON 
 {
+    public string _id;
     public int majorkey;
     public int subkey;
     public string data;
@@ -40,10 +41,16 @@ public class CustomJSON
     //public suitTelem sTelem;
 }
 
+public class ArrayWrapper
+{
+    public taskJSON[] tasks;
+}
+
 public class Globals : MonoBehaviour
 {
     public CustomJSON BluetoothData = null;
     public GameObject[] menuPanels;
+    public taskJSON[] server_data;
     public int currentPanel = 1;
     public int currentTask = 0;
     public int warningFlag = 0;
