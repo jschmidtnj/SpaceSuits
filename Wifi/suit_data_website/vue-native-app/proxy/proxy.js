@@ -5,6 +5,8 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 import config from './config'
 
+/* eslint-disable */
+
 const app = express()
 
 app.use(bodyParser.json())
