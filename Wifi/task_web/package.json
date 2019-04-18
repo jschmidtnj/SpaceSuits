@@ -16,7 +16,9 @@
     "babel-register": "^6.26.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
+    "exit-hook": "^2.2.0",
     "express": "^4.16.4",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+    "mongoose": "^5.5.2"
   }
 }
