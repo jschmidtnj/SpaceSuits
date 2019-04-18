@@ -386,8 +386,8 @@ void PrintStations()
 
   esp_wifi_ap_get_sta_list(&stationList);
 
-  char headerChar[50];
-  char buffer[5];
+  char headerChar[50] = {0};
+  char buffer[5] = {0};
   String stationNumStr = itoa(stationList.num, buffer, 10);
   String headerStr = "Num Connect: " + stationNumStr;
   headerStr.toCharArray(headerChar, 50);
@@ -772,7 +772,9 @@ void sendDataHololensBT()
   }
   btSerial.println(dataLen);
   btSerial.println(data);
-  hololensData["glove"] = 0; // reset glove data
+  /*hololensData["glove"] = 0; // reset glove data
+  if (debug_mode)
+    DBG_OUTPUT_PORT.println("reset glove 1");*/
 }
 
 void handleCommand(String command)
@@ -844,6 +846,21 @@ void handleCommand(String command)
             DBG_OUTPUT_PORT.println("did not send getdata response because bluetooth disabled");
         }
       }
+      else if (data["id"] == "resetglove1")
+      {
+        hololensData["glove"] = 0; // reset glove data
+        if (bluetooth_on)
+        {
+          sendDataHololensBT();
+          if (debug_mode)
+            DBG_OUTPUT_PORT.println("sent reset glove 1 data");
+        }
+        else
+        {
+          if (debug_mode)
+            DBG_OUTPUT_PORT.println("did not send reset glove 1 data because bluetooth disconnected");
+        }
+      }
       else if (data["id"] == "status")
       {
         // return status request message
@@ -904,17 +921,22 @@ void handleCommand(String command)
   {
     if (debug_mode)
       DBG_OUTPUT_PORT.println("received invalid json command");
+    if (bluetooth_on)
+      sendDataHololensBT();
   }
 }
 
 String setTaskData(AsyncWebServerRequest *request, uint8_t *datas)
 {
+  char* chardata = (char*) datas;
   if (debug_mode)
   {
-    // DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\r\n", (const char *)datas);
+    DBG_OUTPUT_PORT.printf("[REQUEST]\t%s\n", chardata);
   }
-  JsonObject &data = jsonBuffer.parseObject((const char *)datas);
-  JsonObject &resp = jsonBuffer.createObject();
+  DBG_OUTPUT_PORT.printf("size of char: %u", strlen(chardata));
+  DynamicJsonBuffer taskDataBuffer(strlen(chardata) + 1);
+  JsonObject &data = taskDataBuffer.parseObject(chardata);
+  JsonObject &resp = taskDataBuffer.createObject();
   String respStr = "";
   if (!data.success())
   {
@@ -928,9 +950,9 @@ String setTaskData(AsyncWebServerRequest *request, uint8_t *datas)
     // maybe do some validation here
     String dataStr = "";
     data.printTo(dataStr);
-    char tasksChar[500];
-    dataStr.toCharArray(tasksChar, 500);
-    JsonObject &tasksObject = jsonBuffer.parseObject(tasksChar);
+    char tasksChar[dataStr.length() + 1] = {0};
+    dataStr.toCharArray(tasksChar, dataStr.length() + 1);
+    JsonObject &tasksObject = taskDataBuffer.parseObject(tasksChar);
     if (!tasksObject.success())
     {
       String errormsg = "invalid json in put task data";
@@ -1255,8 +1277,9 @@ void setup()
   PrintStations();
   if (debug_mode)
     DBG_OUTPUT_PORT.println("#printed initial stations.");
-
-  tasksObjectStr = "{\"1\": {\"0\": {\"data\": \"do something\", \"time\": \"123\"}, \"1\": {\"data\": \"do something else\", \"time\": \"234\"}}, \"2\": {\"0\": {\"data\": \"do something 2\", \"time\": \"123\"}, \"1\": {\"data\": \"do something else 3\", \"time\": \"234\"}}}";
+  // "{\"1\":{\"0\":{\"data\":\"prepare UIA\",\"time\":\"1555427929296\"},\"1\":{\"data\":\"ensure that POWER EV-1 and 2 are set to OFF, POWER EV-1 and 2 EMU LEDs are OFF, WATER SUPPLY EV-1 and 2 is set to CLOSE, OXYGEN EV-1 and 2 are set to CLOSE\",\"time\":\"1555427929296\"}},\"2\":{\"0\":{\"data\":\"FILL AND DUMP UIA AND SCU O2 LINES - repeat 2.1 and 2.2 2 times for N2 purge\",\"time\":\"1555427929296\"}},\"3\":{\"0\":{\"data\":\"FINAL PRESSURIZATION\",\"time\":\"1555427929296\"}}}";
+  // "{\"1\":{\"0\":{\"data\":\"prepare UIA\",\"time\":\"1555427929296\"},\"1\":{\"data\":\"ensure that POWER EV-1 and 2 are set to OFF, POWER EV-1 and 2 EMU LEDs are OFF, WATER SUPPLY EV-1 and 2 is set to CLOSE, OXYGEN EV-1 and 2 are set to CLOSE\",\"time\":\"1555427929296\"},\"2\":{\"data\":\"Depressurize the UIA O2 supply lines: Switch O2 Vent to OPEN, When UIA Supply Press < 23 psi, proceed\",\"time\":\"1555427929296\"},\"3\":{\"data\":\"close O2: O2 Vent - CLOSE\",\"time\":\"1555427929296\"}},\"2\":{\"0\":{\"data\":\"FILL AND DUMP UIA AND SCU O2 LINES - repeat 2.1 and 2.2 2 times for N2 purge\",\"time\":\"1555427929296\"},\"1\":{\"data\":\"Pressurize EVA 1: Check that O2 VENT is set to CLOSED, Switch OXYGEN EV-1 to OPEN, When UIA Supply Press is greater than 3000 psi and stable, proceed\",\"time\":\"1555427929296\"},\"2\":{\"data\":\"Depressurize EVA 1: Switch OXYGEN EV-1 to CLOSE, Switch O2 Vent to OPEN, When UIA Supply Pressure is less than 23 and stable psi, proceed.\",\"time\":\"1555427929296\"}},\"3\":{\"0\":{\"data\":\"FINAL PRESSURIZATION\",\"time\":\"1555427929296\"},\"1\":{\"data\":\"Pressurize EVA 1: Check that O2 VENT is set to CLOSED, Switch OXYGEN EV-1  to OPEN, When UIA Supply Press is greater than 3000 psi and stable, proceed.\",\"time\":\"1555427929296\"},\"2\":{\"data\":\"Close OXYGEN: Switch OXYGEN EV-1 to CLOSE\",\"time\":\"1555427929296\"}}}";
+  tasksObjectStr = "{\"1\":{\"0\":{\"data\":\"prepare UIA\",\"time\":\"1555427929296\"},\"1\":{\"data\":\"ensure that POWER EV-1 and 2 are set to OFF, POWER EV-1 and 2 EMU LEDs are OFF, WATER SUPPLY EV-1 and 2 is set to CLOSE, OXYGEN EV-1 and 2 are set to CLOSE\",\"time\":\"1555427929296\"}},\"2\":{\"0\":{\"data\":\"FILL AND DUMP UIA AND SCU O2 LINES - repeat 2.1 and 2.2 2 times for N2 purge\",\"time\":\"1555427929296\"}},\"3\":{\"0\":{\"data\":\"FINAL PRESSURIZATION\",\"time\":\"1555427929296\"}}}";
   JsonObject &tasksObject = jsonBuffer.parseObject(tasksObjectStr);
   refreshTaskArray(tasksObject);
 }

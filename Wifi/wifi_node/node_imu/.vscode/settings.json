@@ -7,7 +7,7 @@
         "functional": "cpp"
     },
     "terminal.integrated.env.linux": {
-        "PATH": "/home/joshua/.platformio/penv/bin:/home/joshua/.platformio/penv:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/android-sdk/platform-tools:/usr/lib/android-sdk/tools:/usr/lib/jvm/java-8-openjdk-amd64/bin:/home/joshua/android-studio/gradle/gradle-4.10.1/bin:/home/joshua/android-sdk/platform-tools:/home/joshua/android-sdk/emulator",
+        "PATH": "/home/joshua/.platformio/penv/bin:/home/joshua/.platformio/penv:/home/joshua/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/android-sdk/platform-tools:/usr/lib/android-sdk/tools:/usr/lib/jvm/java-8-openjdk-amd64/bin:/home/joshua/android-studio/gradle/gradle-4.10.1/bin:/home/joshua/android-sdk/platform-tools:/home/joshua/android-sdk/emulator",
         "PLATFORMIO_CALLER": "vscode"
     }
 }

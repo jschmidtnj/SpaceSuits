@@ -27,7 +27,6 @@
     "proxy",
     "assets",
     "dist",
-    "**/*config*",
-    "**/*.js"
+    "**/*config*"
   ]
 }

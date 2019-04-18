@@ -1,0 +1,22 @@
+{
+  "name": "task_web",
+  "version": "1.0.0",
+  "description": "editing tasks on same network as hololens",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "task"
+  ],
+  "author": "Joshua Schmidt",
+  "license": "MIT",
+  "dependencies": {
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "minimist": "^1.2.0"
+  }
+}
